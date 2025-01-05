@@ -2,6 +2,10 @@
 # Chart dependencies
 **/charts/*.tgz
 
+### Python ###
+# Virtual environment
+venv/*
+
 ### JetBrains products ###
 .idea/*
 

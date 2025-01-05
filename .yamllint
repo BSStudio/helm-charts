@@ -1,0 +1,21 @@
+---
+extends: default
+
+rules:
+  braces:
+    forbid: non-empty
+  brackets:
+    forbid: false
+    min-spaces-inside: 0
+    max-spaces-inside: 1
+  document-end:
+    present: false
+  indentation:
+    spaces: 2
+  line-length:
+    max: 110
+    allow-non-breakable-words: true
+    allow-non-breakable-inline-mappings: true
+  quoted-strings:
+    quote-type: double
+    required: only-when-needed

@@ -1,0 +1,61 @@
+---
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: detect-private-key
+        name: Detect private keys
+      - id: check-merge-conflict
+        name: Check for merge conflicts
+      - id: check-added-large-files
+        name: Prevent giant files from being committed
+      - id: check-executables-have-shebangs
+        name: Checks that non-binary executables have a proper shebang
+      - id: check-shebang-scripts-are-executable
+        name: Checks that scripts with shebangs are executable
+      - id: trailing-whitespace
+        name: Trim trailing whitespaces
+      - id: end-of-file-fixer
+        name: Makes sure files end in a newline
+        exclude: README.md$
+      - id: mixed-line-ending
+        name: Replace mixed line endings
+        args: [--fix=lf]
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.5.0
+    hooks:
+      - id: detect-secrets
+        name: Detect secrets
+        exclude: ^charts/
+  - repo: https://github.com/crate-ci/typos
+    rev: v1.29.3
+    hooks:
+      - id: typos
+        name: Run spell checker
+  - repo: https://github.com/adrienverge/yamllint
+    rev: v1.35.1
+    hooks:
+      - id: yamllint
+        name: Lint YAML files
+        exclude: ^charts/.*/templates/
+  - repo: https://github.com/stackrox/kube-linter
+    rev: v0.7.1
+    hooks:
+      - id: kube-linter
+        name: Run KubeLinter
+  - repo: https://github.com/gruntwork-io/pre-commit
+    rev: v0.1.25
+    hooks:
+      - id: helmlint
+        name: Run helm lint
+  - repo: https://github.com/norwoodj/helm-docs
+    rev: v1.14.2
+    hooks:
+      - id: helm-docs-built
+        name: Generate README for charts
+        args: [--chart-search-root=charts]
+  - repo: https://github.com/python-jsonschema/check-jsonschema
+    rev: 0.30.0
+    hooks:
+      - id: check-github-workflows
+      - id: check-renovate
