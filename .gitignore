@@ -1,0 +1,13 @@
+### Helm ###
+# Charts
+charts/*
+
+### Python ###
+# Virtual environment
+venv/*
+
+### JetBrains products ###
+.idea/*
+
+### Visual Studio Code ###
+.vscode/*
