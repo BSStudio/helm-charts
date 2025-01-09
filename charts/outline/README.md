@@ -1,6 +1,6 @@
 # outline
 
-![Version: 1.0.1](https://img.shields.io/badge/Version-1.0.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.81.1](https://img.shields.io/badge/AppVersion-0.81.1-informational?style=flat-square)
+![Version: 1.0.2](https://img.shields.io/badge/Version-1.0.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.81.1](https://img.shields.io/badge/AppVersion-0.81.1-informational?style=flat-square)
 
 Outline is a fast, collaborative, knowledge base for your team built using React and Node.js.
 
@@ -76,6 +76,10 @@ Outline is a fast, collaborative, knowledge base for your team built using React
 | resources.limits.memory | string | `"1Gi"` | The maximum amount of memory the container can use |
 | resources.requests.cpu | string | `"250m"` | Specifies the minimum amount of CPU that will be allocated to the container |
 | resources.requests.memory | string | `"512Mi"` | Specifies the minimum amount of memory that will be allocated to the container |
+| scheduler.concurrencyPolicy | string | `"Forbid"` | Concurrency policy for the CronJob |
+| scheduler.enabled | bool | `true` | Create a CronJob to run Outline's scheduled jobs. Refer to <https://docs.getoutline.com/s/hosting/doc/scheduled-jobs-RhZzCt770H> for more information. |
+| scheduler.schedule | string | `"30 12 * * *"` | Schedule to use for the CronJob |
+| scheduler.timeZone | string | `"Europe/Budapest"` | Timezone for interpreting the cron schedule |
 | securityContext | object | `{}` | Run containers as a specific securityContext |
 | service.port | int | `3000` | Port number for web traffic |
 | service.type | string | `"ClusterIP"` | Kubernetes service type for web traffic |
