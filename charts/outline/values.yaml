@@ -181,6 +181,17 @@ outline:
   # -- Maximum allowed byte size for the uploaded attachment.
   file_storage_upload_max_size: 50000000
 
+scheduler:
+  # -- Create a CronJob to run Outline's scheduled jobs.
+  # Refer to <https://docs.getoutline.com/s/hosting/doc/scheduled-jobs-RhZzCt770H> for more information.
+  enabled: true
+  # -- Schedule to use for the CronJob
+  schedule: 30 12 * * *
+  # -- Timezone for interpreting the cron schedule
+  timeZone: Europe/Budapest
+  # -- Concurrency policy for the CronJob
+  concurrencyPolicy: Forbid
+
 minio:
   # -- Enable the Bitnami MinIO® chart.
   # Refer to <https://github.com/bitnami/charts/blob/main/bitnami/minio> for possible values.

@@ -1,0 +1,63 @@
+{{- if .Values.scheduler.enabled }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ printf "%s-cron-daily" (include "outline.fullname" .) | trunc 63 | trimSuffix "-" | quote }}
+  labels:
+    {{- include "outline.labels" . | nindent 4 }}
+spec:
+  schedule: {{ .Values.scheduler.schedule | quote }}
+  timeZone: {{ .Values.scheduler.timeZone | quote }}
+  concurrencyPolicy: {{ .Values.scheduler.concurrencyPolicy | quote }}
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          automountServiceAccountToken: false
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+          containers:
+            - name: invoke-scheduler
+              image: busybox:stable-uclibc
+              imagePullPolicy: Always
+              securityContext:
+                runAsUser: 10000
+                runAsGroup: 10000
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop:
+                    - NET_RAW
+                    - ALL
+              command: [/bin/sh]
+              args:
+                - -c
+                - |
+                  URL={{ printf "http://%s:%0.f/api/cron.daily?token=${UTILS_SECRET}" (include "outline.fullname" .) .Values.service.port | quote }}
+                  RESPONSE=$(wget -q -O - --server-response --no-check-certificate "$URL" 2>&1)
+                  STATUS_CODE=$(echo "$RESPONSE" | sed -rn 's:.*HTTP/.* ([0-9]+) .*:\1:p' | tail -1)
+
+                  if [ "$STATUS_CODE" != "200" ]; then
+                    echo "Failed to invoke cron.daily. HTTP status code: $STATUS_CODE"
+                    echo "Response body: $(echo "$RESPONSE" | tail -n +2)"
+                    exit 1
+                  fi
+
+                  echo "Successfully invoked cron.daily."
+              env:
+                - name: TZ
+                  value: {{ .Values.scheduler.timeZone }}
+                - name: UTILS_SECRET
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ include "outline.fullname" . }}
+                      key: UTILS_SECRET
+              resources:
+                requests:
+                  cpu: 100m
+                  memory: 128Mi
+                limits:
+                  cpu: 150m
+                  memory: 192Mi
+          restartPolicy: OnFailure
+{{- end }}
