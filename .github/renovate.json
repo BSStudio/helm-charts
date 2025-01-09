@@ -18,7 +18,9 @@
     {
       "customType": "regex",
       "datasourceTemplate": "docker",
-      "fileMatch": ["(^|/)Chart\\.yaml$"],
+      "fileMatch": [
+        "(^|/)Chart\\.yaml$"
+      ],
       "matchStrings": [
         "appVersion:\\s+(?<currentValue>.*)",
         "#\\s*image:\\s+(?<depName>.*)"
@@ -26,24 +28,46 @@
       "matchStringsStrategy": "combination"
     }
   ],
-  "gitIgnoredAuthors": ["66853113+pre-commit-ci[bot]@users.noreply.github.com"],
+  "gitIgnoredAuthors": [
+    "66853113+pre-commit-ci[bot]@users.noreply.github.com"
+  ],
   "packageRules": [
     {
       "description": "Group all minor and patch updates together for applications.",
-      "addLabels": ["application"],
+      "addLabels": [
+        "application"
+      ],
       "groupName": "all non-major application updates",
       "groupSlug": "all-minor-patch-application",
-      "matchManagers": ["helm-requirements", "helm-values", "helmv3", "regex"],
-      "matchUpdateTypes": ["minor", "patch"],
-      "postUpdateOptions": ["helmUpdateSubChartArchives"]
+      "matchManagers": [
+        "helm-requirements",
+        "helm-values",
+        "helmv3",
+        "custom.regex"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
+      "postUpdateOptions": [
+        "helmUpdateSubChartArchives"
+      ]
     },
     {
       "description": "Group all minor and patch updates together for CI/CD and development dependencies.",
-      "addLabels": ["development"],
+      "addLabels": [
+        "development"
+      ],
       "groupName": "all non-major development dependencies",
       "groupSlug": "all-minor-patch-development",
-      "matchManagers": ["github-actions", "pip_requirements"],
-      "matchUpdateTypes": ["minor", "patch"]
+      "matchManagers": [
+        "github-actions",
+        "pip_requirements"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ]
     }
   ],
   "rebaseWhen": "conflicted"
