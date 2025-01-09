@@ -1,0 +1,50 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    ":automergeDisabled",
+    ":dependencyDashboard",
+    ":enableVulnerabilityAlertsWithLabel(security)",
+    ":ignoreUnstable",
+    ":label(renovate)",
+    ":pinAllExceptPeerDependencies",
+    ":timezone(Europe/Budapest)",
+    "group:monorepos",
+    "group:recommended",
+    "replacements:all",
+    "schedule:monthly",
+    "workarounds:all"
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "datasourceTemplate": "docker",
+      "fileMatch": ["(^|/)Chart\\.yaml$"],
+      "matchStrings": [
+        "appVersion:\\s+(?<currentValue>.*)",
+        "#\\s*image:\\s+(?<depName>.*)"
+      ],
+      "matchStringsStrategy": "combination"
+    }
+  ],
+  "gitIgnoredAuthors": ["66853113+pre-commit-ci[bot]@users.noreply.github.com"],
+  "packageRules": [
+    {
+      "description": "Group all minor and patch updates together for applications.",
+      "addLabels": ["application"],
+      "groupName": "all non-major application updates",
+      "groupSlug": "all-minor-patch-application",
+      "matchManagers": ["helm-requirements", "helm-values", "helmv3", "regex"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "postUpdateOptions": ["helmUpdateSubChartArchives"]
+    },
+    {
+      "description": "Group all minor and patch updates together for CI/CD and development dependencies.",
+      "addLabels": ["development"],
+      "groupName": "all non-major development dependencies",
+      "groupSlug": "all-minor-patch-development",
+      "matchManagers": ["github-actions", "pip_requirements"],
+      "matchUpdateTypes": ["minor", "patch"]
+    }
+  ],
+  "rebaseWhen": "conflicted"
+}

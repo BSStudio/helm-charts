@@ -17,6 +17,7 @@ dependencies:
 description: Outline is a fast, collaborative, knowledge base for your team built using React and Node.js.
 home: https://www.getoutline.com
 icon: https://www.getoutline.com/images/logo.svg
+# image: outlinewiki/outline
 keywords:
   - outline
   - wiki
