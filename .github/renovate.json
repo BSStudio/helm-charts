@@ -33,7 +33,12 @@
       "addLabels": ["application"],
       "groupName": "all non-major application updates",
       "groupSlug": "all-minor-patch-application",
-      "matchManagers": ["helm-requirements", "helm-values", "helmv3", "regex"],
+      "matchManagers": [
+        "custom.regex",
+        "helm-requirements",
+        "helm-values",
+        "helmv3"
+      ],
       "matchUpdateTypes": ["minor", "patch"],
       "postUpdateOptions": ["helmUpdateSubChartArchives"]
     },
