@@ -36,6 +36,7 @@ repos:
       - id: typos
         name: Run spell checker
   - repo: https://github.com/adrienverge/yamllint
+    # Update lint-test.yaml workflow when updating this.
     rev: v1.35.1
     hooks:
       - id: yamllint

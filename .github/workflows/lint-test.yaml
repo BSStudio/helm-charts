@@ -26,6 +26,9 @@ jobs:
 
       - name: Setup Chart Linting
         uses: helm/chart-testing-action@v2.6.1
+        with:
+          version: 3.11.0
+          yamllint_version: 1.35.1
 
       - name: List changed charts
         id: list-changed
