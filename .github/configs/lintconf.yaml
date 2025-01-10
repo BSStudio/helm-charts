@@ -8,6 +8,9 @@ rules:
     forbid: false
     min-spaces-inside: 0
     max-spaces-inside: 1
+  comments-indentation:
+    ignore:
+      - "**/values.yaml"
   document-end:
     present: false
   indentation:
