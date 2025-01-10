@@ -84,4 +84,3 @@ Outline is a fast, collaborative, knowledge base for your team built using React
 | serviceAccount.create | bool | `true` | Specifies whether a service account should be created |
 | serviceAccount.name | string | `""` | The name of the service account to use. If not set and create is true, a name is generated using the fullname template. |
 | tolerations | list | `[]` | Tolerations for the deployment |
-

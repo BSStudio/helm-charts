@@ -9,4 +9,5 @@ docker run \
     --rm \
     -v "$REPO_ROOT:/helm-docs" \
     -u $(id -u) \
-    jnorwood/helm-docs:v1.14.2
+    jnorwood/helm-docs:v1.14.2 \
+    --skip-version-footer
