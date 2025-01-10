@@ -1,0 +1,9 @@
+---
+remote: origin
+target-branch: main
+chart-dirs:
+  - charts
+chart-repos:
+  - bitnami=oci://registry-1.docker.io/bitnamicharts
+  - bsstudio=https://charts.bsstudio.hu
+validate-maintainers: false

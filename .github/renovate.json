@@ -18,6 +18,16 @@
     {
       "customType": "regex",
       "datasourceTemplate": "docker",
+      "fileMatch": ["^scripts/.*\\.sh$"],
+      "matchStrings": [
+        "docker run",
+        "(?<depName>([a-zA-Z0-9.-]+/)?[a-zA-Z0-9-]+/[a-zA-Z0-9-]+):(?<currentValue>[v0-9.]+)"
+      ],
+      "matchStringsStrategy": "combination"
+    },
+    {
+      "customType": "regex",
+      "datasourceTemplate": "docker",
       "fileMatch": ["(^|/)Chart\\.yaml$"],
       "matchStrings": [
         "appVersion:\\s+(?<currentValue>.*)",
@@ -33,6 +43,7 @@
       "addLabels": ["application"],
       "groupName": "all non-major application updates",
       "groupSlug": "all-minor-patch-application",
+      "matchFileNames": ["**/!(*.sh)"],
       "matchManagers": [
         "custom.regex",
         "helm-requirements",
@@ -47,7 +58,7 @@
       "addLabels": ["development"],
       "groupName": "all non-major development dependencies",
       "groupSlug": "all-minor-patch-development",
-      "matchManagers": ["github-actions", "pip_requirements"],
+      "matchManagers": ["custom.regex", "github-actions", "pip_requirements"],
       "matchUpdateTypes": ["minor", "patch"]
     }
   ],
