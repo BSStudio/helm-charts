@@ -22,7 +22,7 @@ If you want to add a new application or change on of the existing ones please fo
 
 ### Pre-commit
 
-Pre-commit will make sure that your changes follow the guidelines of this repo. To enable the hooks to the following:
+Pre-commit will make sure that your changes follow the guidelines of this repository. To enable the hooks to the following:
 
 ```bash
 python -m venv venv
@@ -43,7 +43,7 @@ pre-commit install
 
 ### Checkov
 
-Before pushing your changes to the repo run the checkov scan locally.
+Before pushing your changes to the repository run the checkov scan locally.
 
 ```bash
 checkov -d . --skip-path venv

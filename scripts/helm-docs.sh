@@ -8,6 +8,6 @@ echo -e "\n-- Running helm-docs --\n"
 docker run \
     --rm \
     --volume "$REPO_ROOT:/helm-docs" \
-    --user $(id --user) \
+    --user "$(id --user)" \
     jnorwood/helm-docs:v1.14.2 \
     --skip-version-footer

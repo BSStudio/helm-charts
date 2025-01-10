@@ -34,7 +34,7 @@ Outline is a fast, collaborative, knowledge base for your team built using React
 | autoscaling.maxReplicas | int | `100` | Sets the maximum number of application instances (replicas) that can be scaled up to during high demand |
 | autoscaling.minReplicas | int | `1` | Defines the minimum number of application instances (replicas) to maintain, even during low demand |
 | autoscaling.targetCPUUtilizationPercentage | int | `80` | Specifies the CPU utilization threshold at which autoscaling will be triggered to adjust the number of replicas |
-| env | list | `[]` | Environment variables to pass to the deployment See configuration options at https://github.com/outline/outline/blob/main/.env.sample |
+| env | list | `[]` | Environment variables to pass to the deployment See configuration options at <https://github.com/outline/outline/blob/main/.env.sample> |
 | envFrom | list | `[]` | envFrom to pass to the deployment |
 | extraVolumeMounts | list | `[]` | Additional volume mounts for the containers |
 | extraVolumes | list | `[]` | Additional volumes to mount to the deployment |
@@ -49,7 +49,7 @@ Outline is a fast, collaborative, knowledge base for your team built using React
 | ingress.tls | list | `[]` | Ingress TLS configuration |
 | initContainers | list | `[]` | Init containers to add to the deployment |
 | minio.defaultBuckets | string | `"outline"` | Comma, semi-colon or space separated list of buckets to create at initialization |
-| minio.enabled | bool | `false` | Enable the Bitnami MinIO® chart. Refer to https://github.com/bitnami/charts/blob/main/bitnami/minio for possible values. |
+| minio.enabled | bool | `false` | Enable the Bitnami MinIO® chart. Refer to <https://github.com/bitnami/charts/blob/main/bitnami/minio> for possible values. |
 | nameOverride | string | `""` | Provide a name in place of `outline`. Prefer using global.nameOverride if possible |
 | nodeSelector | object | `{}` | NodeSelector for the deployment |
 | outline.database_url | string | `"postgres://outline:secretPassword@outline-postgresql:5432/outline"` | Connection string to access the database |
@@ -68,10 +68,10 @@ Outline is a fast, collaborative, knowledge base for your team built using React
 | podSecurityContext | object | `{}` |  |
 | postgresql.auth.database | string | `"outline"` | Name for a custom database to create |
 | postgresql.auth.username | string | `"outline"` | Name for a custom user to create |
-| postgresql.enabled | bool | `true` | Enable the Bitnami PostgreSQL chart. Refer to https://github.com/bitnami/charts/blob/main/bitnami/postgresql for possible values. |
+| postgresql.enabled | bool | `true` | Enable the Bitnami PostgreSQL chart. Refer to <https://github.com/bitnami/charts/blob/main/bitnami/postgresql> for possible values. |
 | redis.architecture | string | `"standalone"` | Redis® architecture. Allowed values: standalone or replication |
 | redis.auth.enabled | bool | `false` | Enable password authentication |
-| redis.enabled | bool | `true` | Enable the Bitnami Redis® chart. Refer to https://github.com/bitnami/charts/blob/main/bitnami/redis for possible values. |
+| redis.enabled | bool | `true` | Enable the Bitnami Redis® chart. Refer to <https://github.com/bitnami/charts/blob/main/bitnami/redis> for possible values. |
 | replicaCount | int | `1` | The number of replicas to deploy |
 | resources.limits.memory | string | `"1Gi"` | The maximum amount of memory the container can use |
 | resources.requests.cpu | string | `"250m"` | Specifies the minimum amount of CPU that will be allocated to the container |
