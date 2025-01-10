@@ -1,6 +1,6 @@
 ---
 ci:
-  skip: [helmlint]
+  skip: [chart-testing, helmlint]
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -52,6 +52,14 @@ repos:
     hooks:
       - id: helmlint
         name: Run helm lint
+  - repo: local
+    hooks:
+      - id: chart-testing
+        name: Run chart-testing (lint)
+        entry: scripts/lint.sh
+        language: system
+        types: [file]
+        pass_filenames: false
   - repo: https://github.com/norwoodj/helm-docs
     rev: v1.14.2
     hooks:
