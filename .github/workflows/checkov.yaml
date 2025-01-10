@@ -1,0 +1,19 @@
+---
+name: Checkov scan
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  checkov:
+    name: Checkov scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Test with Checkov
+        uses: bridgecrewio/checkov-action@v12
