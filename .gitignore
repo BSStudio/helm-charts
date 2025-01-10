@@ -1,6 +1,7 @@
 ### Helm ###
 # Chart dependencies
 **/charts/*.tgz
+**/charts/*/Chart.lock
 
 ### Python ###
 # Virtual environment

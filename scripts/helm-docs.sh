@@ -4,10 +4,10 @@ set -eux
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 
-echo "Running Helm-Docs"
+echo -e "\n-- Running helm-docs --\n"
 docker run \
     --rm \
-    -v "$REPO_ROOT:/helm-docs" \
-    -u $(id -u) \
+    --volume "$REPO_ROOT:/helm-docs" \
+    --user $(id --user) \
     jnorwood/helm-docs:v1.14.2 \
     --skip-version-footer
