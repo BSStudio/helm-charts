@@ -2,7 +2,7 @@
 extends: default
 
 ignore:
-  - charts/*/templates/
+  - "**/charts/*/templates/"
 
 rules:
   braces:

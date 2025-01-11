@@ -41,7 +41,7 @@ repos:
     hooks:
       - id: yamllint
         name: Lint YAML files
-        args: [-c, ./.github/configs/.yamllint.yaml]
+        args: [-c, ./.github/configs/.yaml-lint.yml]
   - repo: https://github.com/stackrox/kube-linter
     rev: v0.7.1
     hooks:

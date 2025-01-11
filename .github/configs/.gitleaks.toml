@@ -1,5 +1,5 @@
 [allowlist]
 description = "global allow list"
 paths = [
-  '''^charts/[a-z0-9-]+/ci/[a-zA-Z0-9-]+\.yaml'''
+  '''^charts/[a-z0-9-]+/ci/[a-zA-Z0-9-]+\.yaml$'''
 ]
