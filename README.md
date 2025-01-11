@@ -43,7 +43,7 @@ pre-commit install
 
 ### Checkov
 
-Before pushing your changes to the repository run the checkov scan and linting locally.
+Before pushing your changes to the repository run the checkov scan locally.
 
 ```bash
 # Windows
@@ -51,8 +51,6 @@ checkov -d . --skip-path venv --skip-path "^charts\\[a-z0-9-]+\\charts\\.*" --sk
 
 # Linux or macOS
 checkov -d . --skip-path venv --skip-path "^charts/[a-z0-9-]+/charts/.*" --skip-path "^charts/[a-z0-9-]+/templates/.*"  --skip-framework secrets --output github_failed_only
-
-./scripts/lint.sh
 ```
 
 Checkov should be installed from the previous `pre-commit` step.
