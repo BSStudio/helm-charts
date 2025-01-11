@@ -55,7 +55,7 @@ entries:
       version: 20.x.x
     description: Outline is a fast, collaborative, knowledge base for your team built
       using React and Node.js.
-    digest: 635a3cedd75f76d6d0064b3b7baaa352b83d673bf7f9dd2c0f3f0c810a158629
+    digest: 7b482dd306dedb7025fe3e4e41420688ef7c4d99ef9cd4560c356e22d3c73f45
     home: https://www.getoutline.com
     icon: https://www.getoutline.com/images/logo.svg
     keywords:
@@ -91,7 +91,7 @@ entries:
       version: 20.x.x
     description: Outline is a fast, collaborative, knowledge base for your team built
       using React and Node.js.
-    digest: 3c46c0174d37d6c1370bbd601541c8d69088169d681cfc3ae7beba99680f7066
+    digest: f8b0ca3dd0d5ed631e2cd9a4ec5197347c2a7e84d16a3bd0f4d67f6ec7b09352
     home: https://www.getoutline.com
     icon: https://www.getoutline.com/images/logo.svg
     keywords:
