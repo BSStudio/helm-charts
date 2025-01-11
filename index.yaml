@@ -3,6 +3,42 @@ entries:
   outline:
   - apiVersion: v2
     appVersion: 0.81.1
+    created: "2025-01-11T01:32:55.829767048Z"
+    dependencies:
+    - condition: minio.enabled
+      name: minio
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 14.x.x
+    - condition: postgresql.enabled
+      name: postgresql
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 16.x.x
+    - condition: redis.enabled
+      name: redis
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 20.x.x
+    description: Outline is a fast, collaborative, knowledge base for your team built
+      using React and Node.js.
+    digest: 635a3cedd75f76d6d0064b3b7baaa352b83d673bf7f9dd2c0f3f0c810a158629
+    home: https://www.getoutline.com
+    icon: https://www.getoutline.com/images/logo.svg
+    keywords:
+    - outline
+    - wiki
+    - docs
+    maintainers:
+    - name: Budavári Schönherz Stúdió
+      url: https://github.com/BSStudio/helm-charts
+    name: outline
+    sources:
+    - https://github.com/BSStudio/helm-charts/tree/main/charts/outline
+    - https://github.com/outline/outline
+    type: application
+    urls:
+    - https://github.com/BSStudio/helm-charts/releases/download/outline-1.0.1/outline-1.0.1.tgz
+    version: 1.0.1
+  - apiVersion: v2
+    appVersion: 0.81.1
     created: "2025-01-08T23:35:46.539144261Z"
     dependencies:
     - condition: minio.enabled
@@ -37,4 +73,4 @@ entries:
     urls:
     - https://github.com/BSStudio/helm-charts/releases/download/outline-1.0.0/outline-1.0.0.tgz
     version: 1.0.0
-generated: "2025-01-08T23:35:46.539155792Z"
+generated: "2025-01-11T01:32:55.829777378Z"
