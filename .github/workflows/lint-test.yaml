@@ -3,6 +3,9 @@ name: Lint and Test Charts
 
 on:
   push:
+    branches: [main]
+    paths:
+      - charts/**
   pull_request:
 
 permissions: read-all
