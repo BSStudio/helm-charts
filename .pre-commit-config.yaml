@@ -1,6 +1,6 @@
 ---
 ci:
-  skip: [helmlint]
+  skip: [chart-testing, helmlint]
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -36,11 +36,12 @@ repos:
       - id: typos
         name: Run spell checker
   - repo: https://github.com/adrienverge/yamllint
+    # Update lint-test.yaml workflow when updating this.
     rev: v1.35.1
     hooks:
       - id: yamllint
         name: Lint YAML files
-        exclude: ^charts/.*/templates/
+        args: [-c, ./.github/configs/.yaml-lint.yml]
   - repo: https://github.com/stackrox/kube-linter
     rev: v0.7.1
     hooks:
@@ -51,12 +52,20 @@ repos:
     hooks:
       - id: helmlint
         name: Run helm lint
+  - repo: local
+    hooks:
+      - id: chart-testing
+        name: Run chart-testing (lint)
+        entry: scripts/lint.sh
+        language: system
+        types: [file]
+        pass_filenames: false
   - repo: https://github.com/norwoodj/helm-docs
     rev: v1.14.2
     hooks:
       - id: helm-docs-built
         name: Generate README for charts
-        args: [--chart-search-root=charts]
+        args: [--chart-search-root=charts, --skip-version-footer]
   - repo: https://github.com/python-jsonschema/check-jsonschema
     rev: 0.30.0
     hooks:

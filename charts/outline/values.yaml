@@ -110,7 +110,7 @@ autoscaling:
   # targetMemoryUtilizationPercentage: 80
 
 # -- Environment variables to pass to the deployment
-# See configuration options at https://github.com/outline/outline/blob/main/.env.sample
+# See configuration options at <https://github.com/outline/outline/blob/main/.env.sample>
 env: []
   # - name: ENV_VAR_NAME
   #   value: VALUE
@@ -183,14 +183,14 @@ outline:
 
 minio:
   # -- Enable the Bitnami MinIO® chart.
-  # Refer to https://github.com/bitnami/charts/blob/main/bitnami/minio for possible values.
+  # Refer to <https://github.com/bitnami/charts/blob/main/bitnami/minio> for possible values.
   enabled: false
   # -- Comma, semi-colon or space separated list of buckets to create at initialization
   defaultBuckets: outline
 
 postgresql:
   # -- Enable the Bitnami PostgreSQL chart.
-  # Refer to https://github.com/bitnami/charts/blob/main/bitnami/postgresql for possible values.
+  # Refer to <https://github.com/bitnami/charts/blob/main/bitnami/postgresql> for possible values.
   enabled: true
   auth:
     # -- Name for a custom user to create
@@ -201,7 +201,7 @@ postgresql:
 
 redis:
   # -- Enable the Bitnami Redis® chart.
-  # Refer to https://github.com/bitnami/charts/blob/main/bitnami/redis for possible values.
+  # Refer to <https://github.com/bitnami/charts/blob/main/bitnami/redis> for possible values.
   enabled: true
   # -- Redis® architecture. Allowed values: standalone or replication
   architecture: standalone

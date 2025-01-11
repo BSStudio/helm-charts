@@ -22,7 +22,7 @@ If you want to add a new application or change on of the existing ones please fo
 
 ### Pre-commit
 
-Pre-commit will make sure that your changes follow the guidelines of this repo. To enable the hooks to the following:
+Pre-commit will make sure that your changes follow the guidelines of this repository. To enable the hooks to the following:
 
 ```bash
 python -m venv venv
@@ -43,10 +43,14 @@ pre-commit install
 
 ### Checkov
 
-Before pushing your changes to the repo run the checkov scan locally.
+Before pushing your changes to the repository run the checkov scan locally.
 
 ```bash
-checkov -d . --skip-path venv
+# Windows
+checkov -d . --skip-path venv --skip-path "^charts\\[a-z0-9-]+\\charts\\.*" --skip-path "^charts\\[a-z0-9-]+\\templates\\.*"  --skip-framework secrets --output github_failed_only
+
+# Linux or macOS
+checkov -d . --skip-path venv --skip-path "^charts/[a-z0-9-]+/charts/.*" --skip-path "^charts/[a-z0-9-]+/templates/.*"  --skip-framework secrets --output github_failed_only
 ```
 
 Checkov should be installed from the previous `pre-commit` step.

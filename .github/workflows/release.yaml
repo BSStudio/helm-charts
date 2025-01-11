@@ -1,3 +1,4 @@
+---
 name: Release Charts
 
 on:
@@ -6,6 +7,8 @@ on:
     paths:
       - charts/**
   workflow_dispatch:
+
+permissions: read-all
 
 jobs:
   release:
