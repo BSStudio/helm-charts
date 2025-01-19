@@ -12,6 +12,16 @@ spec:
   jobTemplate:
     spec:
       template:
+        metadata:
+          {{- with .Values.scheduler.annotations }}
+          annotations:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          labels:
+            {{- include "outline.labels" . | nindent 12 }}
+            {{- with .Values.scheduler.labels }}
+              {{- toYaml . | nindent 12 }}
+            {{- end }}
         spec:
           automountServiceAccountToken: false
           securityContext:

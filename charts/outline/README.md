@@ -1,6 +1,6 @@
 # outline
 
-![Version: 1.0.2](https://img.shields.io/badge/Version-1.0.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.81.1](https://img.shields.io/badge/AppVersion-0.81.1-informational?style=flat-square)
+![Version: 1.0.3](https://img.shields.io/badge/Version-1.0.3-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.81.1](https://img.shields.io/badge/AppVersion-0.81.1-informational?style=flat-square)
 
 Outline is a fast, collaborative, knowledge base for your team built using React and Node.js.
 
@@ -54,7 +54,7 @@ Outline is a fast, collaborative, knowledge base for your team built using React
 | nodeSelector | object | `{}` | NodeSelector for the deployment |
 | outline.database_url | string | `"postgres://outline:secretPassword@outline-postgresql:5432/outline"` | Connection string to access the database |
 | outline.file_storage | string | `"local"` | Specify what storage system to use. Possible value is one of "s3" or "local". |
-| outline.file_storage_upload_max_size | int | `50000000` | Maximum allowed byte size for the uploaded attachment. |
+| outline.file_storage_upload_max_size | string | `"50000000"` | Maximum allowed byte size for the uploaded attachment. Make sure to define it as a string. |
 | outline.pgsslmode | string | `"disable"` | Disable SSL for connecting to PostgreSQL |
 | outline.redis_url | string | `"redis://outline-redis-master:6379"` | Connection string to access Redis |
 | outline.secret_key | string | `""` | Generate a hex-encoded 32-byte random key. You should use `openssl rand -hex 32` in your terminal to generate a random value. |
@@ -76,8 +76,10 @@ Outline is a fast, collaborative, knowledge base for your team built using React
 | resources.limits.memory | string | `"1Gi"` | The maximum amount of memory the container can use |
 | resources.requests.cpu | string | `"250m"` | Specifies the minimum amount of CPU that will be allocated to the container |
 | resources.requests.memory | string | `"512Mi"` | Specifies the minimum amount of memory that will be allocated to the container |
+| scheduler.annotations | object | `{}` | Optional additional annotations to add to the CronJob runner pod |
 | scheduler.concurrencyPolicy | string | `"Forbid"` | Concurrency policy for the CronJob |
 | scheduler.enabled | bool | `true` | Create a CronJob to run Outline's scheduled jobs. Refer to <https://docs.getoutline.com/s/hosting/doc/scheduled-jobs-RhZzCt770H> for more information. |
+| scheduler.labels | object | `{}` | Optional additional labels to add to the CronJob runner pod |
 | scheduler.schedule | string | `"30 12 * * *"` | Schedule to use for the CronJob |
 | scheduler.timeZone | string | `"Europe/Budapest"` | Timezone for interpreting the cron schedule |
 | securityContext | object | `{}` | Run containers as a specific securityContext |
