@@ -54,7 +54,7 @@ Outline is a fast, collaborative, knowledge base for your team built using React
 | nodeSelector | object | `{}` | NodeSelector for the deployment |
 | outline.database_url | string | `"postgres://outline:secretPassword@outline-postgresql:5432/outline"` | Connection string to access the database |
 | outline.file_storage | string | `"local"` | Specify what storage system to use. Possible value is one of "s3" or "local". |
-| outline.file_storage_upload_max_size | int | `50000000` | Maximum allowed byte size for the uploaded attachment. |
+| outline.file_storage_upload_max_size | string | `"50000000"` | Maximum allowed byte size for the uploaded attachment. Make sure to define it as a string. |
 | outline.pgsslmode | string | `"disable"` | Disable SSL for connecting to PostgreSQL |
 | outline.redis_url | string | `"redis://outline-redis-master:6379"` | Connection string to access Redis |
 | outline.secret_key | string | `""` | Generate a hex-encoded 32-byte random key. You should use `openssl rand -hex 32` in your terminal to generate a random value. |

@@ -182,8 +182,8 @@ outline:
   # -- Specify what storage system to use. Possible value is one of "s3" or "local".
   file_storage: local
 
-  # -- Maximum allowed byte size for the uploaded attachment.
-  file_storage_upload_max_size: 50000000
+  # -- Maximum allowed byte size for the uploaded attachment. Make sure to define it as a string.
+  file_storage_upload_max_size: "50000000"
 
 scheduler:
   # -- Create a CronJob to run Outline's scheduled jobs.
