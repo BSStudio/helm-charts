@@ -195,6 +195,10 @@ scheduler:
   timeZone: Europe/Budapest
   # -- Concurrency policy for the CronJob
   concurrencyPolicy: Forbid
+  # -- Optional additional annotations to add to the CronJob runner pod
+  annotations: {}
+  # -- Optional additional labels to add to the CronJob runner pod
+  labels: {}
 
 minio:
   # -- Enable the Bitnami MinIO® chart.
