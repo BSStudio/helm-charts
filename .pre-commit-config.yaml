@@ -31,7 +31,7 @@ repos:
         name: Detect secrets
         exclude: ^charts/
   - repo: https://github.com/crate-ci/typos
-    rev: typos-dict-v0.12.4
+    rev: typos-dict-v0.12.5
     hooks:
       - id: typos
         name: Run spell checker
