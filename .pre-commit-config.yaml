@@ -31,7 +31,7 @@ repos:
         name: Detect secrets
         exclude: ^charts/
   - repo: https://github.com/crate-ci/typos
-    rev: typos-dict-v0.12.5
+    rev: v1.29.9
     hooks:
       - id: typos
         name: Run spell checker
@@ -48,7 +48,7 @@ repos:
       - id: kube-linter
         name: Run KubeLinter
   - repo: https://github.com/gruntwork-io/pre-commit
-    rev: v0.1.25
+    rev: v0.1.26
     hooks:
       - id: helmlint
         name: Run helm lint
@@ -67,7 +67,7 @@ repos:
         name: Generate README for charts
         args: [--chart-search-root=charts, --skip-version-footer]
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: 0.31.1
+    rev: 0.31.2
     hooks:
       - id: check-github-workflows
       - id: check-renovate
