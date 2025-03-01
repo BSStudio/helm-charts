@@ -227,3 +227,5 @@ redis:
   auth:
     # -- Enable password authentication
     enabled: false
+    # -- Workaround until behaviour introduced by <https://github.com/bitnami/charts/pull/32117> is changed
+    usePasswordFiles: false
