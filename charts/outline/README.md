@@ -71,6 +71,7 @@ Outline is a fast, collaborative, knowledge base for your team built using React
 | postgresql.enabled | bool | `true` | Enable the Bitnami PostgreSQL chart. Refer to <https://github.com/bitnami/charts/blob/main/bitnami/postgresql> for possible values. |
 | redis.architecture | string | `"standalone"` | Redis® architecture. Allowed values: standalone or replication |
 | redis.auth.enabled | bool | `false` | Enable password authentication |
+| redis.auth.usePasswordFiles | bool | `false` | Workaround until behaviour introduced by <https://github.com/bitnami/charts/pull/32117> is changed |
 | redis.enabled | bool | `true` | Enable the Bitnami Redis® chart. Refer to <https://github.com/bitnami/charts/blob/main/bitnami/redis> for possible values. |
 | replicaCount | int | `1` | The number of replicas to deploy |
 | resources.limits.memory | string | `"1Gi"` | The maximum amount of memory the container can use |
