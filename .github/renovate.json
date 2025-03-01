@@ -58,6 +58,7 @@
       "addLabels": ["development"],
       "groupName": "all non-major development dependencies",
       "groupSlug": "all-minor-patch-development",
+      "matchFileNames": ["**/!(Chart.yaml)"],
       "matchManagers": ["custom.regex", "github-actions", "pip_requirements"],
       "matchUpdateTypes": ["minor", "patch"]
     }
