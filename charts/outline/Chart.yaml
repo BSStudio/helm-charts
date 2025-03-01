@@ -30,4 +30,4 @@ sources:
   - https://github.com/BSStudio/helm-charts/tree/main/charts/outline
   - https://github.com/outline/outline
 type: application
-version: 1.0.3
+version: 1.0.4
