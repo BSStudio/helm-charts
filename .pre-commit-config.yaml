@@ -48,7 +48,7 @@ repos:
       - id: kube-linter
         name: Run KubeLinter
   - repo: https://github.com/gruntwork-io/pre-commit
-    rev: v0.1.28
+    rev: v0.1.29
     hooks:
       - id: helmlint
         name: Run helm lint
@@ -67,7 +67,7 @@ repos:
         name: Generate README for charts
         args: [--chart-search-root=charts, --skip-version-footer]
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: 0.32.1
+    rev: 0.33.0
     hooks:
       - id: check-github-workflows
       - id: check-renovate
