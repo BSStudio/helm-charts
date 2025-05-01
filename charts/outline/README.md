@@ -1,6 +1,6 @@
 # outline
 
-![Version: 1.0.5](https://img.shields.io/badge/Version-1.0.5-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.83.0](https://img.shields.io/badge/AppVersion-0.83.0-informational?style=flat-square)
+![Version: 1.0.6](https://img.shields.io/badge/Version-1.0.6-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.83.0](https://img.shields.io/badge/AppVersion-0.83.0-informational?style=flat-square)
 
 Outline is a fast, collaborative, knowledge base for your team built using React and Node.js.
 
@@ -21,7 +21,7 @@ Outline is a fast, collaborative, knowledge base for your team built using React
 
 | Repository | Name | Version |
 |------------|------|---------|
-| oci://registry-1.docker.io/bitnamicharts | minio | 14.x.x |
+| oci://registry-1.docker.io/bitnamicharts | minio | 16.x.x |
 | oci://registry-1.docker.io/bitnamicharts | postgresql | 16.x.x |
 | oci://registry-1.docker.io/bitnamicharts | redis | 20.x.x |
 
