@@ -31,13 +31,13 @@ repos:
         name: Detect secrets
         exclude: ^charts/
   - repo: https://github.com/crate-ci/typos
-    rev: v1.31.2
+    rev: v1
     hooks:
       - id: typos
         name: Run spell checker
   - repo: https://github.com/adrienverge/yamllint
     # Update lint-test.yaml workflow when updating this.
-    rev: v1.37.0
+    rev: v1.37.1
     hooks:
       - id: yamllint
         name: Lint YAML files
