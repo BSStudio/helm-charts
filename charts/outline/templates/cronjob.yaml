@@ -44,7 +44,7 @@ spec:
               args:
                 - -c
                 - |
-                  URL={{ printf "http://%s:%0.f/api/cron.daily?token=${UTILS_SECRET}" (include "outline.fullname" .) .Values.service.port | quote }}
+                  URL="http://{{ include "outline.fullname" . }}:{{ .Values.service.port }}/api/cron.daily?token=${UTILS_SECRET}"
                   RESPONSE=$(wget -q -O - --server-response --no-check-certificate "$URL" 2>&1)
                   STATUS_CODE=$(echo "$RESPONSE" | sed -rn 's:.*HTTP/.* ([0-9]+) .*:\1:p' | tail -1)
 
