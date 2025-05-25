@@ -1,6 +1,6 @@
 # outline
 
-![Version: 1.0.6](https://img.shields.io/badge/Version-1.0.6-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.83.0](https://img.shields.io/badge/AppVersion-0.83.0-informational?style=flat-square)
+![Version: 1.1.0](https://img.shields.io/badge/Version-1.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.83.0](https://img.shields.io/badge/AppVersion-0.83.0-informational?style=flat-square)
 
 Outline is a fast, collaborative, knowledge base for your team built using React and Node.js.
 
@@ -74,6 +74,7 @@ Outline is a fast, collaborative, knowledge base for your team built using React
 | redis.auth.usePasswordFiles | bool | `false` | Workaround until behaviour introduced by <https://github.com/bitnami/charts/pull/32117> is changed |
 | redis.enabled | bool | `true` | Enable the Bitnami Redis® chart. Refer to <https://github.com/bitnami/charts/blob/main/bitnami/redis> for possible values. |
 | replicaCount | int | `1` | The number of replicas to deploy |
+| resources.limits.cpu | string | `"1000m"` | The maximum amount of CPU the container can use |
 | resources.limits.memory | string | `"1Gi"` | The maximum amount of memory the container can use |
 | resources.requests.cpu | string | `"250m"` | Specifies the minimum amount of CPU that will be allocated to the container |
 | resources.requests.memory | string | `"512Mi"` | Specifies the minimum amount of memory that will be allocated to the container |

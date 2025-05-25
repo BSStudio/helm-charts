@@ -80,6 +80,8 @@ ingress:
 
 resources:
   limits:
+    # -- The maximum amount of CPU the container can use
+    cpu: 1000m
     # -- The maximum amount of memory the container can use
     memory: 1Gi
   requests:

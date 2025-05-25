@@ -35,6 +35,7 @@ spec:
                 runAsUser: 10000
                 runAsGroup: 10000
                 allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
                 capabilities:
                   drop:
                     - NET_RAW
