@@ -18,7 +18,7 @@
     {
       "customType": "regex",
       "datasourceTemplate": "docker",
-      "fileMatch": ["^scripts/.*\\.sh$"],
+      "managerFilePatterns": ["/^scripts/.*\\.sh$/"],
       "matchStrings": [
         "docker run",
         "(?<depName>([a-zA-Z0-9.-]+/)?[a-zA-Z0-9-]+/[a-zA-Z0-9-]+):(?<currentValue>[v0-9.]+)"
@@ -28,7 +28,7 @@
     {
       "customType": "regex",
       "datasourceTemplate": "docker",
-      "fileMatch": ["(^|/)Chart\\.yaml$"],
+      "managerFilePatterns": ["/(^|/)Chart\\.yaml$/"],
       "matchStrings": [
         "appVersion:\\s+(?<currentValue>.*)",
         "#\\s*image:\\s+(?<depName>.*)"
