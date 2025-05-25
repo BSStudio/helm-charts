@@ -88,6 +88,8 @@ spec:
           {{- include "outline.generateEnvVars" . | nindent 10 }}
           {{- if or .Values.persistence.enabled .Values.extraVolumes }}
           volumeMounts:
+            - name: {{ include "outline.fullname" . }}-tmp
+              mountPath: "/tmp"
             {{- if .Values.persistence.enabled }}
             - name: {{ include "outline.fullname" . }}-data
               mountPath: "/var/lib/outline/data"
@@ -98,6 +100,9 @@ spec:
           {{- end }}
       {{- if or .Values.persistence.enabled .Values.extraVolumes }}
       volumes:
+        - name: {{ include "outline.fullname" . }}-tmp
+          emptyDir:
+            medium: Memory
         {{- if .Values.persistence.enabled }}
         - name: {{ include "outline.fullname" . }}-data
           persistentVolumeClaim:
