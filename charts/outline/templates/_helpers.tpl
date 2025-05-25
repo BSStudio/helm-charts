@@ -108,6 +108,8 @@ Generate environment variables.
   env:
   - name: NODE_ENV
     value: "production"
+  - name: HOME
+    value: "/tmp"
   - name: FORCE_HTTPS
     value: "false"
   - name: PORT

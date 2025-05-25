@@ -46,11 +46,7 @@ pre-commit install
 Before pushing your changes to the repository run the checkov scan locally.
 
 ```bash
-# Windows
-checkov -d . --skip-path venv --skip-path "^charts\\[a-z0-9-]+\\charts\\.*" --skip-path "^charts\\[a-z0-9-]+\\templates\\.*"  --skip-framework secrets --output github_failed_only
-
-# Linux or macOS
-checkov -d . --skip-path venv --skip-path "^charts/[a-z0-9-]+/charts/.*" --skip-path "^charts/[a-z0-9-]+/templates/.*"  --skip-framework secrets --output github_failed_only
+checkov -d . --config-file .github/configs/.checkov.yaml
 ```
 
 Checkov should be installed from the previous `pre-commit` step.
