@@ -30,8 +30,8 @@ repos:
       - id: detect-secrets
         name: Detect secrets
         exclude: ^charts/
-  - repo: https://github.com/crate-ci/typos
-    rev: v1.33.1
+  - repo: https://github.com/adhtruong/mirrors-typos
+    rev: v1.34.0
     hooks:
       - id: typos
         name: Run spell checker
