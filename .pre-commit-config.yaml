@@ -67,7 +67,7 @@ repos:
         name: Generate README for charts
         args: [--chart-search-root=charts, --skip-version-footer]
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: 0.33.1
+    rev: 0.33.2
     hooks:
       - id: check-github-workflows
       - id: check-renovate
