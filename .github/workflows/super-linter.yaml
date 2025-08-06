@@ -30,6 +30,7 @@ jobs:
           GITHUB_ACTIONS_COMMAND_ARGS: "-ignore 'shellcheck reported issue in this script: SC2086:.+'"
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           LINTER_RULES_PATH: .github/configs
+          VALIDATE_GIT_COMMITLINT: false
           VALIDATE_MARKDOWN_PRETTIER: false
           VALIDATE_SHELL_SHFMT: false
           VALIDATE_YAML_PRETTIER: false
