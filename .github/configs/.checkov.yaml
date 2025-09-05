@@ -8,6 +8,6 @@ skip-check:
 skip-framework:
   - secrets
 skip-path:
-  - charts/[a-z0-9-]+/charts/.*
-  - charts\\[a-z0-9-]+\\charts\\.*
+  - charts/.+/charts/.*
+  - charts\\.+\\charts\\.*
   - venv
