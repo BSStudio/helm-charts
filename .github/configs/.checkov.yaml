@@ -1,3 +1,4 @@
+---
 output: github_failed_only
 skip-check:
   - CKV_K8S_15
@@ -8,6 +9,6 @@ skip-check:
 skip-framework:
   - secrets
 skip-path:
-  - charts/[a-z0-9-]+/charts/.*
-  - charts\\[a-z0-9-]+\\charts\\.*
+  - charts/.+/charts/.*
+  - charts\\.+\\charts\\.*
   - venv
