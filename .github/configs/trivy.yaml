@@ -1,0 +1,6 @@
+---
+ignorefile: .trivyignore.yaml
+skip-dirs:
+  - "**/venv/**"
+  - ./venv/**
+  - venv

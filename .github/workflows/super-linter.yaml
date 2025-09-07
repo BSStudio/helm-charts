@@ -6,26 +6,32 @@ on:
     branches: [main]
   pull_request:
 
-permissions: read-all
+permissions: {}
 
 jobs:
-  build:
+  lint:
     name: Lint Code Base
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: read
+      statuses: write
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Super-linter
-        uses: super-linter/super-linter/slim@v7.4.0
+        uses: super-linter/super-linter/slim@v8.1.0
         env:
           GITHUB_ACTIONS_COMMAND_ARGS: "-ignore 'shellcheck reported issue in this script: SC2086:.+'"
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           LINTER_RULES_PATH: .github/configs
-          VALIDATE_KUBERNETES_KUBECONFORM: false
+          VALIDATE_GIT_COMMITLINT: false
           VALIDATE_MARKDOWN_PRETTIER: false
           VALIDATE_SHELL_SHFMT: false
           VALIDATE_YAML_PRETTIER: false
