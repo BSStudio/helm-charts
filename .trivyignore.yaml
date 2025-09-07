@@ -1,0 +1,24 @@
+---
+misconfigurations:
+  - id: AVD-KSV-0020
+    paths:
+      - charts/outline/charts/postgresql/templates/primary/statefulset.yaml
+      - charts/outline/charts/redis/templates/master/application.yaml
+    statement: External charts
+  - id: AVD-KSV-0021
+    paths:
+      - charts/outline/charts/postgresql/templates/primary/statefulset.yaml
+      - charts/outline/charts/redis/templates/master/application.yaml
+    statement: External charts
+  - id: AVD-KSV-0109
+    paths:
+      - charts/outline/charts/redis/templates/health-configmap.yaml
+      - charts/outline/charts/redis/templates/scripts-configmap.yaml
+    statement: External charts
+  - id: AVD-KSV-0110
+    paths:
+      - charts/outline/templates/cronjob.yaml
+      - charts/outline/templates/deployment.yaml
+    statement: Actual chart will not be deployed to default namespace
+  - id: AVD-KSV-0125
+    statement: Used container registries are trusted
