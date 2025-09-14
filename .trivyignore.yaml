@@ -1,19 +1,9 @@
 ---
 misconfigurations:
-  - id: AVD-KSV-0020
+  - id: AVD-KSV-0014
     paths:
-      - charts/outline/charts/postgresql/templates/primary/statefulset.yaml
-      - charts/outline/charts/redis/templates/master/application.yaml
-    statement: External charts
-  - id: AVD-KSV-0021
-    paths:
-      - charts/outline/charts/postgresql/templates/primary/statefulset.yaml
-      - charts/outline/charts/redis/templates/master/application.yaml
-    statement: External charts
-  - id: AVD-KSV-0109
-    paths:
-      - charts/outline/charts/redis/templates/health-configmap.yaml
-      - charts/outline/charts/redis/templates/scripts-configmap.yaml
+      - charts/outline/charts/postgres/templates/statefulset.yaml
+      - charts/outline/charts/redis/templates/statefulset.yaml
     statement: External charts
   - id: AVD-KSV-0110
     paths:

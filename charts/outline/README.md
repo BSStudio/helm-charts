@@ -1,6 +1,6 @@
 # outline
 
-![Version: 1.1.3](https://img.shields.io/badge/Version-1.1.3-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.85.1](https://img.shields.io/badge/AppVersion-0.85.1-informational?style=flat-square)
+![Version: 1.2.0](https://img.shields.io/badge/Version-1.2.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.85.1](https://img.shields.io/badge/AppVersion-0.85.1-informational?style=flat-square)
 
 Outline is a fast, collaborative, knowledge base for your team built using React and Node.js.
 
@@ -21,9 +21,9 @@ Outline is a fast, collaborative, knowledge base for your team built using React
 
 | Repository | Name | Version |
 |------------|------|---------|
-| oci://registry-1.docker.io/bitnamicharts | minio | 17.x.x |
-| oci://registry-1.docker.io/bitnamicharts | postgresql | 16.x.x |
-| oci://registry-1.docker.io/bitnamicharts | redis | 22.x.x |
+| oci://registry-1.docker.io/cloudpirates | minio | 0.2.1 |
+| oci://registry-1.docker.io/cloudpirates | postgres | 0.2.5 |
+| oci://registry-1.docker.io/cloudpirates | redis | 0.2.1 |
 
 ## Values
 
@@ -48,15 +48,14 @@ Outline is a fast, collaborative, knowledge base for your team built using React
 | ingress.hosts | list | `[]` | List of ingress hosts |
 | ingress.tls | list | `[]` | Ingress TLS configuration |
 | initContainers | list | `[]` | Init containers to add to the deployment |
-| minio.defaultBuckets | string | `"outline"` | Comma, semi-colon or space separated list of buckets to create at initialization |
-| minio.enabled | bool | `false` | Enable the Bitnami MinIO® chart. Refer to <https://github.com/bitnami/charts/blob/main/bitnami/minio> for possible values. |
+| minio.enabled | bool | `false` | Enable the CloudPirates MinIO® chart. Refer to <https://github.com/CloudPirates-io/helm-charts/blob/main/charts/minio> for possible values. |
 | nameOverride | string | `""` | Provide a name in place of `outline`. Prefer using global.nameOverride if possible |
 | nodeSelector | object | `{}` | NodeSelector for the deployment |
-| outline.database_url | string | `"postgres://outline:secretPassword@outline-postgresql:5432/outline"` | Connection string to access the database |
+| outline.database_url | string | `"postgres://outline:secretPassword@outline-postgres:5432/outline"` | Connection string to access the database |
 | outline.file_storage | string | `"local"` | Specify what storage system to use. Possible value is one of "s3" or "local". |
 | outline.file_storage_upload_max_size | string | `"50000000"` | Maximum allowed byte size for the uploaded attachment. Make sure to define it as a string. |
 | outline.pgsslmode | string | `"disable"` | Disable SSL for connecting to PostgreSQL |
-| outline.redis_url | string | `"redis://outline-redis-master:6379"` | Connection string to access Redis |
+| outline.redis_url | string | `"redis://outline-redis:6379"` | Connection string to access Redis |
 | outline.secret_key | string | `""` | Generate a hex-encoded 32-byte random key. You should use `openssl rand -hex 32` in your terminal to generate a random value. |
 | outline.url | string | `"https://outline.example.com"` | URL should point to the fully qualified, publicly accessible URL. |
 | outline.utils_secret | string | `""` | Generate a unique random key. The format is not important but you could still use `openssl rand -hex 32` in your terminal to produce this. |
@@ -66,13 +65,26 @@ Outline is a fast, collaborative, knowledge base for your team built using React
 | podAnnotations | object | `{}` | Optional additional annotations to add to the pods |
 | podLabels | object | `{}` | Optional additional labels to add to the pods |
 | podSecurityContext | object | `{}` |  |
-| postgresql.auth.database | string | `"outline"` | Name for a custom database to create |
-| postgresql.auth.username | string | `"outline"` | Name for a custom user to create |
-| postgresql.enabled | bool | `true` | Enable the Bitnami PostgreSQL chart. Refer to <https://github.com/bitnami/charts/blob/main/bitnami/postgresql> for possible values. |
-| redis.architecture | string | `"standalone"` | Redis® architecture. Allowed values: standalone or replication |
+| postgres.auth.database | string | `"outline"` | Name for a custom database to create |
+| postgres.auth.username | string | `"outline"` | Name for a custom user to create |
+| postgres.enabled | bool | `true` | Enable the CloudPirates PostgreSQL chart. Refer to <https://github.com/CloudPirates-io/helm-charts/blob/main/charts/postgres> for possible values. |
+| postgres.resources.limits.cpu | string | `"500m"` | The maximum amount of CPU the container can use |
+| postgres.resources.limits.memory | string | `"512Mi"` | The maximum amount of memory the container can use |
+| postgres.resources.requests.cpu | string | `"250m"` | Specifies the minimum amount of CPU that will be allocated to the container |
+| postgres.resources.requests.memory | string | `"256Mi"` | Specifies the minimum amount of memory that will be allocated to the container |
+| postgres.securityContext.runAsGroup | int | `65534` | Run container processes with nobody group |
+| postgres.securityContext.runAsUser | int | `65534` | Run container processes as non-root user nobody |
+| postgres.securityContext.seccompProfile.type | string | `"RuntimeDefault"` | Use the container runtime default seccomp profile |
 | redis.auth.enabled | bool | `false` | Enable password authentication |
-| redis.auth.usePasswordFiles | bool | `false` | Workaround until behaviour introduced by <https://github.com/bitnami/charts/pull/32117> is changed |
-| redis.enabled | bool | `true` | Enable the Bitnami Redis® chart. Refer to <https://github.com/bitnami/charts/blob/main/bitnami/redis> for possible values. |
+| redis.containerSecurityContext.capabilities.drop | list | `["ALL"]` | Drop all capabilities for improved security |
+| redis.containerSecurityContext.runAsGroup | int | `65534` | Run container processes with nobody group |
+| redis.containerSecurityContext.runAsUser | int | `65534` | Run container processes as non-root user nobody |
+| redis.containerSecurityContext.seccompProfile.type | string | `"RuntimeDefault"` | Use the container runtime default seccomp profile |
+| redis.enabled | bool | `true` | Enable the CloudPirates Redis® chart. Refer to <https://github.com/CloudPirates-io/helm-charts/blob/main/charts/redis> for possible values. |
+| redis.resources.limits.cpu | string | `"150m"` | The maximum amount of CPU the container can use |
+| redis.resources.limits.memory | string | `"256Mi"` | The maximum amount of memory the container can use |
+| redis.resources.requests.cpu | string | `"50m"` | Specifies the minimum amount of CPU that will be allocated to the container |
+| redis.resources.requests.memory | string | `"128Mi"` | Specifies the minimum amount of memory that will be allocated to the container |
 | replicaCount | int | `1` | The number of replicas to deploy |
 | resources.limits.cpu | string | `"1000m"` | The maximum amount of CPU the container can use |
 | resources.limits.memory | string | `"1Gi"` | The maximum amount of memory the container can use |

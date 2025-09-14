@@ -2,9 +2,9 @@
 outline:
   secret_key: 96250aac910f511334f52e9b609713305abb5bf8329188879fcc1c5b3e983aa4
   utils_secret: 69e576155ecfbc380ccb5d7a7293a6e97aca9039e22f5ecadf8f0d49c266879e
-  database_url: postgres://outline:secretPassword@{{ include "outline.fullname" . }}-postgresql:5432/outline
-  redis_url: redis://{{ include "outline.fullname" . }}-redis-master:6379
+  database_url: postgres://outline:secretPassword@{{ include "outline.fullname" . }}-postgres:5432/outline
+  redis_url: redis://{{ include "outline.fullname" . }}-redis:6379
 
-postgresql:
+postgres:
   auth:
     password: secretPassword
