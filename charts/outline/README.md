@@ -68,8 +68,23 @@ Outline is a fast, collaborative, knowledge base for your team built using React
 | postgres.auth.database | string | `"outline"` | Name for a custom database to create |
 | postgres.auth.username | string | `"outline"` | Name for a custom user to create |
 | postgres.enabled | bool | `true` | Enable the CloudPirates PostgreSQL chart. Refer to <https://github.com/CloudPirates-io/helm-charts/blob/main/charts/postgres> for possible values. |
+| postgres.resources.limits.cpu | string | `"500m"` | The maximum amount of CPU the container can use |
+| postgres.resources.limits.memory | string | `"512Mi"` | The maximum amount of memory the container can use |
+| postgres.resources.requests.cpu | string | `"250m"` | Specifies the minimum amount of CPU that will be allocated to the container |
+| postgres.resources.requests.memory | string | `"256Mi"` | Specifies the minimum amount of memory that will be allocated to the container |
+| postgres.securityContext.runAsGroup | int | `65534` | Run container processes with nobody group |
+| postgres.securityContext.runAsUser | int | `65534` | Run container processes as non-root user nobody |
+| postgres.securityContext.seccompProfile.type | string | `"RuntimeDefault"` | Use the container runtime default seccomp profile |
 | redis.auth.enabled | bool | `false` | Enable password authentication |
+| redis.containerSecurityContext.capabilities.drop | list | `["ALL"]` | Drop all capabilities for improved security |
+| redis.containerSecurityContext.runAsGroup | int | `65534` | Run container processes with nobody group |
+| redis.containerSecurityContext.runAsUser | int | `65534` | Run container processes as non-root user nobody |
+| redis.containerSecurityContext.seccompProfile.type | string | `"RuntimeDefault"` | Use the container runtime default seccomp profile |
 | redis.enabled | bool | `true` | Enable the CloudPirates Redis® chart. Refer to <https://github.com/CloudPirates-io/helm-charts/blob/main/charts/redis> for possible values. |
+| redis.resources.limits.cpu | string | `"150m"` | The maximum amount of CPU the container can use |
+| redis.resources.limits.memory | string | `"256Mi"` | The maximum amount of memory the container can use |
+| redis.resources.requests.cpu | string | `"50m"` | Specifies the minimum amount of CPU that will be allocated to the container |
+| redis.resources.requests.memory | string | `"128Mi"` | Specifies the minimum amount of memory that will be allocated to the container |
 | replicaCount | int | `1` | The number of replicas to deploy |
 | resources.limits.cpu | string | `"1000m"` | The maximum amount of CPU the container can use |
 | resources.limits.memory | string | `"1Gi"` | The maximum amount of memory the container can use |

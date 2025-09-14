@@ -217,6 +217,25 @@ postgres:
     # -- Name for a custom database to create
     database: outline
     # password: "secretPassword"
+  resources:
+    limits:
+      # -- The maximum amount of CPU the container can use
+      cpu: 500m
+      # -- The maximum amount of memory the container can use
+      memory: 512Mi
+    requests:
+      # -- Specifies the minimum amount of CPU that will be allocated to the container
+      cpu: 250m
+      # -- Specifies the minimum amount of memory that will be allocated to the container
+      memory: 256Mi
+  securityContext:
+    # -- Run container processes as non-root user nobody
+    runAsUser: 65534
+    # -- Run container processes with nobody group
+    runAsGroup: 65534
+    seccompProfile:
+      # -- Use the container runtime default seccomp profile
+      type: RuntimeDefault
 
 redis:
   # -- Enable the CloudPirates Redis® chart.
@@ -225,3 +244,26 @@ redis:
   auth:
     # -- Enable password authentication
     enabled: false
+  resources:
+    limits:
+      # -- The maximum amount of CPU the container can use
+      cpu: 150m
+      # -- The maximum amount of memory the container can use
+      memory: 256Mi
+    requests:
+      # -- Specifies the minimum amount of CPU that will be allocated to the container
+      cpu: 50m
+      # -- Specifies the minimum amount of memory that will be allocated to the container
+      memory: 128Mi
+  containerSecurityContext:
+    # -- Run container processes as non-root user nobody
+    runAsUser: 65534
+    # -- Run container processes with nobody group
+    runAsGroup: 65534
+    seccompProfile:
+      # -- Use the container runtime default seccomp profile
+      type: RuntimeDefault
+    capabilities:
+      # -- Drop all capabilities for improved security
+      drop:
+        - ALL
