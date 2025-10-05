@@ -1,6 +1,6 @@
 # outline
 
-![Version: 1.2.0](https://img.shields.io/badge/Version-1.2.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.85.1](https://img.shields.io/badge/AppVersion-0.85.1-informational?style=flat-square)
+![Version: 1.2.1](https://img.shields.io/badge/Version-1.2.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.87.4](https://img.shields.io/badge/AppVersion-0.87.4-informational?style=flat-square)
 
 Outline is a fast, collaborative, knowledge base for your team built using React and Node.js.
 
@@ -21,9 +21,9 @@ Outline is a fast, collaborative, knowledge base for your team built using React
 
 | Repository | Name | Version |
 |------------|------|---------|
-| oci://registry-1.docker.io/cloudpirates | minio | 0.2.1 |
-| oci://registry-1.docker.io/cloudpirates | postgres | 0.2.5 |
-| oci://registry-1.docker.io/cloudpirates | redis | 0.2.1 |
+| oci://registry-1.docker.io/cloudpirates | minio | 0.3.0 |
+| oci://registry-1.docker.io/cloudpirates | postgres | 0.7.2 |
+| oci://registry-1.docker.io/cloudpirates | redis | 0.5.0 |
 
 ## Values
 
@@ -67,14 +67,14 @@ Outline is a fast, collaborative, knowledge base for your team built using React
 | podSecurityContext | object | `{}` |  |
 | postgres.auth.database | string | `"outline"` | Name for a custom database to create |
 | postgres.auth.username | string | `"outline"` | Name for a custom user to create |
+| postgres.containerSecurityContext.runAsGroup | int | `65534` | Run container processes with nobody group |
+| postgres.containerSecurityContext.runAsUser | int | `65534` | Run container processes as non-root user nobody |
+| postgres.containerSecurityContext.seccompProfile.type | string | `"RuntimeDefault"` | Use the container runtime default seccomp profile |
 | postgres.enabled | bool | `true` | Enable the CloudPirates PostgreSQL chart. Refer to <https://github.com/CloudPirates-io/helm-charts/blob/main/charts/postgres> for possible values. |
 | postgres.resources.limits.cpu | string | `"500m"` | The maximum amount of CPU the container can use |
 | postgres.resources.limits.memory | string | `"512Mi"` | The maximum amount of memory the container can use |
 | postgres.resources.requests.cpu | string | `"250m"` | Specifies the minimum amount of CPU that will be allocated to the container |
 | postgres.resources.requests.memory | string | `"256Mi"` | Specifies the minimum amount of memory that will be allocated to the container |
-| postgres.securityContext.runAsGroup | int | `65534` | Run container processes with nobody group |
-| postgres.securityContext.runAsUser | int | `65534` | Run container processes as non-root user nobody |
-| postgres.securityContext.seccompProfile.type | string | `"RuntimeDefault"` | Use the container runtime default seccomp profile |
 | redis.auth.enabled | bool | `false` | Enable password authentication |
 | redis.containerSecurityContext.capabilities.drop | list | `["ALL"]` | Drop all capabilities for improved security |
 | redis.containerSecurityContext.runAsGroup | int | `65534` | Run container processes with nobody group |
