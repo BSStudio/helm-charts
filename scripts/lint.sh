@@ -10,7 +10,7 @@ docker run \
     --workdir="//data" \
     --volume "/${REPO_ROOT}:/data" \
     --entrypoint //bin/sh \
-    quay.io/helmpack/chart-testing:v3.13.0 \
+    quay.io/helmpack/chart-testing:v3.14.0 \
     -c "
         git config --global --add safe.directory /data && \
         ct lint \
