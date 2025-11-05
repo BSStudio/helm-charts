@@ -1,6 +1,6 @@
 # outline
 
-![Version: 1.2.2](https://img.shields.io/badge/Version-1.2.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.0.1](https://img.shields.io/badge/AppVersion-1.0.1-informational?style=flat-square)
+![Version: 1.2.3](https://img.shields.io/badge/Version-1.2.3-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.0.1](https://img.shields.io/badge/AppVersion-1.0.1-informational?style=flat-square)
 
 Outline is a fast, collaborative, knowledge base for your team built using React and Node.js.
 
@@ -76,10 +76,8 @@ Outline is a fast, collaborative, knowledge base for your team built using React
 | postgres.resources.requests.cpu | string | `"250m"` | Specifies the minimum amount of CPU that will be allocated to the container |
 | postgres.resources.requests.memory | string | `"256Mi"` | Specifies the minimum amount of memory that will be allocated to the container |
 | redis.auth.enabled | bool | `false` | Enable password authentication |
-| redis.containerSecurityContext.capabilities.drop | list | `["ALL"]` | Drop all capabilities for improved security |
 | redis.containerSecurityContext.runAsGroup | int | `65534` | Run container processes with nobody group |
 | redis.containerSecurityContext.runAsUser | int | `65534` | Run container processes as non-root user nobody |
-| redis.containerSecurityContext.seccompProfile.type | string | `"RuntimeDefault"` | Use the container runtime default seccomp profile |
 | redis.enabled | bool | `true` | Enable the CloudPirates Redis® chart. Refer to <https://github.com/CloudPirates-io/helm-charts/blob/main/charts/redis> for possible values. |
 | redis.resources.limits.cpu | string | `"150m"` | The maximum amount of CPU the container can use |
 | redis.resources.limits.memory | string | `"256Mi"` | The maximum amount of memory the container can use |
