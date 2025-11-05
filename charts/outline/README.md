@@ -21,9 +21,9 @@ Outline is a fast, collaborative, knowledge base for your team built using React
 
 | Repository | Name | Version |
 |------------|------|---------|
-| oci://registry-1.docker.io/cloudpirates | minio | 0.3.0 |
-| oci://registry-1.docker.io/cloudpirates | postgres | 0.7.2 |
-| oci://registry-1.docker.io/cloudpirates | redis | 0.5.0 |
+| oci://registry-1.docker.io/cloudpirates | minio | 0.5.5 |
+| oci://registry-1.docker.io/cloudpirates | postgres | 0.11.4 |
+| oci://registry-1.docker.io/cloudpirates | redis | 0.13.4 |
 
 ## Values
 
