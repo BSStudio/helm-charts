@@ -260,10 +260,3 @@ redis:
     runAsUser: 65534
     # -- Run container processes with nobody group
     runAsGroup: 65534
-    seccompProfile:
-      # -- Use the container runtime default seccomp profile
-      type: RuntimeDefault
-    capabilities:
-      # -- Drop all capabilities for improved security
-      drop:
-        - ALL
