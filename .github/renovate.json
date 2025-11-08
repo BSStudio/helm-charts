@@ -61,6 +61,12 @@
       "matchFileNames": ["**/!(Chart.yaml)"],
       "matchManagers": ["custom.regex", "github-actions", "pip_requirements"],
       "matchUpdateTypes": ["minor", "patch"]
+    },
+    {
+      "matchManagers": ["github-actions"],
+      "matchPackageNames": ["actions/python-versions"],
+      "matchUpdateTypes": ["patch", "pin"],
+      "enabled": false
     }
   ],
   "rebaseWhen": "conflicted",
