@@ -57,7 +57,7 @@ repos:
       - id: chart-testing
         name: Run chart-testing (lint)
         entry: scripts/lint.sh
-        language: system
+        language: unsupported
         types: [file]
         pass_filenames: false
   - repo: https://github.com/norwoodj/helm-docs
