@@ -1,6 +1,6 @@
 # outline
 
-![Version: 1.2.3](https://img.shields.io/badge/Version-1.2.3-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.0.1](https://img.shields.io/badge/AppVersion-1.0.1-informational?style=flat-square)
+![Version: 1.2.4](https://img.shields.io/badge/Version-1.2.4-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.1.0](https://img.shields.io/badge/AppVersion-1.1.0-informational?style=flat-square)
 
 Outline is a fast, collaborative, knowledge base for your team built using React and Node.js.
 
@@ -21,9 +21,9 @@ Outline is a fast, collaborative, knowledge base for your team built using React
 
 | Repository | Name | Version |
 |------------|------|---------|
-| oci://registry-1.docker.io/cloudpirates | minio | 0.5.5 |
-| oci://registry-1.docker.io/cloudpirates | postgres | 0.11.4 |
-| oci://registry-1.docker.io/cloudpirates | redis | 0.13.4 |
+| oci://registry-1.docker.io/cloudpirates | minio | 0.5.6 |
+| oci://registry-1.docker.io/cloudpirates | postgres | 0.12.2 |
+| oci://registry-1.docker.io/cloudpirates | redis | 0.16.0 |
 
 ## Values
 
