@@ -31,7 +31,7 @@ repos:
         name: Detect secrets
         exclude: ^charts/
   - repo: https://github.com/adhtruong/mirrors-typos
-    rev: v1.39.2
+    rev: v1.40.0
     hooks:
       - id: typos
         name: Run spell checker
