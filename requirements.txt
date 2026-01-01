@@ -1,2 +1,2 @@
-checkov==3.2.495
-pre-commit==4.5.0
+checkov==3.2.497
+pre-commit==4.5.1
