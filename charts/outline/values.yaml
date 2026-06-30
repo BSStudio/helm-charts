@@ -41,8 +41,8 @@ podAnnotations: {}
 # -- Optional additional labels to add to the pods
 podLabels: {}
 
+# -- Pod-level security context, merged over chart defaults (fsGroup 65534 for volume writes)
 podSecurityContext: {}
-  # -- Set the shared file system group for all containers in the pod
   # fsGroup: 2000
 
 # -- Run containers as a specific securityContext

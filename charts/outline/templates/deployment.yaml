@@ -36,6 +36,8 @@ spec:
       securityContext:
         seccompProfile:
           type: RuntimeDefault
+        fsGroup: 65534
+        fsGroupChangePolicy: OnRootMismatch
         {{- with .Values.podSecurityContext }}
           {{- toYaml . | nindent 8 }}
         {{- end }}

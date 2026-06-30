@@ -64,7 +64,7 @@ Outline is a fast, collaborative, knowledge base for your team built using React
 | persistence.size | string | `"2Gi"` | Defines the amount of storage allocated for persistence |
 | podAnnotations | object | `{}` | Optional additional annotations to add to the pods |
 | podLabels | object | `{}` | Optional additional labels to add to the pods |
-| podSecurityContext | object | `{}` |  |
+| podSecurityContext | object | `{}` | Pod-level security context, merged over chart defaults (fsGroup 65534 for volume writes) |
 | postgres.auth.database | string | `"outline"` | Name for a custom database to create |
 | postgres.auth.username | string | `"outline"` | Name for a custom user to create |
 | postgres.containerSecurityContext.runAsGroup | int | `65534` | Run container processes with nobody group |
