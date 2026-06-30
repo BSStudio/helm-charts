@@ -1,7 +1,7 @@
 ---
-# -- Provide a name in place of `outline`. Prefer using global.nameOverride if possible
+# -- Provide a name in place of `outline`
 nameOverride: ""
-# -- String to fully override `"outline.fullname"`. Prefer using global.fullnameOverride if possible
+# -- String to fully override `"outline.fullname"`
 fullnameOverride: ""
 
 image:

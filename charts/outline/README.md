@@ -40,7 +40,7 @@ Kubernetes: `>=1.19.0-0`
 | envFrom | list | `[]` | envFrom to pass to the deployment |
 | extraVolumeMounts | list | `[]` | Additional volume mounts for the containers |
 | extraVolumes | list | `[]` | Additional volumes to mount to the deployment |
-| fullnameOverride | string | `""` | String to fully override `"outline.fullname"`. Prefer using global.fullnameOverride if possible |
+| fullnameOverride | string | `""` | String to fully override `"outline.fullname"` |
 | image.imagePullPolicy | string | `"IfNotPresent"` | The logic of image pulling |
 | image.repository | string | `"outlinewiki/outline"` | The Docker repository to pull the image from |
 | image.tag | string | `""` | Overrides the image tag whose default is the chart appVersion |
@@ -51,7 +51,7 @@ Kubernetes: `>=1.19.0-0`
 | ingress.tls | list | `[]` | Ingress TLS configuration |
 | initContainers | list | `[]` | Init containers to add to the deployment |
 | minio.enabled | bool | `false` | Enable the CloudPirates MinIO® chart. Refer to <https://github.com/CloudPirates-io/helm-charts/blob/main/charts/minio> for possible values. |
-| nameOverride | string | `""` | Provide a name in place of `outline`. Prefer using global.nameOverride if possible |
+| nameOverride | string | `""` | Provide a name in place of `outline` |
 | nodeSelector | object | `{}` | NodeSelector for the deployment |
 | outline.database_url | string | `"postgres://outline:secretPassword@outline-postgres:5432/outline"` | Connection string to access the database |
 | outline.file_storage | string | `"local"` | Specify what storage system to use. Possible value is one of "s3" or "local". |
