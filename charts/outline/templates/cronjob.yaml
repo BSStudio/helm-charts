@@ -9,8 +9,12 @@ spec:
   schedule: {{ .Values.scheduler.schedule | quote }}
   timeZone: {{ .Values.scheduler.timeZone | quote }}
   concurrencyPolicy: {{ .Values.scheduler.concurrencyPolicy | quote }}
+  successfulJobsHistoryLimit: {{ .Values.scheduler.successfulJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ .Values.scheduler.failedJobsHistoryLimit }}
   jobTemplate:
     spec:
+      activeDeadlineSeconds: {{ .Values.scheduler.activeDeadlineSeconds }}
+      backoffLimit: {{ .Values.scheduler.backoffLimit }}
       template:
         metadata:
           {{- with .Values.scheduler.annotations }}

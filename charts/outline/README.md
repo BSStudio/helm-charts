@@ -91,11 +91,15 @@ Kubernetes: `>=1.19.0-0`
 | resources.limits.memory | string | `"1Gi"` | The maximum amount of memory the container can use |
 | resources.requests.cpu | string | `"250m"` | Specifies the minimum amount of CPU that will be allocated to the container |
 | resources.requests.memory | string | `"512Mi"` | Specifies the minimum amount of memory that will be allocated to the container |
+| scheduler.activeDeadlineSeconds | int | `300` | Hard time limit for a single run before it is killed (guards against a hung request) |
 | scheduler.annotations | object | `{}` | Optional additional annotations to add to the CronJob runner pod |
+| scheduler.backoffLimit | int | `1` | Number of retries before a run is marked failed |
 | scheduler.concurrencyPolicy | string | `"Forbid"` | Concurrency policy for the CronJob |
 | scheduler.enabled | bool | `true` | Create a CronJob to run Outline's scheduled jobs. Refer to <https://docs.getoutline.com/s/hosting/doc/scheduled-jobs-RhZzCt770H> for more information. |
+| scheduler.failedJobsHistoryLimit | int | `3` | How many failed jobs to retain for debugging |
 | scheduler.labels | object | `{}` | Optional additional labels to add to the CronJob runner pod |
 | scheduler.schedule | string | `"30 12 * * *"` | Schedule to use for the CronJob |
+| scheduler.successfulJobsHistoryLimit | int | `3` | How many completed jobs to retain |
 | scheduler.timeZone | string | `"Europe/Budapest"` | Timezone for interpreting the cron schedule |
 | securityContext | object | `{}` | Run containers as a specific securityContext |
 | service.port | int | `3000` | Port number for web traffic |
