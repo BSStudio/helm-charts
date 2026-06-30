@@ -57,7 +57,7 @@ spec:
                   echo "Successfully invoked cron.daily."
               env:
                 - name: TZ
-                  value: {{ .Values.scheduler.timeZone }}
+                  value: {{ .Values.scheduler.timeZone | quote }}
                 - name: UTILS_SECRET
                   valueFrom:
                     secretKeyRef:
