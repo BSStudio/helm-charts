@@ -3,6 +3,7 @@
   "extends": [
     ":automergeDisabled",
     ":dependencyDashboard",
+    ":disableRateLimiting",
     ":enableVulnerabilityAlertsWithLabel(security)",
     ":ignoreUnstable",
     ":label(renovate)",
