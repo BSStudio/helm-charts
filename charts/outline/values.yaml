@@ -106,6 +106,8 @@ persistence:
   accessMode: ReadWriteOnce
   # -- Defines the amount of storage allocated for persistence
   size: 2Gi
+  # -- Annotations to add to the PVC, e.g. `helm.sh/resource-policy: keep` to retain data on uninstall
+  annotations: {}
   # -- You can also use an existing claim instead of creating one
   # existingClaim: "myClaim"
   # -- If defined, volume.beta.kubernetes.io/storage-class: <storageClass>

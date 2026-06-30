@@ -62,6 +62,7 @@ Kubernetes: `>=1.19.0-0`
 | outline.url | string | `"https://outline.example.com"` | URL should point to the fully qualified, publicly accessible URL. |
 | outline.utils_secret | string | `""` | Generate a unique random key. The format is not important but you could still use `openssl rand -hex 32` in your terminal to produce this. |
 | persistence.accessMode | string | `"ReadWriteOnce"` | Specifies the level of access to the persistent storage (e.g., read-write, read-only) |
+| persistence.annotations | object | `{}` | Annotations to add to the PVC, e.g. `helm.sh/resource-policy: keep` to retain data on uninstall |
 | persistence.enabled | bool | `true` | Determines whether persistent storage is enabled or not |
 | persistence.size | string | `"2Gi"` | Defines the amount of storage allocated for persistence |
 | podAnnotations | object | `{}` | Optional additional annotations to add to the pods |
