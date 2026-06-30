@@ -15,6 +15,15 @@ image:
 # -- The number of replicas to deploy
 replicaCount: 1
 
+# -- Deployment update strategy. When empty, defaults to `Recreate` if persistence
+# is enabled with a non-`ReadWriteMany` access mode (avoids a RWO volume deadlock
+# on upgrade), otherwise Kubernetes' default RollingUpdate is used.
+strategy: {}
+  # type: RollingUpdate
+  # rollingUpdate:
+  #   maxSurge: 1
+  #   maxUnavailable: 0
+
 serviceAccount:
   # -- Specifies whether a service account should be created
   create: true
