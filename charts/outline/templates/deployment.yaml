@@ -25,7 +25,7 @@ spec:
         {{- end }}
     spec:
       serviceAccountName: {{ include "outline.serviceAccountName" . }}
-      automountServiceAccountToken: false
+      automountServiceAccountToken: {{ .Values.serviceAccount.automount }}
       securityContext:
         seccompProfile:
           type: RuntimeDefault
