@@ -22,6 +22,7 @@ keywords:
   - outline
   - wiki
   - docs
+kubeVersion: ">=1.19.0-0"
 maintainers:
   - name: Budavári Schönherz Stúdió
     url: https://github.com/BSStudio/helm-charts
@@ -30,4 +31,4 @@ sources:
   - https://github.com/BSStudio/helm-charts/tree/main/charts/outline
   - https://github.com/outline/outline
 type: application
-version: 1.2.10
+version: 1.3.0

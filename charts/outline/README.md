@@ -1,6 +1,6 @@
 # outline
 
-![Version: 1.2.10](https://img.shields.io/badge/Version-1.2.10-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.8.0](https://img.shields.io/badge/AppVersion-1.8.0-informational?style=flat-square)
+![Version: 1.3.0](https://img.shields.io/badge/Version-1.3.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.8.0](https://img.shields.io/badge/AppVersion-1.8.0-informational?style=flat-square)
 
 Outline is a fast, collaborative, knowledge base for your team built using React and Node.js.
 
@@ -18,6 +18,8 @@ Outline is a fast, collaborative, knowledge base for your team built using React
 * <https://github.com/outline/outline>
 
 ## Requirements
+
+Kubernetes: `>=1.19.0-0`
 
 | Repository | Name | Version |
 |------------|------|---------|
@@ -38,7 +40,7 @@ Outline is a fast, collaborative, knowledge base for your team built using React
 | envFrom | list | `[]` | envFrom to pass to the deployment |
 | extraVolumeMounts | list | `[]` | Additional volume mounts for the containers |
 | extraVolumes | list | `[]` | Additional volumes to mount to the deployment |
-| fullnameOverride | string | `""` | String to fully override `"outline.fullname"`. Prefer using global.fullnameOverride if possible |
+| fullnameOverride | string | `""` | String to fully override `"outline.fullname"` |
 | image.imagePullPolicy | string | `"IfNotPresent"` | The logic of image pulling |
 | image.repository | string | `"outlinewiki/outline"` | The Docker repository to pull the image from |
 | image.tag | string | `""` | Overrides the image tag whose default is the chart appVersion |
@@ -49,7 +51,7 @@ Outline is a fast, collaborative, knowledge base for your team built using React
 | ingress.tls | list | `[]` | Ingress TLS configuration |
 | initContainers | list | `[]` | Init containers to add to the deployment |
 | minio.enabled | bool | `false` | Enable the CloudPirates MinIO® chart. Refer to <https://github.com/CloudPirates-io/helm-charts/blob/main/charts/minio> for possible values. |
-| nameOverride | string | `""` | Provide a name in place of `outline`. Prefer using global.nameOverride if possible |
+| nameOverride | string | `""` | Provide a name in place of `outline` |
 | nodeSelector | object | `{}` | NodeSelector for the deployment |
 | outline.database_url | string | `"postgres://outline:secretPassword@outline-postgres:5432/outline"` | Connection string to access the database |
 | outline.file_storage | string | `"local"` | Specify what storage system to use. Possible value is one of "s3" or "local". |
@@ -60,11 +62,12 @@ Outline is a fast, collaborative, knowledge base for your team built using React
 | outline.url | string | `"https://outline.example.com"` | URL should point to the fully qualified, publicly accessible URL. |
 | outline.utils_secret | string | `""` | Generate a unique random key. The format is not important but you could still use `openssl rand -hex 32` in your terminal to produce this. |
 | persistence.accessMode | string | `"ReadWriteOnce"` | Specifies the level of access to the persistent storage (e.g., read-write, read-only) |
+| persistence.annotations | object | `{}` | Annotations to add to the PVC, e.g. `helm.sh/resource-policy: keep` to retain data on uninstall |
 | persistence.enabled | bool | `true` | Determines whether persistent storage is enabled or not |
 | persistence.size | string | `"2Gi"` | Defines the amount of storage allocated for persistence |
 | podAnnotations | object | `{}` | Optional additional annotations to add to the pods |
 | podLabels | object | `{}` | Optional additional labels to add to the pods |
-| podSecurityContext | object | `{}` |  |
+| podSecurityContext | object | `{}` | Pod-level security context, merged over chart defaults (fsGroup 65534 for volume writes) |
 | postgres.auth.database | string | `"outline"` | Name for a custom database to create |
 | postgres.auth.username | string | `"outline"` | Name for a custom user to create |
 | postgres.containerSecurityContext.runAsGroup | int | `65534` | Run container processes with nobody group |
@@ -88,11 +91,15 @@ Outline is a fast, collaborative, knowledge base for your team built using React
 | resources.limits.memory | string | `"1Gi"` | The maximum amount of memory the container can use |
 | resources.requests.cpu | string | `"250m"` | Specifies the minimum amount of CPU that will be allocated to the container |
 | resources.requests.memory | string | `"512Mi"` | Specifies the minimum amount of memory that will be allocated to the container |
+| scheduler.activeDeadlineSeconds | int | `300` | Hard time limit for a single run before it is killed (guards against a hung request) |
 | scheduler.annotations | object | `{}` | Optional additional annotations to add to the CronJob runner pod |
+| scheduler.backoffLimit | int | `1` | Number of retries before a run is marked failed |
 | scheduler.concurrencyPolicy | string | `"Forbid"` | Concurrency policy for the CronJob |
 | scheduler.enabled | bool | `true` | Create a CronJob to run Outline's scheduled jobs. Refer to <https://docs.getoutline.com/s/hosting/doc/scheduled-jobs-RhZzCt770H> for more information. |
+| scheduler.failedJobsHistoryLimit | int | `3` | How many failed jobs to retain for debugging |
 | scheduler.labels | object | `{}` | Optional additional labels to add to the CronJob runner pod |
 | scheduler.schedule | string | `"30 12 * * *"` | Schedule to use for the CronJob |
+| scheduler.successfulJobsHistoryLimit | int | `3` | How many completed jobs to retain |
 | scheduler.timeZone | string | `"Europe/Budapest"` | Timezone for interpreting the cron schedule |
 | securityContext | object | `{}` | Run containers as a specific securityContext |
 | service.port | int | `3000` | Port number for web traffic |
@@ -101,4 +108,5 @@ Outline is a fast, collaborative, knowledge base for your team built using React
 | serviceAccount.automount | bool | `true` | Automatically mount a ServiceAccount's API credentials? |
 | serviceAccount.create | bool | `true` | Specifies whether a service account should be created |
 | serviceAccount.name | string | `""` | The name of the service account to use. If not set and create is true, a name is generated using the fullname template. |
+| strategy | object | `{}` | Deployment update strategy. When empty, defaults to `Recreate` if persistence is enabled with a non-`ReadWriteMany` access mode (avoids a RWO volume deadlock on upgrade), otherwise Kubernetes' default RollingUpdate is used. |
 | tolerations | list | `[]` | Tolerations for the deployment |

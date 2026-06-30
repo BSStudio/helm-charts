@@ -1,7 +1,7 @@
 ---
-# -- Provide a name in place of `outline`. Prefer using global.nameOverride if possible
+# -- Provide a name in place of `outline`
 nameOverride: ""
-# -- String to fully override `"outline.fullname"`. Prefer using global.fullnameOverride if possible
+# -- String to fully override `"outline.fullname"`
 fullnameOverride: ""
 
 image:
@@ -14,6 +14,15 @@ image:
 
 # -- The number of replicas to deploy
 replicaCount: 1
+
+# -- Deployment update strategy. When empty, defaults to `Recreate` if persistence
+# is enabled with a non-`ReadWriteMany` access mode (avoids a RWO volume deadlock
+# on upgrade), otherwise Kubernetes' default RollingUpdate is used.
+strategy: {}
+  # type: RollingUpdate
+  # rollingUpdate:
+  #   maxSurge: 1
+  #   maxUnavailable: 0
 
 serviceAccount:
   # -- Specifies whether a service account should be created
@@ -32,8 +41,8 @@ podAnnotations: {}
 # -- Optional additional labels to add to the pods
 podLabels: {}
 
+# -- Pod-level security context, merged over chart defaults (fsGroup 65534 for volume writes)
 podSecurityContext: {}
-  # -- Set the shared file system group for all containers in the pod
   # fsGroup: 2000
 
 # -- Run containers as a specific securityContext
@@ -97,6 +106,8 @@ persistence:
   accessMode: ReadWriteOnce
   # -- Defines the amount of storage allocated for persistence
   size: 2Gi
+  # -- Annotations to add to the PVC, e.g. `helm.sh/resource-policy: keep` to retain data on uninstall
+  annotations: {}
   # -- You can also use an existing claim instead of creating one
   # existingClaim: "myClaim"
   # -- If defined, volume.beta.kubernetes.io/storage-class: <storageClass>
@@ -197,6 +208,14 @@ scheduler:
   timeZone: Europe/Budapest
   # -- Concurrency policy for the CronJob
   concurrencyPolicy: Forbid
+  # -- Hard time limit for a single run before it is killed (guards against a hung request)
+  activeDeadlineSeconds: 300
+  # -- Number of retries before a run is marked failed
+  backoffLimit: 1
+  # -- How many completed jobs to retain
+  successfulJobsHistoryLimit: 3
+  # -- How many failed jobs to retain for debugging
+  failedJobsHistoryLimit: 3
   # -- Optional additional annotations to add to the CronJob runner pod
   annotations: {}
   # -- Optional additional labels to add to the CronJob runner pod

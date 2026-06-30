@@ -8,6 +8,13 @@ spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
+  {{- if .Values.strategy }}
+  strategy:
+    {{- toYaml .Values.strategy | nindent 4 }}
+  {{- else if and .Values.persistence.enabled (not (eq .Values.persistence.accessMode "ReadWriteMany")) }}
+  strategy:
+    type: Recreate
+  {{- end }}
   selector:
     matchLabels:
       {{- include "outline.selectorLabels" . | nindent 6 }}
@@ -25,10 +32,12 @@ spec:
         {{- end }}
     spec:
       serviceAccountName: {{ include "outline.serviceAccountName" . }}
-      automountServiceAccountToken: false
+      automountServiceAccountToken: {{ .Values.serviceAccount.automount }}
       securityContext:
         seccompProfile:
           type: RuntimeDefault
+        fsGroup: 65534
+        fsGroupChangePolicy: OnRootMismatch
         {{- with .Values.podSecurityContext }}
           {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -46,13 +55,12 @@ spec:
             readOnlyRootFilesystem: true
             capabilities:
               drop:
-                - NET_RAW
                 - ALL
             {{- with .Values.securityContext }}
               {{- toYaml . | nindent 12 }}
             {{- end }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          imagePullPolicy: {{ .Values.image.imagePullPolicy }}
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
