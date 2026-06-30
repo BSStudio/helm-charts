@@ -1,6 +1,6 @@
 # outline
 
-![Version: 1.3.1](https://img.shields.io/badge/Version-1.3.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.8.1](https://img.shields.io/badge/AppVersion-1.8.1-informational?style=flat-square)
+![Version: 1.3.2](https://img.shields.io/badge/Version-1.3.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.8.1](https://img.shields.io/badge/AppVersion-1.8.1-informational?style=flat-square)
 
 Outline is a fast, collaborative, knowledge base for your team built using React and Node.js.
 
@@ -105,7 +105,7 @@ Kubernetes: `>=1.19.0-0`
 | service.port | int | `3000` | Port number for web traffic |
 | service.type | string | `"ClusterIP"` | Kubernetes service type for web traffic |
 | serviceAccount.annotations | object | `{}` | Annotations to add to the service account |
-| serviceAccount.automount | bool | `true` | Automatically mount a ServiceAccount's API credentials? |
+| serviceAccount.automount | bool | `false` | Automatically mount a ServiceAccount's API credentials? |
 | serviceAccount.create | bool | `true` | Specifies whether a service account should be created |
 | serviceAccount.name | string | `""` | The name of the service account to use. If not set and create is true, a name is generated using the fullname template. |
 | strategy | object | `{}` | Deployment update strategy. When empty, defaults to `Recreate` if persistence is enabled with a non-`ReadWriteMany` access mode (avoids a RWO volume deadlock on upgrade), otherwise Kubernetes' default RollingUpdate is used. |

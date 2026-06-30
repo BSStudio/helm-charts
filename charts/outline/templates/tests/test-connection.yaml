@@ -7,6 +7,8 @@ metadata:
   annotations:
     helm.sh/hook: test
     helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+    checkov.io/skip1: CKV_K8S_8=One-shot helm test pod runs to completion; liveness probe not applicable
+    checkov.io/skip2: CKV_K8S_9=One-shot helm test pod runs to completion; readiness probe not applicable
 spec:
   restartPolicy: Never
   automountServiceAccountToken: false
