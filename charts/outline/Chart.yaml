@@ -22,6 +22,7 @@ keywords:
   - outline
   - wiki
   - docs
+kubeVersion: ">=1.19.0-0"
 maintainers:
   - name: Budavári Schönherz Stúdió
     url: https://github.com/BSStudio/helm-charts

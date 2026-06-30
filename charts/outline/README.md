@@ -19,6 +19,8 @@ Outline is a fast, collaborative, knowledge base for your team built using React
 
 ## Requirements
 
+Kubernetes: `>=1.19.0-0`
+
 | Repository | Name | Version |
 |------------|------|---------|
 | oci://registry-1.docker.io/cloudpirates | minio | 0.13.0 |
