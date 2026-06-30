@@ -45,7 +45,7 @@ spec:
                 - -c
                 - |
                   URL="http://{{ include "outline.fullname" . }}:{{ .Values.service.port }}/api/cron.daily?token=${UTILS_SECRET}"
-                  RESPONSE=$(wget -q -O - --server-response --no-check-certificate "$URL" 2>&1)
+                  RESPONSE=$(wget -q -O - --server-response "$URL" 2>&1)
                   STATUS_CODE=$(echo "$RESPONSE" | sed -rn 's:.*HTTP/.* ([0-9]+) .*:\1:p' | tail -1)
 
                   if [ "$STATUS_CODE" != "200" ]; then
