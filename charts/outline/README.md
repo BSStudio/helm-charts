@@ -19,7 +19,7 @@ Outline is a fast, collaborative, knowledge base for your team built using React
 
 ## Requirements
 
-Kubernetes: `>=1.19.0-0`
+Kubernetes: `>=1.23.0-0`
 
 | Repository | Name | Version |
 |------------|------|---------|
