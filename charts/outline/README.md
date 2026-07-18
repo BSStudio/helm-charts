@@ -98,7 +98,9 @@ Kubernetes: `>=1.23.0-0`
 | scheduler.enabled | bool | `true` | Create a CronJob to run Outline's scheduled jobs. Refer to <https://docs.getoutline.com/s/hosting/doc/scheduled-jobs-RhZzCt770H> for more information. |
 | scheduler.failedJobsHistoryLimit | int | `3` | How many failed jobs to retain for debugging |
 | scheduler.labels | object | `{}` | Optional additional labels to add to the CronJob runner pod |
+| scheduler.podSecurityContext | object | `{}` | Pod-level security context for the runner pod, merged over the chart defaults. Separate from the top-level `podSecurityContext`, which applies to Outline itself. |
 | scheduler.schedule | string | `"30 12 * * *"` | Schedule to use for the CronJob |
+| scheduler.securityContext | object | `{}` | Container-level security context for the runner container, merged over the chart defaults. Separate from the top-level `securityContext`, which applies to Outline itself. |
 | scheduler.successfulJobsHistoryLimit | int | `3` | How many completed jobs to retain |
 | scheduler.timeZone | string | `"Europe/Budapest"` | Timezone for interpreting the cron schedule |
 | securityContext | object | `{}` | Run containers as a specific securityContext |

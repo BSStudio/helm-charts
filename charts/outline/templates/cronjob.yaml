@@ -29,21 +29,13 @@ spec:
         spec:
           automountServiceAccountToken: false
           securityContext:
-            seccompProfile:
-              type: RuntimeDefault
+            {{- include "outline.schedulerPodSecurityContext" . | nindent 12 }}
           containers:
             - name: invoke-scheduler
               image: busybox:stable-uclibc
               imagePullPolicy: Always
               securityContext:
-                runAsUser: 65534
-                runAsGroup: 65534
-                allowPrivilegeEscalation: false
-                runAsNonRoot: true
-                readOnlyRootFilesystem: true
-                capabilities:
-                  drop:
-                    - ALL
+                {{- include "outline.schedulerSecurityContext" . | nindent 16 }}
               command: [/bin/sh]
               args:
                 - -c

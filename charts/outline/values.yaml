@@ -220,6 +220,12 @@ scheduler:
   annotations: {}
   # -- Optional additional labels to add to the CronJob runner pod
   labels: {}
+  # -- Pod-level security context for the runner pod, merged over the chart defaults. Separate from
+  # the top-level `podSecurityContext`, which applies to Outline itself.
+  podSecurityContext: {}
+  # -- Container-level security context for the runner container, merged over the chart defaults.
+  # Separate from the top-level `securityContext`, which applies to Outline itself.
+  securityContext: {}
 
 minio:
   # -- Enable the CloudPirates MinIO® chart.

@@ -90,6 +90,29 @@ Pod-level security context shared by every pod.
 {{- end }}
 
 {{/*
+Security contexts for the scheduler CronJob. Deliberately separate from the application ones: the
+runner is busybox rather than Outline, and it mounts no volumes, so the app's fsGroup does not apply.
+*/}}
+{{- define "outline.schedulerPodSecurityContext" -}}
+{{- $defaults := dict
+  "seccompProfile" (dict "type" "RuntimeDefault")
+-}}
+{{- toYaml (mustMergeOverwrite $defaults (deepCopy (default dict .Values.scheduler.podSecurityContext))) }}
+{{- end }}
+
+{{- define "outline.schedulerSecurityContext" -}}
+{{- $defaults := dict
+  "runAsUser" 65534
+  "runAsGroup" 65534
+  "allowPrivilegeEscalation" false
+  "runAsNonRoot" true
+  "readOnlyRootFilesystem" true
+  "capabilities" (dict "drop" (list "ALL"))
+-}}
+{{- toYaml (mustMergeOverwrite $defaults (deepCopy (default dict .Values.scheduler.securityContext))) }}
+{{- end }}
+
+{{/*
 Create outline configuration environment variables.
 */}}
 {{- define "outline.env" -}}
