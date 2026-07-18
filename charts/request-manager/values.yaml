@@ -231,7 +231,9 @@ migrations:
   enabled: true
   # -- Block every pod in an initContainer until migrations are applied. Deliberately not in the
   # readiness probe: that would flip healthy running pods to NotReady whenever new migrations ship.
-  waitForMigrations: true
+  # Set explicitly to wait even when the Job is disabled; pods then block until you migrate.
+  # @default -- `migrations.enabled`
+  waitForMigrations: ~
   # -- Seconds the initContainer waits for migrations before failing (the pod then retries)
   waitTimeout: 300
   # -- Container args for the migration Job

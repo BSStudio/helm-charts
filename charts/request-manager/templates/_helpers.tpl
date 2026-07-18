@@ -86,6 +86,17 @@ Name of the Secret that holds the Google service account key file.
 {{- end }}
 
 {{/*
+Whether pods block until migrations are applied. Unset follows migrations.enabled.
+*/}}
+{{- define "request-manager.waitForMigrations" -}}
+{{- if kindIs "invalid" .Values.migrations.waitForMigrations -}}
+{{- .Values.migrations.enabled -}}
+{{- else -}}
+{{- .Values.migrations.waitForMigrations -}}
+{{- end -}}
+{{- end }}
+
+{{/*
 initContainer that blocks until migrations are applied. `migrate --check` applies nothing and
 exits non-zero while any are pending, so every pod can run it concurrently.
 */}}

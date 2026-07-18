@@ -39,9 +39,9 @@ spec:
       {{- end }}
       securityContext:
         {{- include "request-manager.podSecurityContext" . | nindent 8 }}
-      {{- if or .Values.migrations.waitForMigrations .Values.initContainers }}
+      {{- if or (eq (include "request-manager.waitForMigrations" .) "true") .Values.initContainers }}
       initContainers:
-        {{- if .Values.migrations.waitForMigrations }}
+        {{- if eq (include "request-manager.waitForMigrations" .) "true" }}
         {{- include "request-manager.waitForMigrationsInitContainer" . | nindent 8 }}
         {{- end }}
         {{- with .Values.initContainers }}

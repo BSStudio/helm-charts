@@ -68,7 +68,7 @@ Kubernetes: `>=1.23.0-0`
 | migrations.resources.requests.cpu | string | `"100m"` | Specifies the minimum amount of CPU that will be allocated to the container |
 | migrations.resources.requests.memory | string | `"512Mi"` | Specifies the minimum amount of memory that will be allocated to the container |
 | migrations.ttlSecondsAfterFinished | int | `600` | How long a finished migration Job is retained before automatic cleanup |
-| migrations.waitForMigrations | bool | `true` | Block every pod in an initContainer until migrations are applied. Deliberately not in the readiness probe: that would flip healthy running pods to NotReady whenever new migrations ship. |
+| migrations.waitForMigrations | string | `migrations.enabled` | Block every pod in an initContainer until migrations are applied. Deliberately not in the readiness probe: that would flip healthy running pods to NotReady whenever new migrations ship. Set explicitly to wait even when the Job is disabled; pods then block until you migrate. |
 | migrations.waitTimeout | int | `300` | Seconds the initContainer waits for migrations before failing (the pod then retries) |
 | nameOverride | string | `""` | Provide a name in place of `request-manager` |
 | nodeSelector | object | `{}` | NodeSelector for all workloads |
