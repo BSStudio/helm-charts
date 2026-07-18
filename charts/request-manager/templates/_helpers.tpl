@@ -215,30 +215,28 @@ Volume mounts shared by every application container.
 
 {{/*
 Container-level security context shared by every application container.
+Merged as a dict so user keys override the defaults instead of being appended as duplicates.
 */}}
 {{- define "request-manager.containerSecurityContext" -}}
-runAsUser: 65532
-runAsGroup: 65532
-allowPrivilegeEscalation: false
-runAsNonRoot: true
-readOnlyRootFilesystem: true
-capabilities:
-  drop:
-    - ALL
-{{- with .Values.securityContext }}
-{{- toYaml . }}
-{{- end }}
+{{- $defaults := dict
+  "runAsUser" 65532
+  "runAsGroup" 65532
+  "allowPrivilegeEscalation" false
+  "runAsNonRoot" true
+  "readOnlyRootFilesystem" true
+  "capabilities" (dict "drop" (list "ALL"))
+-}}
+{{- toYaml (mustMergeOverwrite $defaults (deepCopy (default dict .Values.securityContext))) }}
 {{- end }}
 
 {{/*
 Pod-level security context shared by every pod.
 */}}
 {{- define "request-manager.podSecurityContext" -}}
-seccompProfile:
-  type: RuntimeDefault
-fsGroup: 65532
-fsGroupChangePolicy: OnRootMismatch
-{{- with .Values.podSecurityContext }}
-{{- toYaml . }}
-{{- end }}
+{{- $defaults := dict
+  "seccompProfile" (dict "type" "RuntimeDefault")
+  "fsGroup" 65532
+  "fsGroupChangePolicy" "OnRootMismatch"
+-}}
+{{- toYaml (mustMergeOverwrite $defaults (deepCopy (default dict .Values.podSecurityContext))) }}
 {{- end }}
