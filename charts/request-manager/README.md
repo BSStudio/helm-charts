@@ -42,7 +42,7 @@ Kubernetes: `>=1.23.0-0`
 | config.ALLOWED_HOSTS | string | `""` | Comma separated list of extra allowed hosts, appended to the pod IP, localhost and the Service name that the chart always sets. Add your ingress host(s) here. |
 | credentials.enabled | bool | `false` | Mount a Google service account key file into the credentials directory. Required only if the Google Calendar integration is used. |
 | credentials.existingSecret | string | `""` | Use an existing Secret holding the key file instead of creating one from `serviceAccountKey` |
-| credentials.fileName | string | `"service-account-key-file.json"` | File name of the key inside the credentials directory (env GOOGLE_SERVICE_ACCOUNT_KEY_FILE_NAME) |
+| credentials.fileName | string | `"service-account-key-file.json"` | Filename of the key inside the credentials directory (env GOOGLE_SERVICE_ACCOUNT_KEY_FILE_NAME) |
 | credentials.serviceAccountKey | string | `""` | Contents of the Google service account JSON key. Ignored when `existingSecret` is set. |
 | existingSecret | string | `""` | Supply the sensitive environment variables from an existing Secret instead of `secrets`. The Secret's keys must match the expected environment variable names. |
 | extraEnvFrom | list | `[]` | Additional envFrom sources appended to every container |

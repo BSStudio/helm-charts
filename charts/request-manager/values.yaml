@@ -285,7 +285,7 @@ credentials:
   enabled: false
   # -- Use an existing Secret holding the key file instead of creating one from `serviceAccountKey`
   existingSecret: ""
-  # -- File name of the key inside the credentials directory (env GOOGLE_SERVICE_ACCOUNT_KEY_FILE_NAME)
+  # -- Filename of the key inside the credentials directory (env GOOGLE_SERVICE_ACCOUNT_KEY_FILE_NAME)
   fileName: service-account-key-file.json
   # -- Contents of the Google service account JSON key. Ignored when `existingSecret` is set.
   serviceAccountKey: ""
