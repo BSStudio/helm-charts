@@ -34,6 +34,7 @@ spec:
     spec:
       serviceAccountName: {{ include "outline.serviceAccountName" . }}
       automountServiceAccountToken: {{ .Values.serviceAccount.automount }}
+      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
       securityContext:
         {{- include "outline.podSecurityContext" . | nindent 8 }}
       {{- with .Values.initContainers }}

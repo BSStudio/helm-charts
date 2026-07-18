@@ -15,6 +15,10 @@ image:
 # -- The number of replicas to deploy
 replicaCount: 1
 
+# -- Grace period for shutdown. Above Outline's own 60s force-quit timeout, so it is not killed
+# mid-drain.
+terminationGracePeriodSeconds: 75
+
 # -- Deployment update strategy. When empty, defaults to `Recreate` if persistence
 # is enabled with a non-`ReadWriteMany` access mode (avoids a RWO volume deadlock
 # on upgrade), otherwise Kubernetes' default RollingUpdate is used.

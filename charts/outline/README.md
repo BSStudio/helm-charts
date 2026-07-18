@@ -114,4 +114,5 @@ Kubernetes: `>=1.23.0-0`
 | serviceAccount.create | bool | `true` | Specifies whether a service account should be created |
 | serviceAccount.name | string | `""` | The name of the service account to use. If not set and create is true, a name is generated using the fullname template. |
 | strategy | object | `{}` | Deployment update strategy. When empty, defaults to `Recreate` if persistence is enabled with a non-`ReadWriteMany` access mode (avoids a RWO volume deadlock on upgrade), otherwise Kubernetes' default RollingUpdate is used. |
+| terminationGracePeriodSeconds | int | `75` | Grace period for shutdown. Above Outline's own 60s force-quit timeout, so it is not killed mid-drain. |
 | tolerations | list | `[]` | Tolerations for the deployment |
