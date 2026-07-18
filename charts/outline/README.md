@@ -53,11 +53,11 @@ Kubernetes: `>=1.19.0-0`
 | minio.enabled | bool | `false` | Enable the CloudPirates MinIO® chart. Refer to <https://github.com/CloudPirates-io/helm-charts/blob/main/charts/minio> for possible values. |
 | nameOverride | string | `""` | Provide a name in place of `outline` |
 | nodeSelector | object | `{}` | NodeSelector for the deployment |
-| outline.database_url | string | `"postgres://outline:secretPassword@outline-postgres:5432/outline"` | Connection string to access the database |
+| outline.database_url | string | `"postgres://outline:secretPassword@{{ .Release.Name }}-postgres:5432/outline"` | Connection string to access the database |
 | outline.file_storage | string | `"local"` | Specify what storage system to use. Possible value is one of "s3" or "local". |
 | outline.file_storage_upload_max_size | string | `"50000000"` | Maximum allowed byte size for the uploaded attachment. Make sure to define it as a string. |
 | outline.pgsslmode | string | `"disable"` | Disable SSL for connecting to PostgreSQL |
-| outline.redis_url | string | `"redis://outline-redis:6379"` | Connection string to access Redis |
+| outline.redis_url | string | `"redis://{{ .Release.Name }}-redis:6379"` | Connection string to access Redis |
 | outline.secret_key | string | `""` | Generate a hex-encoded 32-byte random key. You should use `openssl rand -hex 32` in your terminal to generate a random value. |
 | outline.url | string | `"https://outline.example.com"` | URL should point to the fully qualified, publicly accessible URL. |
 | outline.utils_secret | string | `""` | Generate a unique random key. The format is not important but you could still use `openssl rand -hex 32` in your terminal to produce this. |

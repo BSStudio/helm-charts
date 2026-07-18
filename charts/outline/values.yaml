@@ -181,13 +181,13 @@ outline:
   utils_secret: ""
 
   # -- Connection string to access the database
-  database_url: postgres://outline:secretPassword@outline-postgres:5432/outline
+  database_url: postgres://outline:secretPassword@{{ .Release.Name }}-postgres:5432/outline
 
   # -- Disable SSL for connecting to PostgreSQL
   pgsslmode: disable
 
   # -- Connection string to access Redis
-  redis_url: redis://outline-redis:6379
+  redis_url: redis://{{ .Release.Name }}-redis:6379
 
   # -- URL should point to the fully qualified, publicly accessible URL.
   url: https://outline.example.com
