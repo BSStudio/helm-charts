@@ -1,0 +1,17 @@
+---
+# Ingress enabled with pathType omitted, so the chart default is what the API server validates.
+
+outline:
+  secret_key: 4f8c1d2ba9e6374c05fbd8a71e93c62d40b7fa5981ce3d0672b4a8e5f1c9037d
+  utils_secret: 8d3b7f0a1c9e52d6438fb0c7a25e91d3670c4fb28a5d19e36f0b74c8d2a5e913
+
+postgres:
+  auth:
+    password: secretPassword
+
+ingress:
+  enabled: true
+  hosts:
+    - host: outline.example.com
+      paths:
+        - path: /
