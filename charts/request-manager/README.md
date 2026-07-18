@@ -128,11 +128,11 @@ Kubernetes: `>=1.23.0-0`
 | worker.autoscaling.maxReplicas | int | `10` | Maximum number of worker replicas |
 | worker.autoscaling.minReplicas | int | `1` | Minimum number of worker replicas |
 | worker.autoscaling.targetCPUUtilizationPercentage | int | `80` | Target CPU utilization percentage that triggers scaling |
-| worker.livenessProbe | object | `{"exec":{"command":["sh","-c","celery -A core inspect ping -d celery@$HOSTNAME"]},"failureThreshold":3,"initialDelaySeconds":30,"periodSeconds":30,"timeoutSeconds":10}` | Liveness probe for the worker container |
+| worker.livenessProbe | object | `{"exec":{"command":["sh","-c","celery -A core inspect ping -d celery@$(hostname)"]},"failureThreshold":3,"initialDelaySeconds":30,"periodSeconds":30,"timeoutSeconds":10}` | Liveness probe for the worker container |
 | worker.pdb.enabled | bool | `false` | Enable a PodDisruptionBudget for the worker deployment |
 | worker.pdb.maxUnavailable | string | `""` | Maximum unavailable worker pods (takes precedence over minAvailable when set) |
 | worker.pdb.minAvailable | string | `""` | Minimum available worker pods (used when maxUnavailable is unset; defaults to 1) |
-| worker.readinessProbe | object | `{"exec":{"command":["sh","-c","celery -A core inspect ping -d celery@$HOSTNAME"]},"failureThreshold":3,"initialDelaySeconds":15,"periodSeconds":30,"timeoutSeconds":10}` | Readiness probe for the worker container |
+| worker.readinessProbe | object | `{"exec":{"command":["sh","-c","celery -A core inspect ping -d celery@$(hostname)"]},"failureThreshold":3,"initialDelaySeconds":15,"periodSeconds":30,"timeoutSeconds":10}` | Readiness probe for the worker container |
 | worker.replicaCount | int | `1` | Number of Celery worker replicas (ignored when autoscaling is enabled) |
 | worker.resources.limits.cpu | string | `"1000m"` | The maximum amount of CPU the container can use |
 | worker.resources.limits.memory | string | `"768Mi"` | The maximum amount of memory the container can use |

@@ -156,7 +156,7 @@ worker:
       command:
         - sh
         - -c
-        - celery -A core inspect ping -d celery@$HOSTNAME
+        - celery -A core inspect ping -d celery@$(hostname)
     initialDelaySeconds: 30
     periodSeconds: 30
     timeoutSeconds: 10
@@ -167,7 +167,7 @@ worker:
       command:
         - sh
         - -c
-        - celery -A core inspect ping -d celery@$HOSTNAME
+        - celery -A core inspect ping -d celery@$(hostname)
     initialDelaySeconds: 15
     periodSeconds: 30
     timeoutSeconds: 10
