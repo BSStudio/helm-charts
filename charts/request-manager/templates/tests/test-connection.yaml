@@ -1,3 +1,4 @@
+{{- $url := printf "http://%s:%v" (include "request-manager.fullname" .) .Values.server.service.port -}}
 apiVersion: v1
 kind: Pod
 metadata:
@@ -27,11 +28,12 @@ spec:
         capabilities:
           drop:
             - ALL
-      command: [wget]
+      command: [sh]
       args:
-        - --spider
-        - -S
-        - http://{{ include "request-manager.fullname" . }}:{{ .Values.server.service.port }}/livez
+        - -ec
+        - |
+          wget --spider -S {{ $url }}/livez
+          wget --spider -S {{ $url }}/readyz
       resources:
         requests:
           cpu: 50m
