@@ -19,7 +19,7 @@ Manage video shooting and live streaming requests at Budavári Schönherz Stúdi
 
 ## Requirements
 
-Kubernetes: `>=1.19.0-0`
+Kubernetes: `>=1.23.0-0`
 
 | Repository | Name | Version |
 |------------|------|---------|
