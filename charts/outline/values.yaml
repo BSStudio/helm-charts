@@ -126,6 +126,14 @@ autoscaling:
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
 
+pdb:
+  # -- Enable a PodDisruptionBudget. With a single replica `minAvailable: 1` blocks node drains.
+  enabled: false
+  # -- Maximum unavailable pods (takes precedence over minAvailable when set)
+  maxUnavailable: ""
+  # -- Minimum available pods (used when maxUnavailable is unset; defaults to 1)
+  minAvailable: ""
+
 # -- Environment variables to pass to the deployment
 # See configuration options at <https://github.com/outline/outline/blob/main/.env.sample>
 env: []
@@ -220,11 +228,9 @@ scheduler:
   annotations: {}
   # -- Optional additional labels to add to the CronJob runner pod
   labels: {}
-  # -- Pod-level security context for the runner pod, merged over the chart defaults. Separate from
-  # the top-level `podSecurityContext`, which applies to Outline itself.
+  # -- Pod-level security context for the runner pod, merged over the chart defaults
   podSecurityContext: {}
-  # -- Container-level security context for the runner container, merged over the chart defaults.
-  # Separate from the top-level `securityContext`, which applies to Outline itself.
+  # -- Container-level security context for the runner container, merged over the chart defaults
   securityContext: {}
 
 minio:

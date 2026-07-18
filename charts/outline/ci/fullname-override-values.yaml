@@ -1,8 +1,6 @@
 ---
-# Drives `outline.fullname` away from the release name. The bundled sub-charts stay named after the
-# release, so a connection string built from the fullname points at a Service that does not exist.
-# `ct` always generates a release name containing the chart name, which is why this needs an
-# explicit override to surface.
+# Drives `outline.fullname` away from the release name, which the bundled sub-charts are named after.
+# `ct` always generates a release name containing the chart name, so this needs an explicit override.
 
 fullnameOverride: mywiki
 

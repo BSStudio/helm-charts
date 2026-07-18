@@ -1,6 +1,5 @@
 ---
-# Exercises the security context merge helpers. Every key below differs from the chart defaults, so
-# a merge that silently drops user input fails here rather than rendering something plausible.
+# Exercises the security context merge helpers. Every key below differs from the chart defaults.
 
 outline:
   secret_key: 1a7e93c05fb8d2647c0e3f9a15bd6820c47fe9a3b0d58126fc94e07a3b5d81f6

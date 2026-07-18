@@ -63,7 +63,7 @@ Create the name of the service account to use
 
 {{/*
 Container-level security context for the application container.
-Merged as a dict so user keys override the defaults instead of being appended as duplicates.
+Merged as a dict so user keys override the defaults rather than being appended as duplicates.
 */}}
 {{- define "outline.containerSecurityContext" -}}
 {{- $defaults := dict
@@ -90,8 +90,8 @@ Pod-level security context shared by every pod.
 {{- end }}
 
 {{/*
-Security contexts for the scheduler CronJob. Deliberately separate from the application ones: the
-runner is busybox rather than Outline, and it mounts no volumes, so the app's fsGroup does not apply.
+Security contexts for the scheduler CronJob. Separate from the application ones: it runs busybox and
+mounts no volumes.
 */}}
 {{- define "outline.schedulerPodSecurityContext" -}}
 {{- $defaults := dict

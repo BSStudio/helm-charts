@@ -61,6 +61,9 @@ Kubernetes: `>=1.23.0-0`
 | outline.secret_key | string | `""` | Generate a hex-encoded 32-byte random key. You should use `openssl rand -hex 32` in your terminal to generate a random value. |
 | outline.url | string | `"https://outline.example.com"` | URL should point to the fully qualified, publicly accessible URL. |
 | outline.utils_secret | string | `""` | Generate a unique random key. The format is not important but you could still use `openssl rand -hex 32` in your terminal to produce this. |
+| pdb.enabled | bool | `false` | Enable a PodDisruptionBudget. With a single replica `minAvailable: 1` blocks node drains. |
+| pdb.maxUnavailable | string | `""` | Maximum unavailable pods (takes precedence over minAvailable when set) |
+| pdb.minAvailable | string | `""` | Minimum available pods (used when maxUnavailable is unset; defaults to 1) |
 | persistence.accessMode | string | `"ReadWriteOnce"` | Specifies the level of access to the persistent storage (e.g., read-write, read-only) |
 | persistence.annotations | object | `{}` | Annotations to add to the PVC, e.g. `helm.sh/resource-policy: keep` to retain data on uninstall |
 | persistence.enabled | bool | `true` | Determines whether persistent storage is enabled or not |
@@ -98,9 +101,9 @@ Kubernetes: `>=1.23.0-0`
 | scheduler.enabled | bool | `true` | Create a CronJob to run Outline's scheduled jobs. Refer to <https://docs.getoutline.com/s/hosting/doc/scheduled-jobs-RhZzCt770H> for more information. |
 | scheduler.failedJobsHistoryLimit | int | `3` | How many failed jobs to retain for debugging |
 | scheduler.labels | object | `{}` | Optional additional labels to add to the CronJob runner pod |
-| scheduler.podSecurityContext | object | `{}` | Pod-level security context for the runner pod, merged over the chart defaults. Separate from the top-level `podSecurityContext`, which applies to Outline itself. |
+| scheduler.podSecurityContext | object | `{}` | Pod-level security context for the runner pod, merged over the chart defaults |
 | scheduler.schedule | string | `"30 12 * * *"` | Schedule to use for the CronJob |
-| scheduler.securityContext | object | `{}` | Container-level security context for the runner container, merged over the chart defaults. Separate from the top-level `securityContext`, which applies to Outline itself. |
+| scheduler.securityContext | object | `{}` | Container-level security context for the runner container, merged over the chart defaults |
 | scheduler.successfulJobsHistoryLimit | int | `3` | How many completed jobs to retain |
 | scheduler.timeZone | string | `"Europe/Budapest"` | Timezone for interpreting the cron schedule |
 | securityContext | object | `{}` | Run containers as a specific securityContext |

@@ -1,0 +1,19 @@
+{{- if .Values.pdb.enabled }}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "outline.fullname" . }}
+  labels:
+    {{- include "outline.labels" . | nindent 4 }}
+spec:
+  {{- if .Values.pdb.maxUnavailable }}
+  maxUnavailable: {{ .Values.pdb.maxUnavailable }}
+  {{- else }}
+  minAvailable: {{ .Values.pdb.minAvailable | default 1 }}
+  {{- end }}
+  # Scoped by component: the scheduler and test pods share the selector labels.
+  selector:
+    matchLabels:
+      {{- include "outline.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: server
+{{- end }}
