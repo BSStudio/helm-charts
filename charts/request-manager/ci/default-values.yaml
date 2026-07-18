@@ -1,7 +1,4 @@
 ---
-config:
-  ALLOWED_HOSTS: "*"
-
 secrets:
   APP_SECRET_KEY: ci-only-not-a-real-secret-key-do-not-reuse
 
