@@ -1,0 +1,20 @@
+---
+# Ingress enabled with a realistic ALLOWED_HOSTS, and pathType omitted so the chart default is
+# what the API server validates.
+
+config:
+  ALLOWED_HOSTS: request.example.com
+
+secrets:
+  APP_SECRET_KEY: ci-only-not-a-real-secret-key-do-not-reuse
+
+postgres:
+  auth:
+    password: ci-only-postgres-password
+
+ingress:
+  enabled: true
+  hosts:
+    - host: request.example.com
+      paths:
+        - path: /

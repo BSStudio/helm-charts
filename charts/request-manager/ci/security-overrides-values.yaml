@@ -1,0 +1,19 @@
+---
+# Exercises the security context merge helpers. Both keys below differ from the chart defaults, so
+# a merge that silently drops user input fails here rather than rendering something plausible.
+
+secrets:
+  APP_SECRET_KEY: ci-only-not-a-real-secret-key-do-not-reuse
+
+postgres:
+  auth:
+    password: ci-only-postgres-password
+
+# Nested merge: `add` must apply without losing the default `drop: [ALL]`.
+securityContext:
+  capabilities:
+    add:
+      - NET_BIND_SERVICE
+
+podSecurityContext:
+  fsGroupChangePolicy: Always

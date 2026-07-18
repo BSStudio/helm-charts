@@ -1,4 +1,7 @@
 ---
+# Deliberately no config.ALLOWED_HOSTS: this exercises the hosts the chart sets on its own
+# (pod IP for the probes, Service name for `helm test`).
+
 secrets:
   APP_SECRET_KEY: ci-only-not-a-real-secret-key-do-not-reuse
 
