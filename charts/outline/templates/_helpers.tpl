@@ -62,6 +62,34 @@ Create the name of the service account to use
 {{- end }}
 
 {{/*
+Container-level security context for the application container.
+Merged as a dict so user keys override the defaults instead of being appended as duplicates.
+*/}}
+{{- define "outline.containerSecurityContext" -}}
+{{- $defaults := dict
+  "runAsUser" 65534
+  "runAsGroup" 65534
+  "allowPrivilegeEscalation" false
+  "runAsNonRoot" true
+  "readOnlyRootFilesystem" true
+  "capabilities" (dict "drop" (list "ALL"))
+-}}
+{{- toYaml (mustMergeOverwrite $defaults (deepCopy (default dict .Values.securityContext))) }}
+{{- end }}
+
+{{/*
+Pod-level security context shared by every pod.
+*/}}
+{{- define "outline.podSecurityContext" -}}
+{{- $defaults := dict
+  "seccompProfile" (dict "type" "RuntimeDefault")
+  "fsGroup" 65534
+  "fsGroupChangePolicy" "OnRootMismatch"
+-}}
+{{- toYaml (mustMergeOverwrite $defaults (deepCopy (default dict .Values.podSecurityContext))) }}
+{{- end }}
+
+{{/*
 Create outline configuration environment variables.
 */}}
 {{- define "outline.env" -}}

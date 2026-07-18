@@ -34,13 +34,7 @@ spec:
       serviceAccountName: {{ include "outline.serviceAccountName" . }}
       automountServiceAccountToken: {{ .Values.serviceAccount.automount }}
       securityContext:
-        seccompProfile:
-          type: RuntimeDefault
-        fsGroup: 65534
-        fsGroupChangePolicy: OnRootMismatch
-        {{- with .Values.podSecurityContext }}
-          {{- toYaml . | nindent 8 }}
-        {{- end }}
+        {{- include "outline.podSecurityContext" . | nindent 8 }}
       {{- with .Values.initContainers }}
       initContainers:
         {{- toYaml . | nindent 8 }}
@@ -48,17 +42,7 @@ spec:
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
-            runAsUser: 65534
-            runAsGroup: 65534
-            allowPrivilegeEscalation: false
-            runAsNonRoot: true
-            readOnlyRootFilesystem: true
-            capabilities:
-              drop:
-                - ALL
-            {{- with .Values.securityContext }}
-              {{- toYaml . | nindent 12 }}
-            {{- end }}
+            {{- include "outline.containerSecurityContext" . | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.imagePullPolicy }}
           ports:
