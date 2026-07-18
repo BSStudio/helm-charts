@@ -1,0 +1,19 @@
+{{- if .Values.worker.pdb.enabled }}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "request-manager.fullname" . }}-worker
+  labels:
+    {{- include "request-manager.labels" . | nindent 4 }}
+    app.kubernetes.io/component: worker
+spec:
+  {{- if .Values.worker.pdb.maxUnavailable }}
+  maxUnavailable: {{ .Values.worker.pdb.maxUnavailable }}
+  {{- else }}
+  minAvailable: {{ .Values.worker.pdb.minAvailable | default 1 }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "request-manager.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: worker
+{{- end }}

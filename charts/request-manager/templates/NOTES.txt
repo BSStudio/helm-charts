@@ -1,0 +1,40 @@
+{{- $fullName := include "request-manager.fullname" . -}}
+BSS Request Manager {{ .Chart.AppVersion }} has been deployed as release {{ .Release.Name }}.
+
+Workloads:
+  - {{ $fullName }}-server  (Gunicorn web/API)
+  - {{ $fullName }}-worker  (Celery worker)
+  - {{ $fullName }}-beat    (Celery beat scheduler)
+{{- if .Values.migrations.enabled }}
+  - {{ $fullName }}-migrate-{{ .Release.Revision }} (database migrations; runs on install and upgrade)
+{{- end }}
+
+{{- if .Values.ingress.enabled }}
+
+Reach the application at:
+{{- range $host := .Values.ingress.hosts }}
+  {{- range .paths }}
+  http{{ if $.Values.ingress.tls }}s{{ end }}://{{ $host.host }}{{ .path }}
+  {{- end }}
+{{- end }}
+{{- else }}
+
+The web service is exposed on a {{ .Values.server.service.type }} Service. To reach it locally:
+
+  kubectl --namespace {{ .Release.Namespace }} port-forward svc/{{ $fullName }} {{ .Values.server.service.port }}:{{ .Values.server.service.port }}
+
+then open http://127.0.0.1:{{ .Values.server.service.port }}
+{{- end }}
+
+{{- if not .Values.existingSecret }}
+{{- if not (index .Values.secrets "APP_SECRET_KEY") }}
+
+WARNING: secrets.APP_SECRET_KEY is empty. Production requires it and the pods will fail to
+start without it. Set it (e.g. `openssl rand -base64 48`).
+{{- end }}
+{{- if and .Values.postgres.enabled (not .Values.postgres.auth.password) (not (index .Values.secrets "DATABASE_PASSWORD")) }}
+
+WARNING: postgres.auth.password is empty. Set it so the app and the bundled PostgreSQL
+agree on the database password.
+{{- end }}
+{{- end }}

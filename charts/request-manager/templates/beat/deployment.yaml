@@ -1,0 +1,92 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "request-manager.fullname" . }}-beat
+  labels:
+    {{- include "request-manager.labels" . | nindent 4 }}
+    app.kubernetes.io/component: beat
+  annotations:
+    checkov.io/skip1: CKV_K8S_8=Single scheduler process with no HTTP surface; a hang is not observable without app support, and on exit the container is restarted
+    checkov.io/skip2: CKV_K8S_9=No Service selects beat, so readiness has no consumer
+spec:
+  # A single beat scheduler must run at a time; Recreate avoids two schedulers overlapping
+  # during a rollout and double-firing periodic tasks.
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      {{- include "request-manager.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: beat
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        checksum/secret: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
+        {{- with .Values.podAnnotations }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+      labels:
+        {{- include "request-manager.labels" . | nindent 8 }}
+        app.kubernetes.io/component: beat
+        {{- with .Values.podLabels }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "request-manager.serviceAccountName" . }}
+      automountServiceAccountToken: {{ .Values.serviceAccount.automount }}
+      {{- with .Values.beat.terminationGracePeriodSeconds }}
+      terminationGracePeriodSeconds: {{ . }}
+      {{- end }}
+      securityContext:
+        {{- include "request-manager.podSecurityContext" . | nindent 8 }}
+      {{- if or .Values.migrations.waitForMigrations .Values.initContainers }}
+      initContainers:
+        {{- if .Values.migrations.waitForMigrations }}
+        {{- include "request-manager.waitForMigrationsInitContainer" . | nindent 8 }}
+        {{- end }}
+        {{- with .Values.initContainers }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- end }}
+      containers:
+        - name: beat
+          securityContext:
+            {{- include "request-manager.containerSecurityContext" . | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.imagePullPolicy }}
+          args:
+            {{- toYaml .Values.beat.args | nindent 12 }}
+          env:
+            - name: DJANGO_CONTAINER
+              value: "false"
+            - name: HOME
+              value: /tmp
+          envFrom:
+            {{- include "request-manager.envFrom" . | nindent 12 }}
+          {{- with .Values.beat.livenessProbe }}
+          livenessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          resources:
+            {{- toYaml .Values.beat.resources | nindent 12 }}
+          volumeMounts:
+            {{- include "request-manager.volumeMounts" . | nindent 12 }}
+      volumes:
+        {{- include "request-manager.volumes" . | nindent 8 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
