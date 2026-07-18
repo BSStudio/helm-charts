@@ -103,10 +103,7 @@ exits non-zero while any are pending, so every pod can run it concurrently.
       'until python manage.py migrate --check; do
       echo "waiting for migrations..."; sleep 5; done'
   env:
-    - name: DJANGO_CONTAINER
-      value: "false"
-    - name: HOME
-      value: /tmp
+    {{- include "request-manager.env" . | nindent 4 }}
   envFrom:
     {{- include "request-manager.envFrom" . | nindent 4 }}
   resources:
@@ -140,6 +137,7 @@ Non-secret connection defaults derived from the bundled sub-charts. User supplie
 
 {{/*
 The merged, non-secret configuration map (computed defaults + user overrides).
+ALLOWED_HOSTS is excluded; "request-manager.env" renders it instead.
 */}}
 {{- define "request-manager.config" -}}
 {{- $computed := fromYaml (include "request-manager.computedConfig" .) -}}
@@ -147,7 +145,25 @@ The merged, non-secret configuration map (computed defaults + user overrides).
 {{- range $k, $v := .Values.config -}}
 {{- $_ := set $user $k ($v | toString) -}}
 {{- end -}}
-{{- merge $user $computed | toYaml -}}
+{{- merge (omit $user "ALLOWED_HOSTS") $computed | toYaml -}}
+{{- end }}
+
+{{/*
+Environment variables shared by every application container.
+ALLOWED_HOSTS lives here, not in the ConfigMap, so it can pick up the pod IP: probes carry it as
+the Host header and Django 400s any host it does not list. The Service name covers `helm test`.
+*/}}
+{{- define "request-manager.env" -}}
+- name: DJANGO_CONTAINER
+  value: "false"
+- name: HOME
+  value: /tmp
+- name: POD_IP
+  valueFrom:
+    fieldRef:
+      fieldPath: status.podIP
+- name: ALLOWED_HOSTS
+  value: "$(POD_IP),127.0.0.1,localhost,{{ include "request-manager.fullname" . }}{{ with (default dict .Values.config).ALLOWED_HOSTS }},{{ . }}{{ end }}"
 {{- end }}
 
 {{/*

@@ -293,7 +293,8 @@ credentials:
 # Connection settings (DATABASE_*, CACHE_REDIS, CELERY_BROKER) default to the bundled sub-charts.
 config:
   DJANGO_SETTINGS_MODULE: core.settings.production
-  # -- Comma separated list of allowed hosts. Must include your ingress host(s).
+  # -- Comma separated list of extra allowed hosts, appended to the pod IP, localhost and the
+  # Service name that the chart always sets. Add your ingress host(s) here.
   ALLOWED_HOSTS: ""
   # CORS_ALLOWED_ORIGINS: "https://request.example.com"
   # CSRF_TRUSTED_ORIGINS: "https://request.example.com"

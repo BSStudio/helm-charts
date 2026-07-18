@@ -39,7 +39,7 @@ Kubernetes: `>=1.19.0-0`
 | beat.resources.requests.memory | string | `"384Mi"` | Specifies the minimum amount of memory that will be allocated to the container |
 | beat.terminationGracePeriodSeconds | int | `30` | Grace period for the beat scheduler to shut down |
 | config | object | `{"ALLOWED_HOSTS":"","DJANGO_SETTINGS_MODULE":"core.settings.production"}` | Non-secret environment variables rendered into a ConfigMap, shared by all roles. Keys are the literal names from <https://github.com/KOliver94/bss-request-manager/blob/main/backend/.env.sample>. Connection settings (DATABASE_*, CACHE_REDIS, CELERY_BROKER) default to the bundled sub-charts. |
-| config.ALLOWED_HOSTS | string | `""` | Comma separated list of allowed hosts. Must include your ingress host(s). |
+| config.ALLOWED_HOSTS | string | `""` | Comma separated list of extra allowed hosts, appended to the pod IP, localhost and the Service name that the chart always sets. Add your ingress host(s) here. |
 | credentials.enabled | bool | `false` | Mount a Google service account key file into the credentials directory. Required only if the Google Calendar integration is used. |
 | credentials.existingSecret | string | `""` | Use an existing Secret holding the key file instead of creating one from `serviceAccountKey` |
 | credentials.fileName | string | `"service-account-key-file.json"` | File name of the key inside the credentials directory (env GOOGLE_SERVICE_ACCOUNT_KEY_FILE_NAME) |

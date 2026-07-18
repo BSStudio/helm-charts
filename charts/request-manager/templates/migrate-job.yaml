@@ -50,10 +50,7 @@ spec:
           args:
             {{- toYaml .Values.migrations.args | nindent 12 }}
           env:
-            - name: DJANGO_CONTAINER
-              value: "false"
-            - name: HOME
-              value: /tmp
+            {{- include "request-manager.env" . | nindent 12 }}
           envFrom:
             {{- include "request-manager.envFrom" . | nindent 12 }}
           resources:
