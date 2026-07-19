@@ -12,7 +12,7 @@ do not "simplify" one away without re-reading it.
 
 ## Layout
 
-```
+```text
 charts/<name>/
   Chart.yaml
   values.yaml
@@ -69,7 +69,7 @@ chart's own Secret always renders and keeps what the chart computed; the externa
 as a second `secretRef` in `envFrom`.
 
 Gating the whole Secret behind `existingSecret` is wrong: it takes the derived database password with
-it, so a bundled-database install then needs that password written into the external Secret *and*
+it, so a bundled-database install then needs that password written into the external Secret _and_
 into `postgres.auth.password`, and they break silently when they drift.
 
 Anything reading a single key (a CronJob using `secretKeyRef`) must resolve the name through a helper
@@ -77,14 +77,14 @@ so it follows `existingSecret`.
 
 ## values.yaml naming
 
-| Key | Meaning |
-|---|---|
-| `config`, `secrets` | application settings, see above |
-| `existingSecret` | external Secret for the sensitive settings |
-| `extraEnv` | env entries appended to the chart's own, verbatim |
-| `extraEnvFrom` | envFrom sources appended to the chart's own |
-| `extraVolumes`, `extraVolumeMounts` | appended to the chart's own |
-| `initContainers` | appended to the chart's own |
+| Key                                 | Meaning                                           |
+| ----------------------------------- | ------------------------------------------------- |
+| `config`, `secrets`                 | application settings, see above                   |
+| `existingSecret`                    | external Secret for the sensitive settings        |
+| `extraEnv`                          | env entries appended to the chart's own, verbatim |
+| `extraEnvFrom`                      | envFrom sources appended to the chart's own       |
+| `extraVolumes`, `extraVolumeMounts` | appended to the chart's own                       |
+| `initContainers`                    | appended to the chart's own                       |
 
 `extra*` means "added to what the chart already manages". Anything a user should routinely change
 belongs in `config`/`secrets` instead — Kubernetes gives `env` precedence over `envFrom`, so entries
@@ -139,12 +139,12 @@ app's source; the Kubernetes default of 30s kills many apps mid-drain.
 Every chart ships these `ci/` scenarios. `ct install` runs one install per file, so each is a real
 deployment on kind and each must be self-sufficient.
 
-| File | Exists to catch |
-|---|---|
-| `default-values.yaml` | the default path works end to end |
-| `ingress-values.yaml` | ingress on, **`pathType` omitted** so the chart default is what the API server validates |
-| `security-overrides-values.yaml` | a nested `capabilities.add` that must not drop the default `drop: [ALL]` |
-| `fullname-override-values.yaml` | `fullnameOverride` set, so `fullname` diverges from the release name |
+| File                             | Exists to catch                                                                          |
+| -------------------------------- | ---------------------------------------------------------------------------------------- |
+| `default-values.yaml`            | the default path works end-to-end                                                        |
+| `ingress-values.yaml`            | ingress on, **`pathType` omitted** so the chart default is what the API server validates |
+| `security-overrides-values.yaml` | a nested `capabilities.add` that must not drop the default `drop: [ALL]`                 |
+| `fullname-override-values.yaml`  | `fullnameOverride` set, so `fullname` diverges from the release name                     |
 
 The last one matters more than it looks: `ct` always generates a release name containing the chart
 name, so it structurally cannot catch a `fullname`-vs-release-name mistake. `fullnameOverride`

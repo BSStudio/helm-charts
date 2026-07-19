@@ -2,8 +2,9 @@
   "rules": {
     "terminology": {
       "exclude": [
-        "URL",
-        "Postgres?SQL"
+        "Postgres?SQL",
+        "README",
+        "URL"
       ]
     }
   }
