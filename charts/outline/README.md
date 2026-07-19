@@ -52,6 +52,10 @@ secrets:
   UTILS_SECRET: "..."
 ```
 
+`envFrom` is renamed to `extraEnvFrom`, matching the other charts in this repository. Entries under
+`env` are now passed to the container verbatim instead of being folded into the Secret, so a plain
+`value` is visible in the pod spec; move anything sensitive to `secrets`.
+
 `DATABASE_URL` and `REDIS_URL` no longer need to be set when the bundled sub-charts are used: they
 are built from `postgres.auth` and the release name. Set `postgres.auth.password` instead, which
 previously had to be kept in sync with the password embedded in `outline.database_url`. Set
@@ -73,8 +77,8 @@ previously had to be kept in sync with the password embedded in `outline.databas
 | config.PGSSLMODE | string | `"disable"` | SSL mode for connecting to PostgreSQL |
 | config.URL | string | `"https://outline.example.com"` | Fully qualified, publicly accessible URL |
 | env | list | `[]` | Additional environment variables, appended to the container verbatim. Prefer `config` and `secrets`; entries here take precedence over both. |
-| envFrom | list | `[]` | envFrom to pass to the deployment |
 | existingSecret | string | `""` | Read the sensitive environment variables from an existing Secret instead of `secrets`. Its keys must be the environment variable names. The connection strings below are still chart-managed. |
+| extraEnvFrom | list | `[]` | Additional envFrom sources appended to the container |
 | extraVolumeMounts | list | `[]` | Additional volume mounts for the containers |
 | extraVolumes | list | `[]` | Additional volumes to mount to the deployment |
 | fullnameOverride | string | `""` | String to fully override `"outline.fullname"` |
@@ -88,6 +92,7 @@ previously had to be kept in sync with the password embedded in `outline.databas
 | ingress.hosts | list | `[]` | List of ingress hosts |
 | ingress.tls | list | `[]` | Ingress TLS configuration |
 | initContainers | list | `[]` | Init containers to add to the deployment |
+| livenessProbe | object | `{"failureThreshold":3,"initialDelaySeconds":5,"periodSeconds":10,"tcpSocket":{"port":"http"}}` | Liveness probe for the container. Not /_health: it queries Postgres and Redis, so an outage would restart every replica. |
 | minio.enabled | bool | `false` | Enable the CloudPirates MinIO® chart. Refer to <https://github.com/CloudPirates-io/helm-charts/blob/main/charts/minio> for possible values. |
 | nameOverride | string | `""` | Provide a name in place of `outline` |
 | nodeSelector | object | `{}` | NodeSelector for the deployment |
@@ -112,6 +117,7 @@ previously had to be kept in sync with the password embedded in `outline.databas
 | postgres.resources.limits.memory | string | `"512Mi"` | The maximum amount of memory the container can use |
 | postgres.resources.requests.cpu | string | `"250m"` | Specifies the minimum amount of CPU that will be allocated to the container |
 | postgres.resources.requests.memory | string | `"512Mi"` | Specifies the minimum amount of memory that will be allocated to the container |
+| readinessProbe | object | `{"failureThreshold":3,"httpGet":{"path":"/_health","port":"http"},"initialDelaySeconds":5,"periodSeconds":10}` | Readiness probe for the container |
 | redis.auth.enabled | bool | `false` | Enable password authentication |
 | redis.containerSecurityContext.runAsGroup | int | `65534` | Run container processes with nobody group |
 | redis.containerSecurityContext.runAsUser | int | `65534` | Run container processes as non-root user nobody |
@@ -147,6 +153,7 @@ previously had to be kept in sync with the password embedded in `outline.databas
 | serviceAccount.automount | bool | `false` | Automatically mount a ServiceAccount's API credentials? |
 | serviceAccount.create | bool | `true` | Specifies whether a service account should be created |
 | serviceAccount.name | string | `""` | The name of the service account to use. If not set and create is true, a name is generated using the fullname template. |
+| startupProbe | object | `{"failureThreshold":30,"httpGet":{"path":"/_health","port":"http"},"initialDelaySeconds":5,"periodSeconds":10}` | Startup probe for the container |
 | strategy | object | `{}` | Deployment update strategy. When empty, defaults to `Recreate` if persistence is enabled with a non-`ReadWriteMany` access mode (avoids a RWO volume deadlock on upgrade), otherwise Kubernetes' default RollingUpdate is used. |
 | terminationGracePeriodSeconds | int | `75` | Grace period for shutdown. Above Outline's own 60s force-quit timeout, so it is not killed mid-drain. |
 | tolerations | list | `[]` | Tolerations for the deployment |

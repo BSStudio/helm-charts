@@ -94,6 +94,33 @@ ingress:
     #    hosts:
     #      - chart-example.local
 
+# -- Liveness probe for the container. Not /_health: it queries Postgres and Redis, so an outage
+# would restart every replica.
+livenessProbe:
+  tcpSocket:
+    port: http
+  initialDelaySeconds: 5
+  periodSeconds: 10
+  failureThreshold: 3
+
+# -- Readiness probe for the container
+readinessProbe:
+  httpGet:
+    path: /_health
+    port: http
+  initialDelaySeconds: 5
+  periodSeconds: 10
+  failureThreshold: 3
+
+# -- Startup probe for the container
+startupProbe:
+  httpGet:
+    path: /_health
+    port: http
+  initialDelaySeconds: 5
+  periodSeconds: 10
+  failureThreshold: 30
+
 resources:
   limits:
     # -- The maximum amount of CPU the container can use
@@ -157,8 +184,8 @@ env: []
   #       name: config-map-name
   #       key: config-map-key
 
-# -- envFrom to pass to the deployment
-envFrom: []
+# -- Additional envFrom sources appended to the container
+extraEnvFrom: []
   # - configMapRef:
   #     name: config-map-name
   # - secretRef:
