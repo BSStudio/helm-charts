@@ -332,8 +332,8 @@ secrets:
   # TURNSTILE_SECRET_KEY: ""
   # EMAIL_HOST_PASSWORD: ""
 
-# -- Supply the sensitive environment variables from an existing Secret instead of `secrets`.
-# The Secret's keys must match the expected environment variable names.
+# -- Supply the sensitive environment variables from an existing Secret instead of `secrets`. Its
+# keys must be the environment variable names. DATABASE_PASSWORD stays chart-managed.
 existingSecret: ""
 
 # -- Additional envFrom sources appended to every container

@@ -63,14 +63,25 @@ Create the name of the service account to use
 {{- end }}
 
 {{/*
-Name of the Secret that holds the application's sensitive environment variables.
-Uses an externally provided Secret when `existingSecret` is set.
+The application's sensitive environment variables. DATABASE_PASSWORD is derived from
+`postgres.auth` so the bundled sub-chart stays the single source of truth for it; that stays true
+under `existingSecret`, which replaces only the user-supplied `secrets`.
 */}}
-{{- define "request-manager.secretName" -}}
-{{- if .Values.existingSecret }}
-{{- .Values.existingSecret }}
-{{- else }}
-{{- include "request-manager.fullname" . }}
+{{- define "request-manager.secrets" -}}
+{{- $computed := dict -}}
+{{- if and .Values.postgres.enabled .Values.postgres.auth.password -}}
+{{- $_ := set $computed "DATABASE_PASSWORD" .Values.postgres.auth.password -}}
+{{- end -}}
+{{- $user := dict -}}
+{{- if not .Values.existingSecret -}}
+{{- range $k, $v := .Values.secrets -}}
+{{- if and (not (kindIs "invalid" $v)) (ne ($v | toString) "") -}}
+{{- $_ := set $user $k ($v | toString) -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- range $k, $v := merge $user $computed }}
+{{ $k }}: {{ $v | b64enc | quote }}
 {{- end }}
 {{- end }}
 
@@ -184,7 +195,11 @@ envFrom sources shared by every application container.
 - configMapRef:
     name: {{ include "request-manager.fullname" . }}
 - secretRef:
-    name: {{ include "request-manager.secretName" . }}
+    name: {{ include "request-manager.fullname" . }}
+{{- with .Values.existingSecret }}
+- secretRef:
+    name: {{ . }}
+{{- end }}
 {{- with .Values.extraEnvFrom }}
 {{- toYaml . }}
 {{- end }}
