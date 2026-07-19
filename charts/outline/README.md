@@ -107,7 +107,7 @@ previously had to be kept in sync with the password embedded in `outline.databas
 | podLabels | object | `{}` | Optional additional labels to add to the pods |
 | podSecurityContext | object | `{}` | Pod-level security context, merged over chart defaults (fsGroup 65534 for volume writes) |
 | postgres.auth.database | string | `"outline"` | Name for a custom database to create |
-| postgres.auth.password | string | `""` | Password for the custom user. Required, and must be URL-safe: it is interpolated into `outline.database_url`. |
+| postgres.auth.password | string | `""` | Password for the custom user. Required, and must be URL-safe: it is interpolated into `secrets.DATABASE_URL`. |
 | postgres.auth.username | string | `"outline"` | Name for a custom user to create |
 | postgres.containerSecurityContext.runAsGroup | int | `65534` | Run container processes with nobody group |
 | postgres.containerSecurityContext.runAsUser | int | `65534` | Run container processes as non-root user nobody |

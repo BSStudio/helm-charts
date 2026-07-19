@@ -287,7 +287,7 @@ postgres:
     # -- Name for a custom database to create
     database: outline
     # -- Password for the custom user. Required, and must be URL-safe: it is interpolated into
-    # `outline.database_url`.
+    # `secrets.DATABASE_URL`.
     password: ""
   resources:
     limits:
