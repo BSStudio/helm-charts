@@ -1,0 +1,13 @@
+---
+# Drives `request-manager.fullname` away from the release name, which the bundled sub-charts are
+# named after. `ct` always generates a release name containing the chart name, so this needs an
+# explicit override.
+
+fullnameOverride: video-requests
+
+secrets:
+  APP_SECRET_KEY: ci-only-not-a-real-secret-key-do-not-reuse
+
+postgres:
+  auth:
+    password: ci-only-postgres-password
