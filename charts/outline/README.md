@@ -66,12 +66,13 @@ previously had to be kept in sync with the password embedded in `outline.databas
 | autoscaling.maxReplicas | int | `100` | Sets the maximum number of application instances (replicas) that can be scaled up to during high demand |
 | autoscaling.minReplicas | int | `1` | Defines the minimum number of application instances (replicas) to maintain, even during low demand |
 | autoscaling.targetCPUUtilizationPercentage | int | `80` | Specifies the CPU utilization threshold at which autoscaling will be triggered to adjust the number of replicas |
-| config | object | `{"FILE_STORAGE":"local","FILE_STORAGE_UPLOAD_MAX_SIZE":"50000000","PGSSLMODE":"disable","URL":"https://outline.example.com"}` | Non-secret environment variables rendered into a ConfigMap. Keys are the literal names from <https://github.com/outline/outline/blob/main/.env.sample>. |
+| config | object | `{"FILE_STORAGE":"local","FILE_STORAGE_UPLOAD_MAX_SIZE":"50000000","FORCE_HTTPS":"false","PGSSLMODE":"disable","URL":"https://outline.example.com"}` | Non-secret environment variables rendered into a ConfigMap. Keys are the literal names from <https://github.com/outline/outline/blob/main/.env.sample>. |
 | config.FILE_STORAGE | string | `"local"` | Storage system to use, either "s3" or "local" |
 | config.FILE_STORAGE_UPLOAD_MAX_SIZE | string | `"50000000"` | Maximum allowed byte size for an uploaded attachment. Must be a string. |
+| config.FORCE_HTTPS | string | `"false"` | Redirect HTTP to HTTPS in the application. Leave false when TLS is terminated by the ingress. |
 | config.PGSSLMODE | string | `"disable"` | SSL mode for connecting to PostgreSQL |
 | config.URL | string | `"https://outline.example.com"` | Fully qualified, publicly accessible URL |
-| env | list | `[]` | Environment variables to pass to the deployment See configuration options at <https://github.com/outline/outline/blob/main/.env.sample> |
+| env | list | `[]` | Additional environment variables, appended to the container verbatim. Prefer `config` and `secrets`; entries here take precedence over both. |
 | envFrom | list | `[]` | envFrom to pass to the deployment |
 | extraVolumeMounts | list | `[]` | Additional volume mounts for the containers |
 | extraVolumes | list | `[]` | Additional volumes to mount to the deployment |

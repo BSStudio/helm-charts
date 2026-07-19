@@ -152,44 +152,22 @@ pointing at an external database or cache looks like.
 {{- end }}
 
 {{/*
-Transform environment variables to be added to secret.
+Environment variables the chart derives from other values, followed by the user's `env` entries.
+Anything a user should be able to change belongs in `config` or `secrets` instead: `env` wins over
+the ConfigMap and Secret, so entries here silently override them.
 */}}
-{{- define "outline.envVars" -}}
-{{- range $env := .Values.env }}
-  {{- if and (hasKey $env "name") (hasKey $env "value") }}
-{{ $env.name }}: {{ $env.value | toString | b64enc | quote }}
-  {{- end }}
+{{- define "outline.env" -}}
+- name: NODE_ENV
+  value: production
+- name: HOME
+  value: /tmp
+- name: PORT
+  value: {{ .Values.service.port | quote }}
+{{- if eq "local" (.Values.config.FILE_STORAGE | toString) }}
+- name: FILE_STORAGE_LOCAL_ROOT_DIR
+  value: /var/lib/outline/data
+{{- end }}
+{{- with .Values.env }}
+{{ toYaml . }}
 {{- end }}
 {{- end }}
-
-{{/*
-Generate environment variables.
-*/}}
-{{- define "outline.generateEnvVars" -}}
-  {{- $envVarsWithValueFrom := list -}}
-  {{- range $env := .Values.env -}}
-    {{- if and (hasKey $env "name") (hasKey $env "valueFrom") -}}
-      {{- $envVarsWithValueFrom = append $envVarsWithValueFrom (dict "name" $env.name "valueFrom" $env.valueFrom) }}
-    {{- end -}}
-  {{- end -}}
-  env:
-  - name: NODE_ENV
-    value: "production"
-  - name: HOME
-    value: "/tmp"
-  - name: FORCE_HTTPS
-    value: "false"
-  - name: PORT
-    value: {{ .Values.service.port | quote }}
-  {{- if eq "local" (.Values.config.FILE_STORAGE | toString) }}
-  - name: FILE_STORAGE_LOCAL_ROOT_DIR
-    value: "/var/lib/outline/data"
-  {{- end }}
-  {{- if not (empty $envVarsWithValueFrom) }}
-  {{- range $env := $envVarsWithValueFrom }}
-  - name: {{ $env.name }}
-    valueFrom:
-{{ toYaml $env.valueFrom | indent 6 }}
-  {{- end }}
-  {{- end }}
-{{- end -}}

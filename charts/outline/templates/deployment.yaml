@@ -83,7 +83,8 @@ spec:
             {{- with .Values.envFrom }}
               {{- toYaml . | nindent 12 }}
             {{- end }}
-          {{- include "outline.generateEnvVars" . | nindent 10 }}
+          env:
+            {{- include "outline.env" . | trim | nindent 12 }}
           {{- if or .Values.persistence.enabled .Values.extraVolumes }}
           volumeMounts:
             - name: {{ include "outline.fullname" . }}-tmp

@@ -138,8 +138,8 @@ pdb:
   # -- Minimum available pods (used when maxUnavailable is unset; defaults to 1)
   minAvailable: ""
 
-# -- Environment variables to pass to the deployment
-# See configuration options at <https://github.com/outline/outline/blob/main/.env.sample>
+# -- Additional environment variables, appended to the container verbatim. Prefer `config` and
+# `secrets`; entries here take precedence over both.
 env: []
   # - name: ENV_VAR_NAME
   #   value: VALUE
@@ -188,6 +188,8 @@ affinity: {}
 config:
   # -- Fully qualified, publicly accessible URL
   URL: https://outline.example.com
+  # -- Redirect HTTP to HTTPS in the application. Leave false when TLS is terminated by the ingress.
+  FORCE_HTTPS: "false"
   # -- SSL mode for connecting to PostgreSQL
   PGSSLMODE: disable
   # -- Storage system to use, either "s3" or "local"
