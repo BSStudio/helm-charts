@@ -3,7 +3,7 @@
     "terminology": {
       "exclude": [
         "Postgres?SQL",
-        "README",
+        "readme(s)?",
         "URL"
       ]
     }
