@@ -904,4 +904,39 @@ entries:
     urls:
     - https://github.com/BSStudio/helm-charts/releases/download/outline-1.0.0/outline-1.0.0.tgz
     version: 1.0.0
-generated: "2026-06-30T23:03:12.908252974Z"
+  request-manager:
+  - apiVersion: v2
+    appVersion: 1.3.2
+    created: "2026-07-19T08:43:52.985865005Z"
+    dependencies:
+    - condition: postgres.enabled
+      name: postgres
+      repository: oci://registry-1.docker.io/cloudpirates
+      version: 0.19.6
+    - condition: redis.enabled
+      name: redis
+      repository: oci://registry-1.docker.io/cloudpirates
+      version: 0.30.6
+    description: Manage video shooting and live streaming requests at Budavári Schönherz
+      Stúdió.
+    digest: 82627f2e3038a60315500eecc9f7406253a9cd2b311949677f7d0d9c410577f1
+    home: https://github.com/KOliver94/bss-request-manager
+    keywords:
+    - request-manager
+    - video-requests
+    - video-production
+    - studio
+    - bss
+    kubeVersion: '>=1.23.0-0'
+    maintainers:
+    - name: Budavári Schönherz Stúdió
+      url: https://github.com/BSStudio/helm-charts
+    name: request-manager
+    sources:
+    - https://github.com/BSStudio/helm-charts/tree/main/charts/request-manager
+    - https://github.com/KOliver94/bss-request-manager
+    type: application
+    urls:
+    - https://github.com/BSStudio/helm-charts/releases/download/request-manager-0.1.0/request-manager-0.1.0.tgz
+    version: 0.1.0
+generated: "2026-07-19T08:43:52.985931375Z"
