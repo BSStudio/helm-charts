@@ -19,12 +19,14 @@ then open http://127.0.0.1:{{ .Values.service.port }}
 {{- end }}
 
 Configured public URL: {{ .Values.config.URL }}
+{{- if not .Values.existingSecret }}
 {{- if not .Values.secrets.SECRET_KEY }}
 
 WARNING: secrets.SECRET_KEY is empty — set it (openssl rand -hex 32) or Outline will not start.
 {{- end }}
 {{- if not .Values.secrets.UTILS_SECRET }}
 WARNING: secrets.UTILS_SECRET is empty — set it (openssl rand -hex 32) or Outline will not start.
+{{- end }}
 {{- end }}
 {{- if and .Values.postgres.enabled (not .Values.postgres.auth.password) }}
 WARNING: postgres.auth.password is empty — set it or Outline cannot reach the bundled database.
