@@ -172,7 +172,7 @@ pdb:
 
 # -- Additional environment variables, appended to the container verbatim. Prefer `config` and
 # `secrets`; entries here take precedence over both.
-env: []
+extraEnv: []
   # - name: ENV_VAR_NAME
   #   value: VALUE
   # - name: ENV_VAR_OTHER

@@ -52,9 +52,9 @@ secrets:
   UTILS_SECRET: "..."
 ```
 
-`envFrom` is renamed to `extraEnvFrom`, matching the other charts in this repository. Entries under
-`env` are now passed to the container verbatim instead of being folded into the Secret, so a plain
-`value` is visible in the pod spec; move anything sensitive to `secrets`.
+`env` and `envFrom` are renamed to `extraEnv` and `extraEnvFrom`, matching the other charts in this
+repository. Entries under `extraEnv` are now passed to the container verbatim instead of being folded
+into the Secret, so a plain `value` is visible in the pod spec; move anything sensitive to `secrets`.
 
 `DATABASE_URL` and `REDIS_URL` no longer need to be set when the bundled sub-charts are used: they
 are built from `postgres.auth` and the release name. Set `postgres.auth.password` instead, which
@@ -76,8 +76,8 @@ previously had to be kept in sync with the password embedded in `outline.databas
 | config.FORCE_HTTPS | string | `"false"` | Redirect HTTP to HTTPS in the application. Leave false when TLS is terminated by the ingress. |
 | config.PGSSLMODE | string | `"disable"` | SSL mode for connecting to PostgreSQL |
 | config.URL | string | `"https://outline.example.com"` | Fully qualified, publicly accessible URL |
-| env | list | `[]` | Additional environment variables, appended to the container verbatim. Prefer `config` and `secrets`; entries here take precedence over both. |
 | existingSecret | string | `""` | Read the sensitive environment variables from an existing Secret instead of `secrets`. Its keys must be the environment variable names. The connection strings below are still chart-managed. |
+| extraEnv | list | `[]` | Additional environment variables, appended to the container verbatim. Prefer `config` and `secrets`; entries here take precedence over both. |
 | extraEnvFrom | list | `[]` | Additional envFrom sources appended to the container |
 | extraVolumeMounts | list | `[]` | Additional volume mounts for the containers |
 | extraVolumes | list | `[]` | Additional volumes to mount to the deployment |

@@ -176,7 +176,7 @@ the ConfigMap and Secret, so entries here silently override them.
 - name: FILE_STORAGE_LOCAL_ROOT_DIR
   value: /var/lib/outline/data
 {{- end }}
-{{- with .Values.env }}
+{{- with .Values.extraEnv }}
 {{ toYaml . }}
 {{- end }}
 {{- end }}
