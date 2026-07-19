@@ -192,14 +192,16 @@ outline:
   # `openssl rand -hex 32` in your terminal to produce this.
   utils_secret: ""
 
-  # -- Connection string to access the database
-  database_url: postgres://outline:secretPassword@{{ .Release.Name }}-postgres:5432/outline
+  # -- Connection string to access the database. Set this to point at an external database.
+  # @default -- built from `postgres.auth` when the bundled sub-chart is enabled
+  database_url: ""
 
   # -- Disable SSL for connecting to PostgreSQL
   pgsslmode: disable
 
-  # -- Connection string to access Redis
-  redis_url: redis://{{ .Release.Name }}-redis:6379
+  # -- Connection string to access Redis. Set this to point at an external cache.
+  # @default -- built from the bundled sub-chart when it is enabled
+  redis_url: ""
 
   # -- URL should point to the fully qualified, publicly accessible URL.
   url: https://outline.example.com
@@ -251,7 +253,9 @@ postgres:
     username: outline
     # -- Name for a custom database to create
     database: outline
-    # password: "secretPassword"
+    # -- Password for the custom user. Required, and must be URL-safe: it is interpolated into
+    # `outline.database_url`.
+    password: ""
   resources:
     limits:
       # -- The maximum amount of CPU the container can use

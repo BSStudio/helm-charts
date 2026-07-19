@@ -113,6 +113,23 @@ mounts no volumes.
 {{- end }}
 
 {{/*
+Outline settings, with the connection strings defaulted from the bundled sub-charts so that
+`postgres.auth` stays the single source of truth for the credentials. Either URL can still be set
+explicitly, which is what pointing at an external database or cache looks like.
+*/}}
+{{- define "outline.settings" -}}
+{{- $settings := deepCopy .Values.outline -}}
+{{- if and .Values.postgres.enabled (not .Values.outline.database_url) .Values.postgres.auth.password -}}
+{{- $auth := .Values.postgres.auth -}}
+{{- $_ := set $settings "database_url" (printf "postgres://%s:%s@%s-postgres:5432/%s" $auth.username $auth.password .Release.Name $auth.database) -}}
+{{- end -}}
+{{- if and .Values.redis.enabled (not .Values.outline.redis_url) -}}
+{{- $_ := set $settings "redis_url" (printf "redis://%s-redis:6379" .Release.Name) -}}
+{{- end -}}
+{{- toYaml $settings -}}
+{{- end }}
+
+{{/*
 Create outline configuration environment variables.
 */}}
 {{- define "outline.env" -}}
