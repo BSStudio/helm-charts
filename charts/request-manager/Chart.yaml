@@ -1,0 +1,31 @@
+---
+apiVersion: v2
+appVersion: 1.3.2
+dependencies:
+  - condition: postgres.enabled
+    name: postgres
+    repository: oci://registry-1.docker.io/cloudpirates
+    version: 0.19.6
+  - condition: redis.enabled
+    name: redis
+    repository: oci://registry-1.docker.io/cloudpirates
+    version: 0.30.6
+description: Manage video shooting and live streaming requests at Budavári Schönherz Stúdió.
+home: https://github.com/KOliver94/bss-request-manager
+# image: ghcr.io/koliver94/bss-request-manager
+keywords:
+  - request-manager
+  - video-requests
+  - video-production
+  - studio
+  - bss
+kubeVersion: ">=1.23.0-0"
+maintainers:
+  - name: Budavári Schönherz Stúdió
+    url: https://github.com/BSStudio/helm-charts
+name: request-manager
+sources:
+  - https://github.com/BSStudio/helm-charts/tree/main/charts/request-manager
+  - https://github.com/KOliver94/bss-request-manager
+type: application
+version: 0.1.0

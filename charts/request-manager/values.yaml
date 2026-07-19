@@ -1,0 +1,422 @@
+---
+# -- Provide a name in place of `request-manager`
+nameOverride: ""
+# -- String to fully override `"request-manager.fullname"`
+fullnameOverride: ""
+
+image:
+  # -- The Docker repository to pull the image from
+  repository: ghcr.io/koliver94/bss-request-manager
+  # -- The logic of image pulling
+  imagePullPolicy: IfNotPresent
+  # -- Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+# -- Image pull secrets for the (private) container registry
+imagePullSecrets: []
+  # - name: ghcr-credentials
+
+serviceAccount:
+  # -- Specifies whether a service account should be created
+  create: true
+  # -- Automatically mount a ServiceAccount's API credentials?
+  automount: false
+  # -- Annotations to add to the service account
+  annotations: {}
+  # -- The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template.
+  name: ""
+
+# -- Optional additional annotations to add to all pods
+podAnnotations: {}
+
+# -- Optional additional labels to add to all pods
+podLabels: {}
+
+# -- Pod-level security context, merged over chart defaults (fsGroup 65532 for volume writes)
+podSecurityContext: {}
+  # fsGroup: 2000
+
+# -- Container-level security context, merged over the hardened chart defaults
+securityContext: {}
+  # runAsUser: 65532
+
+# -- Init containers to add to every deployment
+initContainers: []
+  # - name: wait-for-something
+  #   image: busybox:latest
+  #   command: ['sh', '-c', 'do-something-here']
+
+# -- NodeSelector for all workloads
+nodeSelector: {}
+
+# -- Tolerations for all workloads
+tolerations: []
+
+# -- Affinity for all workloads
+affinity: {}
+
+server:
+  # -- Number of Gunicorn server replicas (ignored when autoscaling is enabled)
+  replicaCount: 1
+  # -- Grace period for the server pod to finish in-flight requests on shutdown
+  terminationGracePeriodSeconds: 30
+  # -- Container args (passed to the image entrypoint). Overrides the default Gunicorn command.
+  args:
+    - gunicorn
+    - --bind=0.0.0.0:8000
+    - --workers=2
+    - --threads=4
+    - --timeout=60
+    - --graceful-timeout=30
+    - --max-requests=1000
+    - --max-requests-jitter=100
+    - core.wsgi
+  # -- Deployment update strategy for the server workload
+  strategy: {}
+    # type: RollingUpdate
+    # rollingUpdate:
+    #   maxSurge: 1
+    #   maxUnavailable: 0
+  service:
+    # -- Kubernetes service type for HTTP traffic
+    type: ClusterIP
+    # -- Port number for HTTP traffic (the container listens on this port too)
+    port: 8000
+  # -- Liveness probe for the server container
+  livenessProbe:
+    httpGet:
+      path: /livez
+      port: http
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    failureThreshold: 3
+  # -- Readiness probe for the server container
+  readinessProbe:
+    httpGet:
+      path: /readyz
+      port: http
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    failureThreshold: 3
+  # -- Startup probe for the server container
+  startupProbe:
+    httpGet:
+      path: /livez
+      port: http
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    failureThreshold: 30
+  resources:
+    limits:
+      # -- The maximum amount of CPU the container can use
+      cpu: 1000m
+      # -- The maximum amount of memory the container can use. Memory is incompressible, so this
+      # matches the request to keep the pod out of the early-eviction path.
+      memory: 768Mi
+    requests:
+      # -- Specifies the minimum amount of CPU that will be allocated to the container
+      cpu: 500m
+      # -- Specifies the minimum amount of memory that will be allocated to the container
+      memory: 768Mi
+  autoscaling:
+    # -- Controls whether autoscaling is enabled for the server deployment
+    enabled: false
+    # -- Minimum number of server replicas
+    minReplicas: 1
+    # -- Maximum number of server replicas
+    maxReplicas: 10
+    # -- Target CPU utilization percentage that triggers scaling
+    targetCPUUtilizationPercentage: 80
+    # targetMemoryUtilizationPercentage: 80
+  pdb:
+    # -- Enable a PodDisruptionBudget for the server deployment
+    enabled: false
+    # -- Minimum available server pods (used when maxUnavailable is unset; defaults to 1)
+    minAvailable: ""
+    # -- Maximum unavailable server pods (takes precedence over minAvailable when set)
+    maxUnavailable: ""
+
+worker:
+  # -- Number of Celery worker replicas (ignored when autoscaling is enabled)
+  replicaCount: 1
+  # -- Grace period for the worker to finish in-flight tasks on shutdown
+  terminationGracePeriodSeconds: 60
+  # -- Container args for the Celery worker. Keep `--concurrency` in step with the CPU limit;
+  # without it Celery forks one process per node CPU, which will not fit the memory limit.
+  args:
+    - celery
+    - -A
+    - core
+    - worker
+    - --concurrency=2
+  # -- Liveness probe for the worker container
+  livenessProbe:
+    exec:
+      command:
+        - sh
+        - -c
+        - celery -A core inspect ping -d celery@$(hostname)
+    initialDelaySeconds: 30
+    periodSeconds: 30
+    timeoutSeconds: 10
+    failureThreshold: 3
+  # -- Readiness probe for the worker container
+  readinessProbe:
+    exec:
+      command:
+        - sh
+        - -c
+        - celery -A core inspect ping -d celery@$(hostname)
+    initialDelaySeconds: 15
+    periodSeconds: 30
+    timeoutSeconds: 10
+    failureThreshold: 3
+  autoscaling:
+    # -- Controls whether autoscaling is enabled for the worker deployment
+    enabled: false
+    # -- Minimum number of worker replicas
+    minReplicas: 1
+    # -- Maximum number of worker replicas
+    maxReplicas: 10
+    # -- Target CPU utilization percentage that triggers scaling
+    targetCPUUtilizationPercentage: 80
+    # targetMemoryUtilizationPercentage: 80
+  pdb:
+    # -- Enable a PodDisruptionBudget for the worker deployment
+    enabled: false
+    # -- Minimum available worker pods (used when maxUnavailable is unset; defaults to 1)
+    minAvailable: ""
+    # -- Maximum unavailable worker pods (takes precedence over minAvailable when set)
+    maxUnavailable: ""
+  resources:
+    limits:
+      # -- The maximum amount of CPU the container can use
+      cpu: 1000m
+      # -- The maximum amount of memory the container can use
+      memory: 768Mi
+    requests:
+      # -- Specifies the minimum amount of CPU that will be allocated to the container
+      cpu: 500m
+      # -- Specifies the minimum amount of memory that will be allocated to the container
+      memory: 768Mi
+
+beat:
+  # -- Grace period for the beat scheduler to shut down
+  terminationGracePeriodSeconds: 30
+  # -- Container args for the Celery beat scheduler
+  args:
+    - celery
+    - -A
+    - core
+    - beat
+  # -- Liveness probe for the beat container (disabled by default)
+  livenessProbe: {}
+  resources:
+    limits:
+      # -- The maximum amount of CPU the container can use
+      cpu: 250m
+      # -- The maximum amount of memory the container can use
+      memory: 384Mi
+    requests:
+      # -- Specifies the minimum amount of CPU that will be allocated to the container
+      cpu: 50m
+      # -- Specifies the minimum amount of memory that will be allocated to the container
+      memory: 384Mi
+
+migrations:
+  # -- Run database migrations from a dedicated Job on install and upgrade. One pod migrates, so
+  # the server can scale past a single replica. Disable to migrate out-of-band; the chart assumes
+  # it is the only migrator, `manage.py migrate` is not locked.
+  enabled: true
+  # -- Block every pod in an initContainer until migrations are applied. Deliberately not in the
+  # readiness probe: that would flip healthy running pods to NotReady whenever new migrations ship.
+  # Set explicitly to wait even when the Job is disabled; pods then block until you migrate.
+  # @default -- `migrations.enabled`
+  waitForMigrations: ~
+  # -- Seconds the initContainer waits for migrations before failing (the pod then retries)
+  waitTimeout: 300
+  # -- Container args for the migration Job
+  args:
+    - python
+    - manage.py
+    - migrate
+  # -- Number of retries before the migration Job is marked failed
+  backoffLimit: 3
+  # -- How long a finished migration Job is retained before automatic cleanup
+  ttlSecondsAfterFinished: 600
+  # -- Hard time limit for the migration Job. Unset so a long migration is never killed midway.
+  activeDeadlineSeconds: ""
+  resources:
+    limits:
+      # -- The maximum amount of CPU the container can use
+      cpu: 500m
+      # -- The maximum amount of memory the container can use
+      memory: 512Mi
+    requests:
+      # -- Specifies the minimum amount of CPU that will be allocated to the container
+      cpu: 100m
+      # -- Specifies the minimum amount of memory that will be allocated to the container
+      memory: 512Mi
+
+ingress:
+  # -- Enable an ingress resource for the server Service
+  enabled: false
+  # -- Defines which ingress controller will implement the resource
+  className: ""
+  # -- Additional ingress annotations
+  annotations: {}
+    # cert-manager.io/cluster-issuer: letsencrypt-prod
+  # -- List of ingress hosts
+  hosts: []
+    #  - host: request.example.com
+    #    paths:
+    #      - path: /
+    #        pathType: Prefix
+  # -- Ingress TLS configuration
+  tls: []
+    #  - secretName: request-example-tls
+    #    hosts:
+    #      - request.example.com
+
+credentials:
+  # -- Mount a Google service account key file into the credentials directory. Required only
+  # if the Google Calendar integration is used.
+  enabled: false
+  # -- Use an existing Secret holding the key file instead of creating one from `serviceAccountKey`
+  existingSecret: ""
+  # -- Filename of the key inside the credentials directory (env GOOGLE_SERVICE_ACCOUNT_KEY_FILE_NAME)
+  fileName: service-account-key-file.json
+  # -- Contents of the Google service account JSON key. Ignored when `existingSecret` is set.
+  serviceAccountKey: ""
+
+# -- Non-secret environment variables rendered into a ConfigMap, shared by all roles. Keys are the
+# literal names from <https://github.com/KOliver94/bss-request-manager/blob/main/backend/.env.sample>.
+# Connection settings (DATABASE_*, CACHE_REDIS, CELERY_BROKER) default to the bundled sub-charts.
+config:
+  DJANGO_SETTINGS_MODULE: core.settings.production
+  # -- Comma separated list of extra allowed hosts, appended to the pod IP, localhost and the
+  # Service name that the chart always sets. Add your ingress host(s) here.
+  ALLOWED_HOSTS: ""
+  # CORS_ALLOWED_ORIGINS: "https://request.example.com"
+  # CSRF_TRUSTED_ORIGINS: "https://request.example.com"
+  # BASE_URL_DOMAIN: request.example.com
+  # LANGUAGE_CODE: hu-hu
+  # TIME_ZONE: Europe/Budapest
+  # DJANGO_ADMIN: "True"
+  # EMAIL_HOST: smtp.example.com
+  # EMAIL_PORT: "587"
+  # EMAIL_USE_TLS: "True"
+  # DEFAULT_FROM_EMAIL: noreply@example.com
+  # DEFAULT_REPLY_EMAIL: info@example.com
+  # WEEKLY_TASK_EMAIL: list@example.com
+
+# -- Sensitive environment variables rendered into a Secret, shared by all roles. Keys are the
+# literal names from <https://github.com/KOliver94/bss-request-manager/blob/main/backend/.env.sample>.
+# With postgres.enabled, DATABASE_PASSWORD defaults to postgres.auth.password.
+secrets:
+  # -- Django secret key. Generate with `openssl rand -base64 48`.
+  APP_SECRET_KEY: ""
+  # DATABASE_PASSWORD: ""
+  # AUTH_SCH_CLIENT_ID: ""
+  # AUTH_SCH_CLIENT_SECRET: ""
+  # AUTH_BSS_CLIENT_ID: ""
+  # AUTH_BSS_CLIENT_SECRET: ""
+  # AUTH_BSS_SYNC_TOKEN: ""
+  # AUTH_GOOGLE_CLIENT_ID: ""
+  # AUTH_GOOGLE_CLIENT_SECRET: ""
+  # AUTH_MICROSOFT_CLIENT_ID: ""
+  # AUTH_MICROSOFT_CLIENT_SECRET: ""
+  # SCH_EVENTS_TOKEN: ""
+  # SENTRY_URL: ""
+  # TURNSTILE_SECRET_KEY: ""
+  # EMAIL_HOST_PASSWORD: ""
+
+# -- Supply the sensitive environment variables from an existing Secret instead of `secrets`. Its
+# keys must be the environment variable names. DATABASE_PASSWORD stays chart-managed.
+existingSecret: ""
+
+# -- Additional environment variables, appended to every container verbatim. Prefer `config` and
+# `secrets`; entries here take precedence over both.
+extraEnv: []
+  # - name: MY_SETTING
+  #   valueFrom:
+  #     fieldRef:
+  #       fieldPath: metadata.namespace
+
+# -- Additional envFrom sources appended to every container
+extraEnvFrom: []
+  # - secretRef:
+  #     name: extra-secret
+
+# -- Additional volumes added to every pod
+extraVolumes: []
+  # - name: foo
+  #   secret:
+  #     secretName: mysecret
+
+# -- Additional volume mounts added to every container
+extraVolumeMounts: []
+  # - name: foo
+  #   mountPath: /etc/foo
+  #   readOnly: true
+
+postgres:
+  # -- Enable the CloudPirates PostgreSQL chart.
+  # Refer to <https://github.com/CloudPirates-io/helm-charts/blob/main/charts/postgres> for possible values.
+  enabled: true
+  auth:
+    # -- Name for a custom user to create (also used as DATABASE_USER)
+    username: request_manager
+    # -- Name for a custom database to create (also used as DATABASE_NAME)
+    database: request_manager_db
+    # -- Password for the custom user (also used as DATABASE_PASSWORD). Must be set.
+    password: ""
+  # NOTE: Compose initialises PostgreSQL with a Hungarian ICU collation
+  # (`--locale-provider=icu --icu-locale=hu-HU`). Set the equivalent here if your data needs it.
+  resources:
+    limits:
+      # -- The maximum amount of CPU the container can use
+      cpu: 1000m
+      # -- The maximum amount of memory the container can use
+      memory: 1Gi
+    requests:
+      # -- Specifies the minimum amount of CPU that will be allocated to the container
+      cpu: 250m
+      # -- Specifies the minimum amount of memory that will be allocated to the container
+      memory: 256Mi
+  containerSecurityContext:
+    # -- Run container processes as non-root user nobody
+    runAsUser: 65534
+    # -- Run container processes with nobody group
+    runAsGroup: 65534
+    seccompProfile:
+      # -- Use the container runtime default seccomp profile
+      type: RuntimeDefault
+
+redis:
+  # -- Enable the CloudPirates Redis® chart.
+  # Refer to <https://github.com/CloudPirates-io/helm-charts/blob/main/charts/redis> for possible values.
+  enabled: true
+  auth:
+    # -- Enable password authentication
+    enabled: false
+  resources:
+    limits:
+      # -- The maximum amount of CPU the container can use
+      cpu: 150m
+      # -- The maximum amount of memory the container can use
+      memory: 256Mi
+    requests:
+      # -- Specifies the minimum amount of CPU that will be allocated to the container
+      cpu: 50m
+      # -- Specifies the minimum amount of memory that will be allocated to the container
+      memory: 128Mi
+  containerSecurityContext:
+    # -- Run container processes as non-root user nobody
+    runAsUser: 65534
+    # -- Run container processes with nobody group
+    runAsGroup: 65534
+    seccompProfile:
+      # -- Use the container runtime default seccomp profile
+      type: RuntimeDefault

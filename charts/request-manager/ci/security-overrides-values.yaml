@@ -1,0 +1,30 @@
+---
+# Exercises the security context merge helpers. Both keys below differ from the chart defaults, so
+# a merge that silently drops user input fails here rather than rendering something plausible.
+
+config:
+  EMAIL_HOST: localhost
+  EMAIL_PORT: "25"
+  DEFAULT_FROM_EMAIL: noreply@example.com
+  DEFAULT_REPLY_EMAIL: reply@example.com
+  WEEKLY_TASK_EMAIL: weekly@example.com
+  GOOGLE_SERVICE_ACCOUNT_KEY_FILE_NAME: ci-only-service-account.json
+  GOOGLE_CALENDAR_ID: ci-only@group.calendar.google.com
+
+secrets:
+  APP_SECRET_KEY: ci-only-not-a-real-secret-key-do-not-reuse
+  SCH_EVENTS_TOKEN: ci-only-sch-events-token
+  SENTRY_URL: https://ci@ci.invalid/1
+
+postgres:
+  auth:
+    password: ci-only-postgres-password
+
+# Nested merge: `add` must apply without losing the default `drop: [ALL]`.
+securityContext:
+  capabilities:
+    add:
+      - NET_BIND_SERVICE
+
+podSecurityContext:
+  fsGroupChangePolicy: Always
