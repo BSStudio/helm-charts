@@ -5,4 +5,4 @@ metadata:
   labels:
     {{- include "outline.labels" . | nindent 4 }}
 data:
-  {{- include "outline.config" . | trim | nindent 2 }}
+  {{- include "outline.config" . | trim | default "{}" | nindent 2 }}
