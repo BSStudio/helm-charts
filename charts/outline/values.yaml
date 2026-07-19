@@ -136,7 +136,8 @@ resources:
 persistence:
   # -- Determines whether persistent storage is enabled or not
   enabled: true
-  # -- Specifies the level of access to the persistent storage (e.g., read-write, read-only)
+  # -- Access mode for the volume. ReadWriteMany is required to run more than one replica while
+  # `config.FILE_STORAGE` is "local".
   accessMode: ReadWriteOnce
   # -- Defines the amount of storage allocated for persistence
   size: 2Gi
@@ -149,7 +150,8 @@ persistence:
   # storageClass:
 
 autoscaling:
-  # -- Controls whether autoscaling is enabled or disabled for the application
+  # -- Controls whether autoscaling is enabled or disabled for the application. Scaling past one
+  # replica needs `config.FILE_STORAGE` set to "s3", or a ReadWriteMany volume.
   enabled: false
   # -- Defines the minimum number of application instances (replicas) to maintain, even during low demand
   minReplicas: 1
@@ -222,7 +224,8 @@ config:
   FORCE_HTTPS: "false"
   # -- SSL mode for connecting to PostgreSQL
   PGSSLMODE: disable
-  # -- Storage system to use, either "s3" or "local"
+  # -- Storage system to use, either "s3" or "local". "local" needs `persistence` enabled, and pins
+  # the deployment to one node unless the volume is ReadWriteMany.
   FILE_STORAGE: local
   # -- Maximum allowed byte size for an uploaded attachment. Must be a string.
   FILE_STORAGE_UPLOAD_MAX_SIZE: "50000000"

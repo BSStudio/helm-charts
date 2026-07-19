@@ -66,12 +66,12 @@ previously had to be kept in sync with the password embedded in `outline.databas
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | affinity | object | `{}` | Affinity for the deployment |
-| autoscaling.enabled | bool | `false` | Controls whether autoscaling is enabled or disabled for the application |
+| autoscaling.enabled | bool | `false` | Controls whether autoscaling is enabled or disabled for the application. Scaling past one replica needs `config.FILE_STORAGE` set to "s3", or a ReadWriteMany volume. |
 | autoscaling.maxReplicas | int | `100` | Sets the maximum number of application instances (replicas) that can be scaled up to during high demand |
 | autoscaling.minReplicas | int | `1` | Defines the minimum number of application instances (replicas) to maintain, even during low demand |
 | autoscaling.targetCPUUtilizationPercentage | int | `80` | Specifies the CPU utilization threshold at which autoscaling will be triggered to adjust the number of replicas |
 | config | object | `{"FILE_STORAGE":"local","FILE_STORAGE_UPLOAD_MAX_SIZE":"50000000","FORCE_HTTPS":"false","PGSSLMODE":"disable","URL":"https://outline.example.com"}` | Non-secret environment variables rendered into a ConfigMap. Keys are the literal names from <https://github.com/outline/outline/blob/main/.env.sample>. |
-| config.FILE_STORAGE | string | `"local"` | Storage system to use, either "s3" or "local" |
+| config.FILE_STORAGE | string | `"local"` | Storage system to use, either "s3" or "local". "local" needs `persistence` enabled, and pins the deployment to one node unless the volume is ReadWriteMany. |
 | config.FILE_STORAGE_UPLOAD_MAX_SIZE | string | `"50000000"` | Maximum allowed byte size for an uploaded attachment. Must be a string. |
 | config.FORCE_HTTPS | string | `"false"` | Redirect HTTP to HTTPS in the application. Leave false when TLS is terminated by the ingress. |
 | config.PGSSLMODE | string | `"disable"` | SSL mode for connecting to PostgreSQL |
@@ -99,7 +99,7 @@ previously had to be kept in sync with the password embedded in `outline.databas
 | pdb.enabled | bool | `false` | Enable a PodDisruptionBudget. With a single replica `minAvailable: 1` blocks node drains. |
 | pdb.maxUnavailable | string | `""` | Maximum unavailable pods (takes precedence over minAvailable when set) |
 | pdb.minAvailable | string | `""` | Minimum available pods (used when maxUnavailable is unset; defaults to 1) |
-| persistence.accessMode | string | `"ReadWriteOnce"` | Specifies the level of access to the persistent storage (e.g., read-write, read-only) |
+| persistence.accessMode | string | `"ReadWriteOnce"` | Access mode for the volume. ReadWriteMany is required to run more than one replica while `config.FILE_STORAGE` is "local". |
 | persistence.annotations | object | `{}` | Annotations to add to the PVC, e.g. `helm.sh/resource-policy: keep` to retain data on uninstall |
 | persistence.enabled | bool | `true` | Determines whether persistent storage is enabled or not |
 | persistence.size | string | `"2Gi"` | Defines the amount of storage allocated for persistence |

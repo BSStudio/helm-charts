@@ -31,3 +31,13 @@ WARNING: secrets.UTILS_SECRET is empty — set it (openssl rand -hex 32) or Outl
 {{- if and .Values.postgres.enabled (not .Values.postgres.auth.password) }}
 WARNING: postgres.auth.password is empty — set it or Outline cannot reach the bundled database.
 {{- end }}
+{{- if eq "local" (.Values.config.FILE_STORAGE | toString) }}
+{{- if not .Values.persistence.enabled }}
+WARNING: FILE_STORAGE is "local" but persistence is disabled. The root filesystem is read-only, so
+uploads will fail. Enable persistence, or set config.FILE_STORAGE to "s3".
+{{- else if and (or .Values.autoscaling.enabled (gt (int .Values.replicaCount) 1)) (ne .Values.persistence.accessMode "ReadWriteMany") }}
+WARNING: FILE_STORAGE is "local" on a {{ .Values.persistence.accessMode }} volume, which only one
+node can mount. Replicas beyond the first will fail to schedule. Use ReadWriteMany, or set
+config.FILE_STORAGE to "s3".
+{{- end }}
+{{- end }}
