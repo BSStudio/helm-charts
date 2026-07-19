@@ -62,67 +62,121 @@ Create the name of the service account to use
 {{- end }}
 
 {{/*
-Create outline configuration environment variables.
+Container-level security context for the application container.
+Merged as a dict so user keys override the defaults rather than being appended as duplicates.
+*/}}
+{{- define "outline.containerSecurityContext" -}}
+{{- $defaults := dict
+  "runAsUser" 65534
+  "runAsGroup" 65534
+  "allowPrivilegeEscalation" false
+  "runAsNonRoot" true
+  "readOnlyRootFilesystem" true
+  "capabilities" (dict "drop" (list "ALL"))
+-}}
+{{- toYaml (mustMergeOverwrite $defaults (deepCopy (default dict .Values.securityContext))) }}
+{{- end }}
+
+{{/*
+Pod-level security context shared by every pod.
+*/}}
+{{- define "outline.podSecurityContext" -}}
+{{- $defaults := dict
+  "seccompProfile" (dict "type" "RuntimeDefault")
+  "fsGroup" 65534
+  "fsGroupChangePolicy" "OnRootMismatch"
+-}}
+{{- toYaml (mustMergeOverwrite $defaults (deepCopy (default dict .Values.podSecurityContext))) }}
+{{- end }}
+
+{{/*
+Security contexts for the scheduler CronJob. Separate from the application ones: it runs busybox and
+mounts no volumes.
+*/}}
+{{- define "outline.schedulerPodSecurityContext" -}}
+{{- $defaults := dict
+  "seccompProfile" (dict "type" "RuntimeDefault")
+-}}
+{{- toYaml (mustMergeOverwrite $defaults (deepCopy (default dict .Values.scheduler.podSecurityContext))) }}
+{{- end }}
+
+{{- define "outline.schedulerSecurityContext" -}}
+{{- $defaults := dict
+  "runAsUser" 65534
+  "runAsGroup" 65534
+  "allowPrivilegeEscalation" false
+  "runAsNonRoot" true
+  "readOnlyRootFilesystem" true
+  "capabilities" (dict "drop" (list "ALL"))
+-}}
+{{- toYaml (mustMergeOverwrite $defaults (deepCopy (default dict .Values.scheduler.securityContext))) }}
+{{- end }}
+
+{{/*
+Non-secret environment variables. Empty values are dropped so that blanking a default in a values
+file removes the variable rather than setting it to "".
+*/}}
+{{- define "outline.config" -}}
+{{- range $k, $v := .Values.config }}
+{{- $rendered := tpl ($v | toString) $ }}
+{{- if $rendered }}
+{{ $k }}: {{ $rendered | quote }}
+{{- end }}
+{{- end }}
+{{- end }}
+
+{{/*
+Sensitive environment variables. The connection strings default to the bundled sub-charts, keeping
+`postgres.auth` the single source of truth for the credentials; setting either explicitly is what
+pointing at an external database or cache looks like.
+*/}}
+{{- define "outline.secrets" -}}
+{{- $computed := dict -}}
+{{- if and .Values.postgres.enabled .Values.postgres.auth.password -}}
+{{- $auth := .Values.postgres.auth -}}
+{{- $_ := set $computed "DATABASE_URL" (printf "postgres://%s:%s@%s-postgres:5432/%s" $auth.username $auth.password .Release.Name $auth.database) -}}
+{{- end -}}
+{{- if .Values.redis.enabled -}}
+{{- $_ := set $computed "REDIS_URL" (printf "redis://%s-redis:6379" .Release.Name) -}}
+{{- end -}}
+{{- $user := dict -}}
+{{- if not .Values.existingSecret -}}
+{{- range $k, $v := .Values.secrets -}}
+{{- $rendered := tpl ($v | toString) $ -}}
+{{- if $rendered -}}
+{{- $_ := set $user $k $rendered -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- range $k, $v := merge $user $computed }}
+{{ $k }}: {{ $v | b64enc | quote }}
+{{- end }}
+{{- end }}
+
+{{/*
+Name of the Secret holding the user-supplied secrets, for consumers that read a single key.
+*/}}
+{{- define "outline.secretName" -}}
+{{- default (include "outline.fullname" .) .Values.existingSecret }}
+{{- end }}
+
+{{/*
+Environment variables the chart derives from other values, followed by the user's `env` entries.
+Anything a user should be able to change belongs in `config` or `secrets` instead: `env` wins over
+the ConfigMap and Secret, so entries here silently override them.
 */}}
 {{- define "outline.env" -}}
-{{- range $k, $v := .values }}
-  {{- if kindIs "map" $v }}
-    {{- range $sk, $sv := $v }}
-      {{- include "outline.env" (dict "root" $.root "values" (dict (printf "%s_%s" (upper $k) (upper $sk)) $sv)) }}
-    {{- end }}
-  {{- else }}
-    {{- $value := $v }}
-    {{- if or (kindIs "bool" $v) (kindIs "float64" $v) (kindIs "int" $v) (kindIs "int64" $v) }}
-      {{- $v = $v | toString | b64enc | quote -}}
-    {{- else }}
-      {{- $v = tpl $v $.root | toString | b64enc | quote }}
-    {{- end }}
-    {{- if and ($v) (ne $v "\"\"") }}
-{{ upper $k }}: {{ $v }}
-    {{- end }}
-  {{- end }}
+- name: NODE_ENV
+  value: production
+- name: HOME
+  value: /tmp
+- name: PORT
+  value: {{ .Values.service.port | quote }}
+{{- if eq "local" (.Values.config.FILE_STORAGE | toString) }}
+- name: FILE_STORAGE_LOCAL_ROOT_DIR
+  value: /var/lib/outline/data
 {{- end }}
-{{- end -}}
-
-{{/*
-Transform environment variables to be added to secret.
-*/}}
-{{- define "outline.envVars" -}}
-{{- range $env := .Values.env }}
-  {{- if and (hasKey $env "name") (hasKey $env "value") }}
-{{ $env.name }}: {{ $env.value | toString | b64enc | quote }}
-  {{- end }}
+{{- with .Values.extraEnv }}
+{{ toYaml . }}
 {{- end }}
 {{- end }}
-
-{{/*
-Generate environment variables.
-*/}}
-{{- define "outline.generateEnvVars" -}}
-  {{- $envVarsWithValueFrom := list -}}
-  {{- range $env := .Values.env -}}
-    {{- if and (hasKey $env "name") (hasKey $env "valueFrom") -}}
-      {{- $envVarsWithValueFrom = append $envVarsWithValueFrom (dict "name" $env.name "valueFrom" $env.valueFrom) }}
-    {{- end -}}
-  {{- end -}}
-  env:
-  - name: NODE_ENV
-    value: "production"
-  - name: HOME
-    value: "/tmp"
-  - name: FORCE_HTTPS
-    value: "false"
-  - name: PORT
-    value: {{ .Values.service.port | quote }}
-  {{- if eq "local" $.Values.outline.file_storage }}
-  - name: FILE_STORAGE_LOCAL_ROOT_DIR
-    value: "/var/lib/outline/data"
-  {{- end }}
-  {{- if not (empty $envVarsWithValueFrom) }}
-  {{- range $env := $envVarsWithValueFrom }}
-  - name: {{ $env.name }}
-    valueFrom:
-{{ toYaml $env.valueFrom | indent 6 }}
-  {{- end }}
-  {{- end }}
-{{- end -}}

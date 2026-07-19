@@ -1,9 +1,8 @@
 apiVersion: v1
-kind: Secret
+kind: ConfigMap
 metadata:
   name: {{ include "outline.fullname" . }}
   labels:
     {{- include "outline.labels" . | nindent 4 }}
-type: Opaque
 data:
-  {{- include "outline.secrets" . | trim | default "{}" | nindent 2 }}
+  {{- include "outline.config" . | trim | default "{}" | nindent 2 }}

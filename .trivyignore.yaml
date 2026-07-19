@@ -19,5 +19,6 @@ misconfigurations:
     statement: Used container registries are trusted
   - id: AVD-KSV-01010
     paths:
+      - charts/outline/templates/configmap.yaml
       - charts/request-manager/templates/configmap.yaml
-    statement: Actual chart will not be deployed to default namespace
+    statement: Matches on the key name only; the ConfigMap holds no sensitive values

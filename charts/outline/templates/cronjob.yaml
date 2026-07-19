@@ -23,27 +23,20 @@ spec:
           {{- end }}
           labels:
             {{- include "outline.labels" . | nindent 12 }}
+            app.kubernetes.io/component: scheduler
             {{- with .Values.scheduler.labels }}
               {{- toYaml . | nindent 12 }}
             {{- end }}
         spec:
           automountServiceAccountToken: false
           securityContext:
-            seccompProfile:
-              type: RuntimeDefault
+            {{- include "outline.schedulerPodSecurityContext" . | nindent 12 }}
           containers:
             - name: invoke-scheduler
               image: busybox:stable-uclibc
               imagePullPolicy: Always
               securityContext:
-                runAsUser: 65534
-                runAsGroup: 65534
-                allowPrivilegeEscalation: false
-                runAsNonRoot: true
-                readOnlyRootFilesystem: true
-                capabilities:
-                  drop:
-                    - ALL
+                {{- include "outline.schedulerSecurityContext" . | nindent 16 }}
               command: [/bin/sh]
               args:
                 - -c
@@ -65,12 +58,12 @@ spec:
                 - name: UTILS_SECRET
                   valueFrom:
                     secretKeyRef:
-                      name: {{ include "outline.fullname" . }}
+                      name: {{ include "outline.secretName" . }}
                       key: UTILS_SECRET
               resources:
                 requests:
                   cpu: 100m
-                  memory: 128Mi
+                  memory: 192Mi
                 limits:
                   cpu: 150m
                   memory: 192Mi

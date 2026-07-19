@@ -12,8 +12,15 @@ image:
   # -- Overrides the image tag whose default is the chart appVersion
   tag: ""
 
+# -- Secrets for pulling the image from a private registry
+imagePullSecrets: []
+
 # -- The number of replicas to deploy
 replicaCount: 1
+
+# -- Grace period for shutdown. Above Outline's own 60s force-quit timeout, so it is not killed
+# mid-drain.
+terminationGracePeriodSeconds: 75
 
 # -- Deployment update strategy. When empty, defaults to `Recreate` if persistence
 # is enabled with a non-`ReadWriteMany` access mode (avoids a RWO volume deadlock
@@ -80,12 +87,39 @@ ingress:
     #  - host: chart-example.local
     #    paths:
     #      - path: /
-    #        pathType: ImplementationSpecific
+    #        pathType: Prefix
     # -- Ingress TLS configuration
   tls: []
     #  - secretName: chart-example-tls
     #    hosts:
     #      - chart-example.local
+
+# -- Liveness probe for the container. Not /_health: it queries Postgres and Redis, so an outage
+# would restart every replica.
+livenessProbe:
+  tcpSocket:
+    port: http
+  initialDelaySeconds: 5
+  periodSeconds: 10
+  failureThreshold: 3
+
+# -- Readiness probe for the container
+readinessProbe:
+  httpGet:
+    path: /_health
+    port: http
+  initialDelaySeconds: 5
+  periodSeconds: 10
+  failureThreshold: 3
+
+# -- Startup probe for the container
+startupProbe:
+  httpGet:
+    path: /_health
+    port: http
+  initialDelaySeconds: 5
+  periodSeconds: 10
+  failureThreshold: 30
 
 resources:
   limits:
@@ -97,12 +131,13 @@ resources:
     # -- Specifies the minimum amount of CPU that will be allocated to the container
     cpu: 250m
     # -- Specifies the minimum amount of memory that will be allocated to the container
-    memory: 512Mi
+    memory: 1Gi
 
 persistence:
   # -- Determines whether persistent storage is enabled or not
   enabled: true
-  # -- Specifies the level of access to the persistent storage (e.g., read-write, read-only)
+  # -- Access mode for the volume. ReadWriteMany is required to run more than one replica while
+  # `config.FILE_STORAGE` is "local".
   accessMode: ReadWriteOnce
   # -- Defines the amount of storage allocated for persistence
   size: 2Gi
@@ -115,7 +150,8 @@ persistence:
   # storageClass:
 
 autoscaling:
-  # -- Controls whether autoscaling is enabled or disabled for the application
+  # -- Controls whether autoscaling is enabled or disabled for the application. Scaling past one
+  # replica needs `config.FILE_STORAGE` set to "s3", or a ReadWriteMany volume.
   enabled: false
   # -- Defines the minimum number of application instances (replicas) to maintain, even during low demand
   minReplicas: 1
@@ -126,9 +162,17 @@ autoscaling:
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
 
-# -- Environment variables to pass to the deployment
-# See configuration options at <https://github.com/outline/outline/blob/main/.env.sample>
-env: []
+pdb:
+  # -- Enable a PodDisruptionBudget. With a single replica `minAvailable: 1` blocks node drains.
+  enabled: false
+  # -- Maximum unavailable pods (takes precedence over minAvailable when set)
+  maxUnavailable: ""
+  # -- Minimum available pods (used when maxUnavailable is unset; defaults to 1)
+  minAvailable: ""
+
+# -- Additional environment variables, appended to the container verbatim. Prefer `config` and
+# `secrets`; entries here take precedence over both.
+extraEnv: []
   # - name: ENV_VAR_NAME
   #   value: VALUE
   # - name: ENV_VAR_OTHER
@@ -142,8 +186,8 @@ env: []
   #       name: config-map-name
   #       key: config-map-key
 
-# -- envFrom to pass to the deployment
-envFrom: []
+# -- Additional envFrom sources appended to the container
+extraEnvFrom: []
   # - configMapRef:
   #     name: config-map-name
   # - secretRef:
@@ -171,32 +215,35 @@ tolerations: []
 # -- Affinity for the deployment
 affinity: {}
 
-outline:
-  # -- Generate a hex-encoded 32-byte random key. You should use `openssl rand -hex 32`
-  # in your terminal to generate a random value.
-  secret_key: ""
+# -- Non-secret environment variables rendered into a ConfigMap. Keys are the literal names from
+# <https://github.com/outline/outline/blob/main/.env.sample>.
+config:
+  # -- Fully qualified, publicly accessible URL
+  URL: https://outline.example.com
+  # -- Redirect HTTP to HTTPS in the application. Leave false when TLS is terminated by the ingress.
+  FORCE_HTTPS: "false"
+  # -- SSL mode for connecting to PostgreSQL
+  PGSSLMODE: disable
+  # -- Storage system to use, either "s3" or "local". "local" needs `persistence` enabled, and pins
+  # the deployment to one node unless the volume is ReadWriteMany.
+  FILE_STORAGE: local
+  # -- Maximum allowed byte size for an uploaded attachment. Must be a string.
+  FILE_STORAGE_UPLOAD_MAX_SIZE: "50000000"
 
-  # -- Generate a unique random key. The format is not important but you could still use
-  # `openssl rand -hex 32` in your terminal to produce this.
-  utils_secret: ""
+# -- Read the sensitive environment variables from an existing Secret instead of `secrets`. Its keys
+# must be the environment variable names. The connection strings below are still chart-managed.
+existingSecret: ""
 
-  # -- Connection string to access the database
-  database_url: postgres://outline:secretPassword@outline-postgres:5432/outline
-
-  # -- Disable SSL for connecting to PostgreSQL
-  pgsslmode: disable
-
-  # -- Connection string to access Redis
-  redis_url: redis://outline-redis:6379
-
-  # -- URL should point to the fully qualified, publicly accessible URL.
-  url: https://outline.example.com
-
-  # -- Specify what storage system to use. Possible value is one of "s3" or "local".
-  file_storage: local
-
-  # -- Maximum allowed byte size for the uploaded attachment. Make sure to define it as a string.
-  file_storage_upload_max_size: "50000000"
+# -- Sensitive environment variables rendered into a Secret. Keys are the literal names from
+# <https://github.com/outline/outline/blob/main/.env.sample>. DATABASE_URL and REDIS_URL default to
+# the bundled sub-charts; set them to point at an external database or cache.
+secrets:
+  # -- Hex-encoded 32-byte random key. Generate with `openssl rand -hex 32`.
+  SECRET_KEY: ""
+  # -- Unique random key. Generate with `openssl rand -hex 32`.
+  UTILS_SECRET: ""
+  # DATABASE_URL: ""
+  # REDIS_URL: ""
 
 scheduler:
   # -- Create a CronJob to run Outline's scheduled jobs.
@@ -220,6 +267,10 @@ scheduler:
   annotations: {}
   # -- Optional additional labels to add to the CronJob runner pod
   labels: {}
+  # -- Pod-level security context for the runner pod, merged over the chart defaults
+  podSecurityContext: {}
+  # -- Container-level security context for the runner container, merged over the chart defaults
+  securityContext: {}
 
 minio:
   # -- Enable the CloudPirates MinIO® chart.
@@ -235,7 +286,9 @@ postgres:
     username: outline
     # -- Name for a custom database to create
     database: outline
-    # password: "secretPassword"
+    # -- Password for the custom user. Required, and must be URL-safe: it is interpolated into
+    # `secrets.DATABASE_URL`.
+    password: ""
   resources:
     limits:
       # -- The maximum amount of CPU the container can use
@@ -246,7 +299,7 @@ postgres:
       # -- Specifies the minimum amount of CPU that will be allocated to the container
       cpu: 250m
       # -- Specifies the minimum amount of memory that will be allocated to the container
-      memory: 256Mi
+      memory: 512Mi
   containerSecurityContext:
     # -- Run container processes as non-root user nobody
     runAsUser: 65534
@@ -273,7 +326,7 @@ redis:
       # -- Specifies the minimum amount of CPU that will be allocated to the container
       cpu: 50m
       # -- Specifies the minimum amount of memory that will be allocated to the container
-      memory: 128Mi
+      memory: 256Mi
   containerSecurityContext:
     # -- Run container processes as non-root user nobody
     runAsUser: 65534

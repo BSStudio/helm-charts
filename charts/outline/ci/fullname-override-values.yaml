@@ -1,0 +1,13 @@
+---
+# Drives `outline.fullname` away from the release name, which the bundled sub-charts are named after.
+# `ct` always generates a release name containing the chart name, so this needs an explicit override.
+
+fullnameOverride: mywiki
+
+secrets:
+  SECRET_KEY: 9c04e7b1a35d826f0b4c8e1d7a35906c2fb8e04d19a7c3b5e02f6d8a4b1c937e
+  UTILS_SECRET: 3e91d7c05a2bf846d0c937e1a58b4f26097cd3ba51e8f704b6a29d3c85e0f172
+
+postgres:
+  auth:
+    password: secretPassword
