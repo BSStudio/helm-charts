@@ -3,6 +3,43 @@ entries:
   outline:
   - apiVersion: v2
     appVersion: 1.8.1
+    created: "2026-07-19T09:30:42.908505783Z"
+    dependencies:
+    - condition: minio.enabled
+      name: minio
+      repository: oci://registry-1.docker.io/cloudpirates
+      version: 0.13.0
+    - condition: postgres.enabled
+      name: postgres
+      repository: oci://registry-1.docker.io/cloudpirates
+      version: 0.19.6
+    - condition: redis.enabled
+      name: redis
+      repository: oci://registry-1.docker.io/cloudpirates
+      version: 0.30.6
+    description: Outline is a fast, collaborative, knowledge base for your team built
+      using React and Node.js.
+    digest: b716b7ed96be5ba48dce681071e5290528495bc4d94044e220e4932bf8bd0506
+    home: https://www.getoutline.com
+    icon: https://www.getoutline.com/images/logo.svg
+    keywords:
+    - outline
+    - wiki
+    - docs
+    kubeVersion: '>=1.23.0-0'
+    maintainers:
+    - name: Budavári Schönherz Stúdió
+      url: https://github.com/BSStudio/helm-charts
+    name: outline
+    sources:
+    - https://github.com/BSStudio/helm-charts/tree/main/charts/outline
+    - https://github.com/outline/outline
+    type: application
+    urls:
+    - https://github.com/BSStudio/helm-charts/releases/download/outline-2.0.0/outline-2.0.0.tgz
+    version: 2.0.0
+  - apiVersion: v2
+    appVersion: 1.8.1
     created: "2026-06-30T23:03:12.908122681Z"
     dependencies:
     - condition: minio.enabled
@@ -939,4 +976,4 @@ entries:
     urls:
     - https://github.com/BSStudio/helm-charts/releases/download/request-manager-0.1.0/request-manager-0.1.0.tgz
     version: 0.1.0
-generated: "2026-07-19T08:43:52.985931375Z"
+generated: "2026-07-19T09:30:42.90871704Z"
