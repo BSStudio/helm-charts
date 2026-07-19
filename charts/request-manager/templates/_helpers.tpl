@@ -158,16 +158,26 @@ Non-secret connection defaults derived from the bundled sub-charts. User supplie
 {{- end }}
 
 {{/*
-The merged, non-secret configuration map (computed defaults + user overrides).
+The merged, non-secret configuration (computed defaults + user overrides). Empty values are dropped
+so that blanking a default in a values file removes the variable rather than setting it to "".
 ALLOWED_HOSTS is excluded; "request-manager.env" renders it instead.
 */}}
 {{- define "request-manager.config" -}}
 {{- $computed := fromYaml (include "request-manager.computedConfig" .) -}}
 {{- $user := dict -}}
-{{- range $k, $v := .Values.config -}}
-{{- $_ := set $user $k ($v | toString) -}}
+{{- range $k, $v := omit .Values.config "ALLOWED_HOSTS" -}}
+{{- if not (kindIs "invalid" $v) -}}
+{{- $rendered := tpl ($v | toString) $ -}}
+{{- if $rendered -}}
+{{- $_ := set $user $k $rendered -}}
 {{- end -}}
-{{- merge (omit $user "ALLOWED_HOSTS") $computed | toYaml -}}
+{{- end -}}
+{{- end -}}
+{{- range $k, $v := merge $user $computed }}
+{{- if $v }}
+{{ $k }}: {{ $v | quote }}
+{{- end }}
+{{- end }}
 {{- end }}
 
 {{/*

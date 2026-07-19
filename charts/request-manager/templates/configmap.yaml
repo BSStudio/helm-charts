@@ -5,7 +5,4 @@ metadata:
   labels:
     {{- include "request-manager.labels" . | nindent 4 }}
 data:
-  {{- $cfg := fromYaml (include "request-manager.config" .) }}
-  {{- range $k, $v := $cfg }}
-  {{ $k }}: {{ $v | quote }}
-  {{- end }}
+  {{- include "request-manager.config" . | trim | default "{}" | nindent 2 }}
