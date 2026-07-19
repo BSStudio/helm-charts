@@ -140,15 +140,24 @@ pointing at an external database or cache looks like.
 {{- $_ := set $computed "REDIS_URL" (printf "redis://%s-redis:6379" .Release.Name) -}}
 {{- end -}}
 {{- $user := dict -}}
+{{- if not .Values.existingSecret -}}
 {{- range $k, $v := .Values.secrets -}}
 {{- $rendered := tpl ($v | toString) $ -}}
 {{- if $rendered -}}
 {{- $_ := set $user $k $rendered -}}
 {{- end -}}
 {{- end -}}
+{{- end -}}
 {{- range $k, $v := merge $user $computed }}
 {{ $k }}: {{ $v | b64enc | quote }}
 {{- end }}
+{{- end }}
+
+{{/*
+Name of the Secret holding the user-supplied secrets, for consumers that read a single key.
+*/}}
+{{- define "outline.secretName" -}}
+{{- default (include "outline.fullname" .) .Values.existingSecret }}
 {{- end }}
 
 {{/*

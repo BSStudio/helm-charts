@@ -74,6 +74,7 @@ previously had to be kept in sync with the password embedded in `outline.databas
 | config.URL | string | `"https://outline.example.com"` | Fully qualified, publicly accessible URL |
 | env | list | `[]` | Additional environment variables, appended to the container verbatim. Prefer `config` and `secrets`; entries here take precedence over both. |
 | envFrom | list | `[]` | envFrom to pass to the deployment |
+| existingSecret | string | `""` | Read the sensitive environment variables from an existing Secret instead of `secrets`. Its keys must be the environment variable names. The connection strings below are still chart-managed. |
 | extraVolumeMounts | list | `[]` | Additional volume mounts for the containers |
 | extraVolumes | list | `[]` | Additional volumes to mount to the deployment |
 | fullnameOverride | string | `""` | String to fully override `"outline.fullname"` |

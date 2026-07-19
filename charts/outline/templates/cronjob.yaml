@@ -58,7 +58,7 @@ spec:
                 - name: UTILS_SECRET
                   valueFrom:
                     secretKeyRef:
-                      name: {{ include "outline.fullname" . }}
+                      name: {{ include "outline.secretName" . }}
                       key: UTILS_SECRET
               resources:
                 requests:

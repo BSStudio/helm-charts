@@ -197,6 +197,10 @@ config:
   # -- Maximum allowed byte size for an uploaded attachment. Must be a string.
   FILE_STORAGE_UPLOAD_MAX_SIZE: "50000000"
 
+# -- Read the sensitive environment variables from an existing Secret instead of `secrets`. Its keys
+# must be the environment variable names. The connection strings below are still chart-managed.
+existingSecret: ""
+
 # -- Sensitive environment variables rendered into a Secret. Keys are the literal names from
 # <https://github.com/outline/outline/blob/main/.env.sample>. DATABASE_URL and REDIS_URL default to
 # the bundled sub-charts; set them to point at an external database or cache.

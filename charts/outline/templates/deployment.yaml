@@ -80,6 +80,10 @@ spec:
                 name: {{ include "outline.fullname" . }}
             - secretRef:
                 name: {{ include "outline.fullname" . }}
+            {{- with .Values.existingSecret }}
+            - secretRef:
+                name: {{ . }}
+            {{- end }}
             {{- with .Values.envFrom }}
               {{- toYaml . | nindent 12 }}
             {{- end }}
