@@ -81,6 +81,7 @@ previously had to be kept in sync with the password embedded in `outline.databas
 | image.imagePullPolicy | string | `"IfNotPresent"` | The logic of image pulling |
 | image.repository | string | `"outlinewiki/outline"` | The Docker repository to pull the image from |
 | image.tag | string | `""` | Overrides the image tag whose default is the chart appVersion |
+| imagePullSecrets | list | `[]` | Secrets for pulling the image from a private registry |
 | ingress.annotations | object | `{}` | Additional ingress annotations |
 | ingress.className | string | `""` | Defines which ingress controller will implement the resource |
 | ingress.enabled | bool | `false` | Enable an ingress resource |

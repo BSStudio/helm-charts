@@ -12,6 +12,9 @@ image:
   # -- Overrides the image tag whose default is the chart appVersion
   tag: ""
 
+# -- Secrets for pulling the image from a private registry
+imagePullSecrets: []
+
 # -- The number of replicas to deploy
 replicaCount: 1
 
