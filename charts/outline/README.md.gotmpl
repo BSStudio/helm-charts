@@ -1,0 +1,45 @@
+{{ template "chart.header" . }}
+{{ template "chart.deprecationWarning" . }}
+{{ template "chart.badgesSection" . }}
+
+{{ template "chart.description" . }}
+
+{{ template "chart.homepageLine" . }}
+
+{{ template "chart.maintainersSection" . }}
+
+{{ template "chart.sourcesSection" . }}
+
+{{ template "chart.requirementsSection" . }}
+
+## Upgrading
+
+### 1.x to 2.0
+
+The `outline` values block is replaced by `config` (rendered into a ConfigMap) and `secrets`
+(rendered into a Secret). Keys are now the literal environment variable names from Outline's
+[.env.sample](https://github.com/outline/outline/blob/main/.env.sample), so `outline.secret_key`
+becomes `secrets.SECRET_KEY`, and a nested `outline.smtp.host` becomes `config.SMTP_HOST`.
+
+```yaml
+# before
+outline:
+  secret_key: "..."
+  utils_secret: "..."
+  url: https://wiki.example.com
+  database_url: postgres://outline:hunter2@outline-postgres:5432/outline
+
+# after
+config:
+  URL: https://wiki.example.com
+secrets:
+  SECRET_KEY: "..."
+  UTILS_SECRET: "..."
+```
+
+`DATABASE_URL` and `REDIS_URL` no longer need to be set when the bundled sub-charts are used: they
+are built from `postgres.auth` and the release name. Set `postgres.auth.password` instead, which
+previously had to be kept in sync with the password embedded in `outline.database_url`. Set
+`secrets.DATABASE_URL` explicitly only to point at an external database.
+
+{{ template "chart.valuesSection" . }}

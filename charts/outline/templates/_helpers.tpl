@@ -113,44 +113,43 @@ mounts no volumes.
 {{- end }}
 
 {{/*
-Outline settings, with the connection strings defaulted from the bundled sub-charts so that
-`postgres.auth` stays the single source of truth for the credentials. Either URL can still be set
-explicitly, which is what pointing at an external database or cache looks like.
+Non-secret environment variables. Empty values are dropped so that blanking a default in a values
+file removes the variable rather than setting it to "".
 */}}
-{{- define "outline.settings" -}}
-{{- $settings := deepCopy .Values.outline -}}
-{{- if and .Values.postgres.enabled (not .Values.outline.database_url) .Values.postgres.auth.password -}}
-{{- $auth := .Values.postgres.auth -}}
-{{- $_ := set $settings "database_url" (printf "postgres://%s:%s@%s-postgres:5432/%s" $auth.username $auth.password .Release.Name $auth.database) -}}
-{{- end -}}
-{{- if and .Values.redis.enabled (not .Values.outline.redis_url) -}}
-{{- $_ := set $settings "redis_url" (printf "redis://%s-redis:6379" .Release.Name) -}}
-{{- end -}}
-{{- toYaml $settings -}}
+{{- define "outline.config" -}}
+{{- range $k, $v := .Values.config }}
+{{- $rendered := tpl ($v | toString) $ }}
+{{- if $rendered }}
+{{ $k }}: {{ $rendered | quote }}
+{{- end }}
+{{- end }}
 {{- end }}
 
 {{/*
-Create outline configuration environment variables.
+Sensitive environment variables. The connection strings default to the bundled sub-charts, keeping
+`postgres.auth` the single source of truth for the credentials; setting either explicitly is what
+pointing at an external database or cache looks like.
 */}}
-{{- define "outline.env" -}}
-{{- range $k, $v := .values }}
-  {{- if kindIs "map" $v }}
-    {{- range $sk, $sv := $v }}
-      {{- include "outline.env" (dict "root" $.root "values" (dict (printf "%s_%s" (upper $k) (upper $sk)) $sv)) }}
-    {{- end }}
-  {{- else }}
-    {{- $value := $v }}
-    {{- if or (kindIs "bool" $v) (kindIs "float64" $v) (kindIs "int" $v) (kindIs "int64" $v) }}
-      {{- $v = $v | toString | b64enc | quote -}}
-    {{- else }}
-      {{- $v = tpl $v $.root | toString | b64enc | quote }}
-    {{- end }}
-    {{- if and ($v) (ne $v "\"\"") }}
-{{ upper $k }}: {{ $v }}
-    {{- end }}
-  {{- end }}
-{{- end }}
+{{- define "outline.secrets" -}}
+{{- $computed := dict -}}
+{{- if and .Values.postgres.enabled .Values.postgres.auth.password -}}
+{{- $auth := .Values.postgres.auth -}}
+{{- $_ := set $computed "DATABASE_URL" (printf "postgres://%s:%s@%s-postgres:5432/%s" $auth.username $auth.password .Release.Name $auth.database) -}}
 {{- end -}}
+{{- if .Values.redis.enabled -}}
+{{- $_ := set $computed "REDIS_URL" (printf "redis://%s-redis:6379" .Release.Name) -}}
+{{- end -}}
+{{- $user := dict -}}
+{{- range $k, $v := .Values.secrets -}}
+{{- $rendered := tpl ($v | toString) $ -}}
+{{- if $rendered -}}
+{{- $_ := set $user $k $rendered -}}
+{{- end -}}
+{{- end -}}
+{{- range $k, $v := merge $user $computed }}
+{{ $k }}: {{ $v | b64enc | quote }}
+{{- end }}
+{{- end }}
 
 {{/*
 Transform environment variables to be added to secret.
@@ -182,7 +181,7 @@ Generate environment variables.
     value: "false"
   - name: PORT
     value: {{ .Values.service.port | quote }}
-  {{- if eq "local" $.Values.outline.file_storage }}
+  {{- if eq "local" (.Values.config.FILE_STORAGE | toString) }}
   - name: FILE_STORAGE_LOCAL_ROOT_DIR
     value: "/var/lib/outline/data"
   {{- end }}

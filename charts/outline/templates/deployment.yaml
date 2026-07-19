@@ -21,6 +21,7 @@ spec:
   template:
     metadata:
       annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
         checksum/secret: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
         {{- with .Values.podAnnotations }}
           {{- toYaml . | nindent 8 }}
@@ -75,6 +76,8 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           envFrom:
+            - configMapRef:
+                name: {{ include "outline.fullname" . }}
             - secretRef:
                 name: {{ include "outline.fullname" . }}
             {{- with .Values.envFrom }}

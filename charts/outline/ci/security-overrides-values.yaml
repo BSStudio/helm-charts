@@ -1,9 +1,9 @@
 ---
 # Exercises the security context merge helpers. Every key below differs from the chart defaults.
 
-outline:
-  secret_key: 1a7e93c05fb8d2647c0e3f9a15bd6820c47fe9a3b0d58126fc94e07a3b5d81f6
-  utils_secret: 26fbc0a94d7e13580b6ca2f84e09d735182bf6ca0e94d7538201bfc6a4e9d370
+secrets:
+  SECRET_KEY: 1a7e93c05fb8d2647c0e3f9a15bd6820c47fe9a3b0d58126fc94e07a3b5d81f6
+  UTILS_SECRET: 26fbc0a94d7e13580b6ca2f84e09d735182bf6ca0e94d7538201bfc6a4e9d370
 
 postgres:
   auth:
