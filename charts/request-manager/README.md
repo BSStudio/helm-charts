@@ -45,6 +45,7 @@ Kubernetes: `>=1.23.0-0`
 | credentials.fileName | string | `"service-account-key-file.json"` | Filename of the key inside the credentials directory (env GOOGLE_SERVICE_ACCOUNT_KEY_FILE_NAME) |
 | credentials.serviceAccountKey | string | `""` | Contents of the Google service account JSON key. Ignored when `existingSecret` is set. |
 | existingSecret | string | `""` | Supply the sensitive environment variables from an existing Secret instead of `secrets`. Its keys must be the environment variable names. DATABASE_PASSWORD stays chart-managed. |
+| extraEnv | list | `[]` | Additional environment variables, appended to every container verbatim. Prefer `config` and `secrets`; entries here take precedence over both. |
 | extraEnvFrom | list | `[]` | Additional envFrom sources appended to every container |
 | extraVolumeMounts | list | `[]` | Additional volume mounts added to every container |
 | extraVolumes | list | `[]` | Additional volumes added to every pod |

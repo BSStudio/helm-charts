@@ -186,6 +186,9 @@ the Host header and Django 400s any host it does not list. The Service name cove
       fieldPath: status.podIP
 - name: ALLOWED_HOSTS
   value: "$(POD_IP),127.0.0.1,localhost,{{ include "request-manager.fullname" . }}{{ with (default dict .Values.config).ALLOWED_HOSTS }},{{ . }}{{ end }}"
+{{- with .Values.extraEnv }}
+{{ toYaml . }}
+{{- end }}
 {{- end }}
 
 {{/*
