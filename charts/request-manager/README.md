@@ -38,7 +38,7 @@ Kubernetes: `>=1.23.0-0`
 | beat.resources.requests.cpu | string | `"50m"` | Specifies the minimum amount of CPU that will be allocated to the container |
 | beat.resources.requests.memory | string | `"384Mi"` | Specifies the minimum amount of memory that will be allocated to the container |
 | beat.terminationGracePeriodSeconds | int | `30` | Grace period for the beat scheduler to shut down |
-| config | object | `{"ALLOWED_HOSTS":"","DJANGO_SETTINGS_MODULE":"core.settings.production"}` | Non-secret environment variables rendered into a ConfigMap, shared by all roles. Keys are the literal names from <https://github.com/KOliver94/bss-request-manager/blob/main/backend/.env.sample>. Connection settings (DATABASE_*, CACHE_REDIS, CELERY_BROKER) default to the bundled sub-charts. |
+| config | object | `{"ALLOWED_HOSTS":"","DJANGO_SETTINGS_MODULE":"core.settings.production"}` | Non-secret environment variables rendered into a ConfigMap, shared by all roles. Keys are the literal names from <https://github.com/BSStudio/request-manager/blob/main/backend/.env.sample>. Connection settings (DATABASE_*, CACHE_REDIS, CELERY_BROKER) default to the bundled sub-charts. |
 | config.ALLOWED_HOSTS | string | `""` | Comma separated list of extra allowed hosts, appended to the pod IP, localhost and the Service name that the chart always sets. Add your ingress host(s) here. |
 | credentials.enabled | bool | `false` | Mount a Google service account key file into the credentials directory. Required only if the Google Calendar integration is used. |
 | credentials.existingSecret | string | `""` | Use an existing Secret holding the key file instead of creating one from `serviceAccountKey` |
@@ -96,7 +96,7 @@ Kubernetes: `>=1.23.0-0`
 | redis.resources.limits.memory | string | `"256Mi"` | The maximum amount of memory the container can use |
 | redis.resources.requests.cpu | string | `"50m"` | Specifies the minimum amount of CPU that will be allocated to the container |
 | redis.resources.requests.memory | string | `"128Mi"` | Specifies the minimum amount of memory that will be allocated to the container |
-| secrets | object | `{"APP_SECRET_KEY":""}` | Sensitive environment variables rendered into a Secret, shared by all roles. Keys are the literal names from <https://github.com/KOliver94/bss-request-manager/blob/main/backend/.env.sample>. With postgres.enabled, DATABASE_PASSWORD defaults to postgres.auth.password. |
+| secrets | object | `{"APP_SECRET_KEY":""}` | Sensitive environment variables rendered into a Secret, shared by all roles. Keys are the literal names from <https://github.com/BSStudio/request-manager/blob/main/backend/.env.sample>. With postgres.enabled, DATABASE_PASSWORD defaults to postgres.auth.password. |
 | secrets.APP_SECRET_KEY | string | `""` | Django secret key. Generate with `openssl rand -base64 48`. |
 | securityContext | object | `{}` | Container-level security context, merged over the hardened chart defaults |
 | server.args | list | `["gunicorn","--bind=0.0.0.0:8000","--workers=2","--threads=4","--timeout=60","--graceful-timeout=30","--max-requests=1000","--max-requests-jitter=100","core.wsgi"]` | Container args (passed to the image entrypoint). Overrides the default Gunicorn command. |
