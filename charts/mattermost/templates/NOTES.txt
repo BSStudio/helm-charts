@@ -1,0 +1,30 @@
+{{- $fullName := include "mattermost.fullname" . -}}
+Mattermost {{ .Chart.AppVersion }} has been deployed as release {{ .Release.Name }}.
+
+{{- if .Values.ingress.enabled }}
+
+Reach Mattermost at:
+{{- range $host := .Values.ingress.hosts }}
+  {{- range .paths }}
+  http{{ if $.Values.ingress.tls }}s{{ end }}://{{ $host.host }}{{ .path }}
+  {{- end }}
+{{- end }}
+{{- else }}
+
+Mattermost is exposed on a {{ .Values.service.type }} Service. To reach it from your machine:
+
+  kubectl --namespace {{ .Release.Namespace }} port-forward svc/{{ $fullName }} {{ .Values.service.port }}:{{ .Values.service.port }}
+
+then open http://127.0.0.1:{{ .Values.service.port }}
+{{- end }}
+
+{{- if and .Values.postgres.enabled (not .Values.postgres.auth.password) }}
+
+WARNING: postgres.auth.password is empty — set it or Mattermost cannot reach the bundled database.
+{{- end }}
+{{- if and .Values.persistence.enabled (gt (int .Values.replicaCount) 1) (ne .Values.persistence.accessMode "ReadWriteMany") }}
+
+WARNING: replicaCount is {{ .Values.replicaCount }} on a {{ .Values.persistence.accessMode }} data
+volume, which only one node can mount. Replicas beyond the first will fail to schedule. Use
+ReadWriteMany, or switch config.MM_FILESETTINGS_DRIVERNAME to "amazons3".
+{{- end }}

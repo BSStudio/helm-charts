@@ -1,0 +1,13 @@
+---
+# Ingress enabled with pathType omitted, so the chart default is what the API server validates.
+
+postgres:
+  auth:
+    password: secretPassword
+
+ingress:
+  enabled: true
+  hosts:
+    - host: mattermost.example.com
+      paths:
+        - path: /

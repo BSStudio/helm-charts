@@ -1,0 +1,16 @@
+---
+# Exercises the default path end-to-end: bundled PostgreSQL and OIDC enabled with complete settings.
+# The discovery endpoint is only fetched at login, so a placeholder URL is fine for an install test.
+
+postgres:
+  auth:
+    password: secretPassword
+
+config:
+  MM_SERVICESETTINGS_SITEURL: https://mattermost.ci.example.com
+  MM_OPENIDSETTINGS_ENABLE: "true"
+  MM_OPENIDSETTINGS_DISCOVERYENDPOINT: https://id.example.com/.well-known/openid-configuration
+  MM_OPENIDSETTINGS_ID: ci-client-id
+
+secrets:
+  MM_OPENIDSETTINGS_SECRET: ci-client-secret

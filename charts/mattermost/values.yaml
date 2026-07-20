@@ -1,0 +1,262 @@
+---
+# -- Provide a name in place of `mattermost`
+nameOverride: ""
+# -- String to fully override `"mattermost.fullname"`
+fullnameOverride: ""
+
+image:
+  # -- The Docker repository to pull the image from. The BSStudio build is Team Edition with the
+  # OIDC patch applied and the user cap lifted (<https://github.com/BSStudio/mattermost-image>).
+  repository: ghcr.io/bsstudio/mattermost-team-edition
+  # -- The logic of image pulling
+  imagePullPolicy: IfNotPresent
+  # -- Overrides the image tag whose default is the chart appVersion
+  tag: ""
+
+# -- Secrets for pulling the image from a private registry
+imagePullSecrets: []
+
+# -- The number of replicas to deploy. Scaling past one needs a `ReadWriteMany` data volume (or
+# external S3 file storage): the bundled default is a single `ReadWriteOnce` PVC only one node can mount.
+replicaCount: 1
+
+# -- Grace period for shutdown. Should exceed Mattermost's own graceful-shutdown timeout so it is
+# not killed mid-drain.
+terminationGracePeriodSeconds: 60
+
+# -- Deployment update strategy. When empty, defaults to `Recreate` if persistence is enabled with a
+# non-`ReadWriteMany` access mode (avoids a RWO volume deadlock on upgrade), otherwise Kubernetes'
+# default RollingUpdate is used.
+strategy: {}
+  # type: RollingUpdate
+  # rollingUpdate:
+  #   maxSurge: 1
+  #   maxUnavailable: 0
+
+serviceAccount:
+  # -- Specifies whether a service account should be created
+  create: true
+  # -- Automatically mount a ServiceAccount's API credentials?
+  automount: false
+  # -- Annotations to add to the service account
+  annotations: {}
+  # -- The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template.
+  name: ""
+
+# -- Optional additional annotations to add to the pods
+podAnnotations: {}
+
+# -- Optional additional labels to add to the pods
+podLabels: {}
+
+# -- Pod-level security context, merged over chart defaults (fsGroup 65534 for volume writes)
+podSecurityContext: {}
+  # fsGroup: 2000
+
+# -- Run containers as a specific securityContext, merged over chart defaults (runAsUser 65534,
+# readOnlyRootFilesystem, capabilities drop ALL)
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+# -- Init containers to add to the deployment
+initContainers: []
+  # - name: wait-for-postgres
+  #   image: busybox:latest
+  #   command: ['sh', '-c', 'do-something-here']
+
+service:
+  # -- Kubernetes service type for web traffic
+  type: ClusterIP
+  # -- Port number for web traffic
+  port: 8065
+
+ingress:
+  # -- Enable an ingress resource
+  enabled: false
+  # -- Defines which ingress controller will implement the resource
+  className: ""
+  # -- Additional ingress annotations. Mattermost pushes large uploads and long-polls, so a bigger
+  # body size and read timeout are usually needed on the controller.
+  annotations: {}
+    # nginx.ingress.kubernetes.io/proxy-body-size: 50m
+    # nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+  # -- List of ingress hosts
+  hosts: []
+    #  - host: mattermost.example.com
+    #    paths:
+    #      - path: /
+    #        pathType: Prefix
+  # -- Ingress TLS configuration
+  tls: []
+    #  - secretName: mattermost-example-com-tls
+    #    hosts:
+    #      - mattermost.example.com
+
+# -- Liveness probe for the container. `tcpSocket`, not the ping endpoint: a ping that reaches the
+# database would restart every replica during a database blip, which cannot fix it.
+livenessProbe:
+  tcpSocket:
+    port: http
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  failureThreshold: 3
+
+# -- Readiness probe for the container
+readinessProbe:
+  httpGet:
+    path: /api/v4/system/ping
+    port: http
+  initialDelaySeconds: 15
+  periodSeconds: 10
+  failureThreshold: 3
+
+# -- Startup probe for the container. Generous threshold: the first boot runs database migrations.
+startupProbe:
+  httpGet:
+    path: /api/v4/system/ping
+    port: http
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  failureThreshold: 30
+
+resources:
+  limits:
+    # -- The maximum amount of CPU the container can use
+    cpu: 1000m
+    # -- The maximum amount of memory the container can use
+    memory: 1Gi
+  requests:
+    # -- Specifies the minimum amount of CPU that will be allocated to the container
+    cpu: 250m
+    # -- Specifies the minimum amount of memory that will be allocated to the container
+    memory: 1Gi
+
+persistence:
+  # -- Persist uploaded files, attachments and plugins (`/mattermost/data`). Required with local file
+  # storage and a read-only root filesystem.
+  enabled: true
+  # -- Access mode for the volume. ReadWriteMany is required to run more than one replica while file
+  # storage is "local".
+  accessMode: ReadWriteOnce
+  # -- Defines the amount of storage allocated for persistence
+  size: 10Gi
+  # -- Annotations to add to the PVC, e.g. `helm.sh/resource-policy: keep` to retain data on uninstall
+  annotations: {}
+  # -- Use an existing claim instead of creating one
+  # existingClaim: ""
+  # -- If defined, storageClassName. "-" sets it to "" (disables dynamic provisioning); unset uses
+  # the cluster default.
+  # storageClass: ""
+
+pdb:
+  # -- Enable a PodDisruptionBudget. With a single replica `minAvailable: 1` blocks node drains.
+  enabled: false
+  # -- Maximum unavailable pods (takes precedence over minAvailable when set)
+  maxUnavailable: ""
+  # -- Minimum available pods (used when maxUnavailable is unset; defaults to 1)
+  minAvailable: ""
+
+# -- Additional environment variables, appended to the container verbatim. Prefer `config` and
+# `secrets`; entries here take precedence over both.
+extraEnv: []
+  # - name: MM_SERVICESETTINGS_ENABLECOMMANDS
+  #   value: "true"
+  # - name: ENV_FROM_SECRET
+  #   valueFrom:
+  #     secretKeyRef:
+  #       name: secret-name
+  #       key: secret-key
+
+# -- Additional envFrom sources appended to the container
+extraEnvFrom: []
+  # - configMapRef:
+  #     name: config-map-name
+  # - secretRef:
+  #     name: secret-name
+
+# -- Additional volumes to mount to the deployment
+extraVolumes: []
+  # - name: saml-certs
+  #   secret:
+  #     secretName: mattermost-saml
+
+# -- Additional volume mounts for the containers
+extraVolumeMounts: []
+  # - name: saml-certs
+  #   mountPath: /mattermost/config/saml
+  #   readOnly: true
+
+# -- NodeSelector for the deployment
+nodeSelector: {}
+
+# -- Tolerations for the deployment
+tolerations: []
+
+# -- Affinity for the deployment
+affinity: {}
+
+# -- Non-secret environment variables rendered into a ConfigMap. Keys are the literal
+# `MM_<SECTION>_<SETTING>` names Mattermost reads
+# (<https://docs.mattermost.com/configure/configuration-settings.html>). Each overrides the value
+# stored in the database; empty values are dropped.
+config:
+  # -- Database driver. Only "postgres" is supported by this chart's bundled database.
+  MM_SQLSETTINGS_DRIVERNAME: postgres
+  # -- File storage backend, "local" or "amazons3". "local" pins the deployment to one node unless
+  # `persistence.accessMode` is ReadWriteMany.
+  MM_FILESETTINGS_DRIVERNAME: local
+  # Optional settings, e.g. site URL and OIDC login — uncomment to manage them from the chart:
+  # MM_SERVICESETTINGS_SITEURL: https://mattermost.example.com
+  # MM_OPENIDSETTINGS_ENABLE: "true"
+  # MM_OPENIDSETTINGS_DISCOVERYENDPOINT: https://login.example.com/.well-known/openid-configuration
+  # MM_OPENIDSETTINGS_ID: your-client-id
+
+# -- Read the sensitive environment variables from an existing Secret instead of `secrets`. Its keys
+# must be the environment variable names. The database connection below is still chart-managed.
+existingSecret: ""
+
+# -- Sensitive environment variables rendered into a Secret. `MM_CONFIG` and
+# `MM_SQLSETTINGS_DATASOURCE` default to the bundled database; set them to point at an external
+# PostgreSQL.
+secrets: {}
+  # MM_OPENIDSETTINGS_SECRET: your-client-secret
+  # MM_CONFIG: ""
+  # MM_SQLSETTINGS_DATASOURCE: ""
+
+postgres:
+  # -- Enable the CloudPirates PostgreSQL chart.
+  # Refer to <https://github.com/CloudPirates-io/helm-charts/blob/main/charts/postgres> for possible values.
+  enabled: true
+  auth:
+    # -- Name for a custom user to create
+    username: mattermost
+    # -- Name for a custom database to create
+    database: mattermost
+    # -- Password for the custom user. Required, and must be URL-safe: it is interpolated into the
+    # database connection string.
+    password: ""
+  resources:
+    limits:
+      # -- The maximum amount of CPU the container can use
+      cpu: 500m
+      # -- The maximum amount of memory the container can use
+      memory: 512Mi
+    requests:
+      # -- Specifies the minimum amount of CPU that will be allocated to the container
+      cpu: 250m
+      # -- Specifies the minimum amount of memory that will be allocated to the container
+      memory: 512Mi
+  containerSecurityContext:
+    # -- Run container processes as non-root user nobody
+    runAsUser: 65534
+    # -- Run container processes with nobody group
+    runAsGroup: 65534
+    seccompProfile:
+      # -- Use the container runtime default seccomp profile
+      type: RuntimeDefault
