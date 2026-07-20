@@ -6,7 +6,7 @@ fullnameOverride: ""
 
 image:
   # -- The Docker repository to pull the image from
-  repository: ghcr.io/koliver94/bss-request-manager
+  repository: ghcr.io/bsstudio/request-manager
   # -- The logic of image pulling
   imagePullPolicy: IfNotPresent
   # -- Overrides the image tag whose default is the chart appVersion.
@@ -291,7 +291,7 @@ credentials:
   serviceAccountKey: ""
 
 # -- Non-secret environment variables rendered into a ConfigMap, shared by all roles. Keys are the
-# literal names from <https://github.com/KOliver94/bss-request-manager/blob/main/backend/.env.sample>.
+# literal names from <https://github.com/BSStudio/request-manager/blob/main/backend/.env.sample>.
 # Connection settings (DATABASE_*, CACHE_REDIS, CELERY_BROKER) default to the bundled sub-charts.
 config:
   DJANGO_SETTINGS_MODULE: core.settings.production
@@ -312,7 +312,7 @@ config:
   # WEEKLY_TASK_EMAIL: list@example.com
 
 # -- Sensitive environment variables rendered into a Secret, shared by all roles. Keys are the
-# literal names from <https://github.com/KOliver94/bss-request-manager/blob/main/backend/.env.sample>.
+# literal names from <https://github.com/BSStudio/request-manager/blob/main/backend/.env.sample>.
 # With postgres.enabled, DATABASE_PASSWORD defaults to postgres.auth.password.
 secrets:
   # -- Django secret key. Generate with `openssl rand -base64 48`.
