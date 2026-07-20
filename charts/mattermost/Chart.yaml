@@ -1,0 +1,29 @@
+---
+apiVersion: v2
+appVersion: 11.8.1
+dependencies:
+  - condition: postgres.enabled
+    name: postgres
+    repository: oci://registry-1.docker.io/cloudpirates
+    version: 0.19.6
+description: Mattermost Team Edition with OIDC single sign-on and the user limit lifted.
+home: https://mattermost.com
+icon: https://mattermost.com/wp-content/uploads/2022/02/icon.png
+# image: ghcr.io/bsstudio/mattermost-team-edition
+keywords:
+  - mattermost
+  - communication
+  - team collaboration
+  - oidc
+kubeVersion: ">=1.21.0-0"
+maintainers:
+  - name: Budavári Schönherz Stúdió
+    url: https://github.com/BSStudio/helm-charts
+name: mattermost
+sources:
+  - https://github.com/BSStudio/helm-charts/tree/main/charts/mattermost
+  - https://github.com/BSStudio/mattermost-image
+  - https://github.com/BSStudio/mattermost-oidc
+  - https://github.com/mattermost/mattermost
+type: application
+version: 1.0.0

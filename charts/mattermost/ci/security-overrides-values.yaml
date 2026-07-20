@@ -1,0 +1,15 @@
+---
+# Exercises the security context merge helpers. Every key below differs from the chart defaults.
+
+postgres:
+  auth:
+    password: secretPassword
+
+# Nested merge: `add` must apply without losing the default `drop: [ALL]`.
+securityContext:
+  capabilities:
+    add:
+      - NET_BIND_SERVICE
+
+podSecurityContext:
+  fsGroupChangePolicy: Always

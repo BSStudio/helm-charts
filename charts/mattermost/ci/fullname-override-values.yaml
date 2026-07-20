@@ -1,0 +1,9 @@
+---
+# Drives `mattermost.fullname` away from the release name, which the bundled sub-chart is named after.
+# `ct` always generates a release name containing the chart name, so this needs an explicit override.
+
+fullnameOverride: chat
+
+postgres:
+  auth:
+    password: secretPassword
