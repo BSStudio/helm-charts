@@ -1,10 +1,10 @@
 # request-manager
 
-![Version: 0.1.0](https://img.shields.io/badge/Version-0.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.3.2](https://img.shields.io/badge/AppVersion-1.3.2-informational?style=flat-square)
+![Version: 0.2.0](https://img.shields.io/badge/Version-0.2.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.4.0](https://img.shields.io/badge/AppVersion-1.4.0-informational?style=flat-square)
 
 Manage video shooting and live streaming requests at Budavári Schönherz Stúdió.
 
-**Homepage:** <https://github.com/KOliver94/bss-request-manager>
+**Homepage:** <https://github.com/BSStudio/request-manager>
 
 ## Maintainers
 
@@ -15,7 +15,7 @@ Manage video shooting and live streaming requests at Budavári Schönherz Stúdi
 ## Source Code
 
 * <https://github.com/BSStudio/helm-charts/tree/main/charts/request-manager>
-* <https://github.com/KOliver94/bss-request-manager>
+* <https://github.com/BSStudio/request-manager>
 
 ## Requirements
 
@@ -51,7 +51,7 @@ Kubernetes: `>=1.23.0-0`
 | extraVolumes | list | `[]` | Additional volumes added to every pod |
 | fullnameOverride | string | `""` | String to fully override `"request-manager.fullname"` |
 | image.imagePullPolicy | string | `"IfNotPresent"` | The logic of image pulling |
-| image.repository | string | `"ghcr.io/koliver94/bss-request-manager"` | The Docker repository to pull the image from |
+| image.repository | string | `"ghcr.io/bsstudio/request-manager"` | The Docker repository to pull the image from |
 | image.tag | string | `""` | Overrides the image tag whose default is the chart appVersion. |
 | imagePullSecrets | list | `[]` | Image pull secrets for the (private) container registry |
 | ingress.annotations | object | `{}` | Additional ingress annotations |
