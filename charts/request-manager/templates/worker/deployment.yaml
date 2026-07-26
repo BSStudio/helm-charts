@@ -5,6 +5,8 @@ metadata:
   labels:
     {{- include "request-manager.labels" . | nindent 4 }}
     app.kubernetes.io/component: worker
+  annotations:
+    checkov.io/skip1: CKV_K8S_9=No Service selects the worker, so readiness has no consumer
 spec:
   {{- if not .Values.worker.autoscaling.enabled }}
   replicas: {{ .Values.worker.replicaCount }}

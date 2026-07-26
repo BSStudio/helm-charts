@@ -91,7 +91,12 @@ belongs in `config`/`secrets` instead — Kubernetes gives `env` precedence over
 in `extraEnv` silently override both the ConfigMap and the Secret.
 
 Probes live in `values.yaml` (`livenessProbe`, `readinessProbe`, `startupProbe`) and are rendered
-under `{{- with }}`, so setting one to `null` disables it.
+under `{{- with }}`, so setting one to `null` disables it. `{}` does not — Helm coalesces the chart's
+default back into a user's empty map, so say `null` in the chart README.
+
+**An `exec` probe that starts an interpreter competes with the workload**, inside the same CPU limit.
+Give it a long `periodSeconds`, and check the command's own timeout: `celery inspect ping` waits 1s
+for a reply regardless of `timeoutSeconds`.
 
 ## Rules that are easy to get wrong
 
