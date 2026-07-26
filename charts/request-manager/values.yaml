@@ -150,28 +150,19 @@ worker:
     - core
     - worker
     - --concurrency=2
-  # -- Liveness probe for the worker container
+  # -- Liveness probe for the worker container. Keep `-t`: celery's reply timeout defaults to 1s.
   livenessProbe:
     exec:
       command:
         - sh
         - -c
-        - celery -A core inspect ping -d celery@$(hostname)
-    initialDelaySeconds: 30
-    periodSeconds: 30
-    timeoutSeconds: 10
+        - celery -A core inspect ping -d celery@$(hostname) -t 15
+    initialDelaySeconds: 60
+    periodSeconds: 60
+    timeoutSeconds: 30
     failureThreshold: 3
-  # -- Readiness probe for the worker container
-  readinessProbe:
-    exec:
-      command:
-        - sh
-        - -c
-        - celery -A core inspect ping -d celery@$(hostname)
-    initialDelaySeconds: 15
-    periodSeconds: 30
-    timeoutSeconds: 10
-    failureThreshold: 3
+  # -- Readiness probe for the worker container. Disabled: the worker fronts no Service.
+  readinessProbe: {}
   autoscaling:
     # -- Controls whether autoscaling is enabled for the worker deployment
     enabled: false
