@@ -1,6 +1,6 @@
 # request-manager
 
-![Version: 0.3.0](https://img.shields.io/badge/Version-0.3.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.4.1](https://img.shields.io/badge/AppVersion-1.4.1-informational?style=flat-square)
+![Version: 0.3.1](https://img.shields.io/badge/Version-0.3.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.4.1](https://img.shields.io/badge/AppVersion-1.4.1-informational?style=flat-square)
 
 Manage video shooting and live streaming requests at Budavári Schönherz Stúdió.
 
@@ -23,8 +23,8 @@ Kubernetes: `>=1.23.0-0`
 
 | Repository | Name | Version |
 |------------|------|---------|
-| oci://registry-1.docker.io/cloudpirates | postgres | 0.19.6 |
-| oci://registry-1.docker.io/cloudpirates | redis | 0.30.6 |
+| oci://registry-1.docker.io/cloudpirates | postgres | 0.19.12 |
+| oci://registry-1.docker.io/cloudpirates | redis | 0.33.2 |
 
 ## Values
 
