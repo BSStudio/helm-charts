@@ -2,6 +2,38 @@ apiVersion: v1
 entries:
   mattermost:
   - apiVersion: v2
+    appVersion: 11.9.0
+    created: "2026-08-01T14:46:53.570367973Z"
+    dependencies:
+    - condition: postgres.enabled
+      name: postgres
+      repository: oci://registry-1.docker.io/cloudpirates
+      version: 0.19.12
+    description: Mattermost Team Edition with OIDC single sign-on and the user limit
+      lifted.
+    digest: 53818ef69ee7aaa2c2017e53ae986cbcb1494dbc77c62d1ad3befb87cfe4d50d
+    home: https://mattermost.com
+    icon: https://mattermost.com/wp-content/uploads/2022/02/icon.png
+    keywords:
+    - mattermost
+    - communication
+    - team collaboration
+    - oidc
+    kubeVersion: '>=1.21.0-0'
+    maintainers:
+    - name: Budavári Schönherz Stúdió
+      url: https://github.com/BSStudio/helm-charts
+    name: mattermost
+    sources:
+    - https://github.com/BSStudio/helm-charts/tree/main/charts/mattermost
+    - https://github.com/BSStudio/mattermost-image
+    - https://github.com/BSStudio/mattermost-oidc
+    - https://github.com/mattermost/mattermost
+    type: application
+    urls:
+    - https://github.com/BSStudio/helm-charts/releases/download/mattermost-1.0.1/mattermost-1.0.1.tgz
+    version: 1.0.1
+  - apiVersion: v2
     appVersion: 11.8.1
     created: "2026-07-20T23:29:40.389690826Z"
     dependencies:
@@ -34,6 +66,43 @@ entries:
     - https://github.com/BSStudio/helm-charts/releases/download/mattermost-1.0.0/mattermost-1.0.0.tgz
     version: 1.0.0
   outline:
+  - apiVersion: v2
+    appVersion: 1.9.2
+    created: "2026-08-01T14:46:53.783662738Z"
+    dependencies:
+    - condition: minio.enabled
+      name: minio
+      repository: oci://registry-1.docker.io/cloudpirates
+      version: 0.13.1
+    - condition: postgres.enabled
+      name: postgres
+      repository: oci://registry-1.docker.io/cloudpirates
+      version: 0.19.12
+    - condition: redis.enabled
+      name: redis
+      repository: oci://registry-1.docker.io/cloudpirates
+      version: 0.33.2
+    description: Outline is a fast, collaborative, knowledge base for your team built
+      using React and Node.js.
+    digest: c40fc13d9abad1d44a8a17d4b5a869d24915cc0c56f4578241b3283df82e4302
+    home: https://www.getoutline.com
+    icon: https://www.getoutline.com/images/logo.svg
+    keywords:
+    - outline
+    - wiki
+    - docs
+    kubeVersion: '>=1.23.0-0'
+    maintainers:
+    - name: Budavári Schönherz Stúdió
+      url: https://github.com/BSStudio/helm-charts
+    name: outline
+    sources:
+    - https://github.com/BSStudio/helm-charts/tree/main/charts/outline
+    - https://github.com/outline/outline
+    type: application
+    urls:
+    - https://github.com/BSStudio/helm-charts/releases/download/outline-2.0.1/outline-2.0.1.tgz
+    version: 2.0.1
   - apiVersion: v2
     appVersion: 1.8.1
     created: "2026-07-19T09:30:42.908505783Z"
@@ -977,6 +1046,40 @@ entries:
   request-manager:
   - apiVersion: v2
     appVersion: 1.4.1
+    created: "2026-08-01T14:46:53.977359468Z"
+    dependencies:
+    - condition: postgres.enabled
+      name: postgres
+      repository: oci://registry-1.docker.io/cloudpirates
+      version: 0.19.12
+    - condition: redis.enabled
+      name: redis
+      repository: oci://registry-1.docker.io/cloudpirates
+      version: 0.33.2
+    description: Manage video shooting and live streaming requests at Budavári Schönherz
+      Stúdió.
+    digest: 2f8a552cace7e7601a2aa7c7480286ad1fc54abe809ee041c229398b65a3cc13
+    home: https://github.com/BSStudio/request-manager
+    keywords:
+    - request-manager
+    - video-requests
+    - video-production
+    - studio
+    - bss
+    kubeVersion: '>=1.23.0-0'
+    maintainers:
+    - name: Budavári Schönherz Stúdió
+      url: https://github.com/BSStudio/helm-charts
+    name: request-manager
+    sources:
+    - https://github.com/BSStudio/helm-charts/tree/main/charts/request-manager
+    - https://github.com/BSStudio/request-manager
+    type: application
+    urls:
+    - https://github.com/BSStudio/helm-charts/releases/download/request-manager-0.3.1/request-manager-0.3.1.tgz
+    version: 0.3.1
+  - apiVersion: v2
+    appVersion: 1.4.1
     created: "2026-07-26T22:20:19.98869288Z"
     dependencies:
     - condition: postgres.enabled
@@ -1077,4 +1180,4 @@ entries:
     urls:
     - https://github.com/BSStudio/helm-charts/releases/download/request-manager-0.1.0/request-manager-0.1.0.tgz
     version: 0.1.0
-generated: "2026-07-26T22:20:19.988738363Z"
+generated: "2026-08-01T14:46:53.977573819Z"
