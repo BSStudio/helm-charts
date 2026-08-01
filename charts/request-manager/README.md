@@ -23,8 +23,8 @@ Kubernetes: `>=1.23.0-0`
 
 | Repository | Name | Version |
 |------------|------|---------|
-| oci://registry-1.docker.io/cloudpirates | postgres | 0.19.6 |
-| oci://registry-1.docker.io/cloudpirates | redis | 0.30.6 |
+| oci://registry-1.docker.io/cloudpirates | postgres | 0.19.12 |
+| oci://registry-1.docker.io/cloudpirates | redis | 0.33.2 |
 
 ## Values
 
