@@ -59,8 +59,9 @@ affinity: {}
 server:
   # -- Number of Gunicorn server replicas (ignored when autoscaling is enabled)
   replicaCount: 1
-  # -- Grace period for the server pod to finish in-flight requests on shutdown
-  terminationGracePeriodSeconds: 30
+  # -- Grace period for the server pod to finish in-flight requests on shutdown. Above Gunicorn's
+  # `--graceful-timeout=30`, so a `lifecycle.preStop` sleep does not eat into the drain.
+  terminationGracePeriodSeconds: 45
   # -- Container args (passed to the image entrypoint). Overrides the default Gunicorn command.
   args:
     - gunicorn
@@ -108,8 +109,7 @@ server:
     periodSeconds: 10
     failureThreshold: 30
   # -- Container lifecycle hooks. A `preStop` sleep holds the pod open until its endpoint removal
-  # has propagated. It is charged against `terminationGracePeriodSeconds`, which already only matches
-  # Gunicorn's `--graceful-timeout` — raise it alongside, or the sleep eats into the drain.
+  # has propagated, and is charged against `terminationGracePeriodSeconds`.
   lifecycle: {}
     # preStop:
     #   exec:

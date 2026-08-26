@@ -104,7 +104,7 @@ Kubernetes: `>=1.23.0-0`
 | server.autoscaling.maxReplicas | int | `10` | Maximum number of server replicas |
 | server.autoscaling.minReplicas | int | `1` | Minimum number of server replicas |
 | server.autoscaling.targetCPUUtilizationPercentage | int | `80` | Target CPU utilization percentage that triggers scaling |
-| server.lifecycle | object | `{}` | Container lifecycle hooks. A `preStop` sleep holds the pod open until its endpoint removal has propagated. It is charged against `terminationGracePeriodSeconds`, which already only matches Gunicorn's `--graceful-timeout` — raise it alongside, or the sleep eats into the drain. |
+| server.lifecycle | object | `{}` | Container lifecycle hooks. A `preStop` sleep holds the pod open until its endpoint removal has propagated, and is charged against `terminationGracePeriodSeconds`. |
 | server.livenessProbe | object | `{"failureThreshold":3,"httpGet":{"path":"/livez","port":"http"},"initialDelaySeconds":10,"periodSeconds":10}` | Liveness probe for the server container |
 | server.pdb.enabled | bool | `false` | Enable a PodDisruptionBudget for the server deployment |
 | server.pdb.maxUnavailable | string | `""` | Maximum unavailable server pods (takes precedence over minAvailable when set) |
@@ -119,7 +119,7 @@ Kubernetes: `>=1.23.0-0`
 | server.service.type | string | `"ClusterIP"` | Kubernetes service type for HTTP traffic |
 | server.startupProbe | object | `{"failureThreshold":30,"httpGet":{"path":"/livez","port":"http"},"initialDelaySeconds":10,"periodSeconds":10}` | Startup probe for the server container |
 | server.strategy | object | `{}` | Deployment update strategy for the server workload |
-| server.terminationGracePeriodSeconds | int | `30` | Grace period for the server pod to finish in-flight requests on shutdown |
+| server.terminationGracePeriodSeconds | int | `45` | Grace period for the server pod to finish in-flight requests on shutdown. Above Gunicorn's `--graceful-timeout=30`, so a `lifecycle.preStop` sleep does not eat into the drain. |
 | serviceAccount.annotations | object | `{}` | Annotations to add to the service account |
 | serviceAccount.automount | bool | `false` | Automatically mount a ServiceAccount's API credentials? |
 | serviceAccount.create | bool | `true` | Specifies whether a service account should be created |
