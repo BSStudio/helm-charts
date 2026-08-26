@@ -1,0 +1,7 @@
+---
+secrets:
+  BETTER_AUTH_SECRET: rAfUhO50b96FggXalDRubuvkw3cXxEqb7p3X1iIs0mE=
+
+postgres:
+  auth:
+    password: secretPassword

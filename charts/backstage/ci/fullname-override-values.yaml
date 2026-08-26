@@ -1,0 +1,12 @@
+---
+# Drives `backstage.fullname` away from the release name, which the bundled sub-chart is named after.
+# `ct` always generates a release name containing the chart name, so this needs an explicit override.
+
+fullnameOverride: portal
+
+secrets:
+  BETTER_AUTH_SECRET: 5s6GeG16sEpXvR/nJxuNTvyhL7cQdd0nAU2iA0I/qxw=
+
+postgres:
+  auth:
+    password: secretPassword

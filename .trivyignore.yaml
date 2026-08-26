@@ -2,6 +2,7 @@
 misconfigurations:
   - id: AVD-KSV-0014
     paths:
+      - charts/backstage/charts/postgres/templates/statefulset.yaml
       - charts/mattermost/charts/postgres/templates/statefulset.yaml
       - charts/outline/charts/postgres/templates/statefulset.yaml
       - charts/outline/charts/redis/templates/statefulset.yaml
@@ -9,6 +10,7 @@ misconfigurations:
     statement: External charts
   - id: AVD-KSV-0110
     paths:
+      - charts/backstage/templates/deployment.yaml
       - charts/mattermost/templates/deployment.yaml
       - charts/outline/templates/cronjob.yaml
       - charts/outline/templates/deployment.yaml
@@ -21,6 +23,7 @@ misconfigurations:
     statement: Used container registries are trusted
   - id: AVD-KSV-01010
     paths:
+      - charts/backstage/templates/configmap.yaml
       - charts/mattermost/templates/configmap.yaml
       - charts/outline/templates/configmap.yaml
       - charts/request-manager/templates/configmap.yaml

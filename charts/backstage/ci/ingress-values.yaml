@@ -1,0 +1,19 @@
+---
+# Ingress enabled with pathType omitted, so the chart default is what the API server validates.
+
+secrets:
+  BETTER_AUTH_SECRET: SBZGKvYOaRZarh2/LM1hrZGOkjDCaB0g9etAuOngDmk=
+
+postgres:
+  auth:
+    password: secretPassword
+
+config:
+  BETTER_AUTH_URL: https://backstage.example.com
+
+ingress:
+  enabled: true
+  hosts:
+    - host: backstage.example.com
+      paths:
+        - path: /

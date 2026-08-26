@@ -1,0 +1,321 @@
+---
+# -- Provide a name in place of `backstage`
+nameOverride: ""
+# -- String to fully override `"backstage.fullname"`
+fullnameOverride: ""
+
+image:
+  # -- The Docker repository to pull the image from
+  repository: ghcr.io/bsstudio/backstage
+  # -- The logic of image pulling
+  imagePullPolicy: IfNotPresent
+  # -- Overrides the image tag whose default is the chart appVersion
+  tag: ""
+
+# -- Secrets for pulling the image from a private registry
+imagePullSecrets: []
+  # - name: ghcr-credentials
+
+# -- The number of replicas to deploy (ignored when autoscaling is enabled). Each replica keeps its
+# own in-memory rate-limit counters for the machine-to-machine API.
+replicaCount: 1
+
+# -- Grace period for shutdown. Next.js drains in-flight requests with no deadline of its own, and
+# syncs to Authentik and the website run inside the request that triggered them.
+terminationGracePeriodSeconds: 60
+
+# -- Deployment update strategy. When empty, defaults to `Recreate` if persistence is enabled with a
+# non-`ReadWriteMany` access mode (avoids a RWO volume deadlock on upgrade), otherwise Kubernetes'
+# default RollingUpdate is used.
+strategy: {}
+  # type: RollingUpdate
+  # rollingUpdate:
+  #   maxSurge: 1
+  #   maxUnavailable: 0
+
+serviceAccount:
+  # -- Specifies whether a service account should be created
+  create: true
+  # -- Automatically mount a ServiceAccount's API credentials?
+  automount: false
+  # -- Annotations to add to the service account
+  annotations: {}
+  # -- The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template.
+  name: ""
+
+# -- Optional additional annotations to add to the pods
+podAnnotations: {}
+
+# -- Optional additional labels to add to the pods
+podLabels: {}
+
+# -- Pod-level security context, merged over chart defaults (fsGroup 65532 for volume writes)
+podSecurityContext: {}
+  # fsGroup: 2000
+
+# -- Run containers as a specific securityContext, merged over chart defaults (runAsUser 65532, the
+# UID the image chowns its files to; readOnlyRootFilesystem; capabilities drop ALL)
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+# -- Init containers to add to the deployment
+initContainers: []
+  # - name: wait-for-postgres
+  #   image: busybox:latest
+  #   command: ['sh', '-c', 'do-something-here']
+
+service:
+  # -- Kubernetes service type for web traffic
+  type: ClusterIP
+  # -- Port number for web traffic (passed to the container as `PORT`)
+  port: 3000
+
+ingress:
+  # -- Enable an ingress resource
+  enabled: false
+  # -- Defines which ingress controller will implement the resource
+  className: ""
+  # -- Additional ingress annotations
+  annotations: {}
+    # cert-manager.io/cluster-issuer: letsencrypt-prod
+  # -- List of ingress hosts. Must match `config.BETTER_AUTH_URL`, where the OIDC callback lands.
+  hosts: []
+    #  - host: backstage.example.com
+    #    paths:
+    #      - path: /
+    #        pathType: Prefix
+  # -- Ingress TLS configuration
+  tls: []
+    #  - secretName: backstage-example-com-tls
+    #    hosts:
+    #      - backstage.example.com
+
+# -- Liveness probe for the container. `tcpSocket`, not `/api/health`: that endpoint queries the
+# database.
+livenessProbe:
+  tcpSocket:
+    port: http
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  failureThreshold: 3
+
+# -- Readiness probe for the container
+readinessProbe:
+  httpGet:
+    path: /api/health
+    port: http
+  initialDelaySeconds: 5
+  periodSeconds: 10
+  failureThreshold: 3
+
+# -- Startup probe for the container. Its window must outlast `config.MIGRATION_TIMEOUT`: the
+# entrypoint migrates before the server listens.
+startupProbe:
+  httpGet:
+    path: /api/health
+    port: http
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  failureThreshold: 40
+
+resources:
+  limits:
+    # -- The maximum amount of CPU the container can use
+    cpu: 1000m
+    # -- The maximum amount of memory the container can use
+    memory: 768Mi
+  requests:
+    # -- Specifies the minimum amount of CPU that will be allocated to the container
+    cpu: 250m
+    # -- Specifies the minimum amount of memory that will be allocated to the container
+    memory: 768Mi
+
+persistence:
+  # -- Claim a volume for `/app/storage`, where the app keeps uploaded avatars. With
+  # `config.AVATAR_STORAGE` set to "local" and this off, uploads fail on the read-only filesystem.
+  enabled: true
+  # -- Access mode for the volume. ReadWriteMany is required to run more than one replica while
+  # `config.AVATAR_STORAGE` is "local".
+  accessMode: ReadWriteOnce
+  # -- Defines the amount of storage allocated for persistence
+  size: 2Gi
+  # -- Annotations to add to the PVC, e.g. `helm.sh/resource-policy: keep` to retain data on uninstall
+  annotations: {}
+  # -- Use an existing claim instead of the generated `<fullname>-storage` one
+  # existingClaim: ""
+  # -- If defined, storageClassName. "-" sets it to "" (disables dynamic provisioning); unset uses
+  # the cluster default.
+  # storageClass: ""
+
+# -- Size limit for the Next.js cache emptyDir, where `next/image` writes what it optimizes
+cacheSizeLimit: 512Mi
+
+autoscaling:
+  # -- Controls whether autoscaling is enabled for the deployment. Scaling past one replica needs
+  # `config.AVATAR_STORAGE` set to "s3", or a ReadWriteMany volume.
+  enabled: false
+  # -- Defines the minimum number of application instances (replicas) to maintain, even during low demand
+  minReplicas: 1
+  # -- Sets the maximum number of application instances (replicas) that can be scaled up to during high demand
+  maxReplicas: 10
+  # -- Specifies the CPU utilization threshold at which autoscaling will be triggered
+  # to adjust the number of replicas
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+pdb:
+  # -- Enable a PodDisruptionBudget. With a single replica `minAvailable: 1` blocks node drains.
+  enabled: false
+  # -- Maximum unavailable pods (takes precedence over minAvailable when set)
+  maxUnavailable: ""
+  # -- Minimum available pods (used when maxUnavailable is unset; defaults to 1)
+  minAvailable: ""
+
+# -- Additional environment variables, appended to the container verbatim. Prefer `config` and
+# `secrets`; entries here take precedence over both.
+extraEnv: []
+  # - name: ENV_VAR_NAME
+  #   value: VALUE
+  # - name: ENV_VAR_OTHER
+  #   valueFrom:
+  #     secretKeyRef:
+  #       name: secret-name
+  #       key: secret-key
+
+# -- Additional envFrom sources appended to the container
+extraEnvFrom: []
+  # - configMapRef:
+  #     name: config-map-name
+  # - secretRef:
+  #     name: secret-name
+
+# -- Additional volumes to mount to the deployment
+extraVolumes: []
+  # - name: foo
+  #   secret:
+  #     secretName: mysecret
+  #     optional: false
+
+# -- Additional volume mounts for the containers
+extraVolumeMounts: []
+  # - name: foo
+  #   mountPath: "/etc/foo"
+  #   readOnly: true
+
+# -- NodeSelector for the deployment
+nodeSelector: {}
+
+# -- Tolerations for the deployment
+tolerations: []
+
+# -- Affinity for the deployment
+affinity: {}
+
+# -- Non-secret environment variables rendered into a ConfigMap. Keys are the literal names from
+# <https://github.com/BSStudio/backstage/blob/main/.env.example>; empty values are dropped.
+# `NEXT_PUBLIC_*` settings are absent because `next build` freezes them into the image.
+config:
+  # -- Publicly accessible URL. Better Auth builds the OIDC callback from it, so it has to match the
+  # ingress host and the redirect URI registered in Authentik.
+  BETTER_AUTH_URL: https://backstage.example.com
+  # -- OIDC issuer, the Authentik application's provider URL. Blanking it takes down every auth
+  # route, not just login.
+  AUTHENTIK_ISSUER: https://auth.example.com/application/o/backstage
+  # -- OIDC client ID, also the audience the machine-to-machine API checks tokens against
+  AUTHENTIK_CLIENT_ID: ""
+  # -- Base URL of the Authentik instance, for its REST API
+  AUTHENTIK_URL: https://auth.example.com
+  # -- Authentik group name that grants the LEADERSHIP role
+  AUTHENTIK_GROUP_LEADERSHIP: ""
+  # -- Authentik group name that grants the ADMIN role
+  AUTHENTIK_GROUP_ADMIN: ""
+  # -- Authentik group name a machine-to-machine API client must be in
+  AUTHENTIK_GROUP_API_CLIENTS: backstage-api-clients
+  # -- UUID of the Authentik group for candidate candidates ("jelölt-jelölt")
+  AUTHENTIK_GROUP_CANDIDATE_CANDIDATE: ""
+  # -- UUID of the Authentik group for candidates ("jelölt")
+  AUTHENTIK_GROUP_CANDIDATE: ""
+  # -- UUID of the Authentik group for members ("stúdiós")
+  AUTHENTIK_GROUP_MEMBER: ""
+  # -- UUID of the Authentik group for alumni ("öregtag")
+  AUTHENTIK_GROUP_ALUMNI: ""
+  # -- UUID of the common Leadership group in Authentik
+  AUTHENTIK_GROUP_LEADERSHIP_UUID: ""
+  # -- Base URL of the legacy Drupal website that member data is synced to
+  WEBSITE_URL: https://bsstudio.hu
+  # -- Avatar storage backend, "local" or "s3". "local" needs `persistence`.
+  AVATAR_STORAGE: local
+  # -- Apply database migrations from the entrypoint before the server starts
+  RUN_MIGRATIONS: "true"
+  # -- Seconds the entrypoint waits for migrations before failing the container
+  MIGRATION_TIMEOUT: "300"
+  # S3 settings, required when AVATAR_STORAGE is "s3":
+  # S3_BUCKET: ""
+  # S3_REGION: ""
+  # -- Endpoint override for S3-compatible providers. Unset, the AWS SDK derives it from S3_REGION.
+  # S3_ENDPOINT: ""
+  # S3_FORCE_PATH_STYLE: "false"
+
+# -- Read the sensitive environment variables from an existing Secret instead of `secrets`. Its keys
+# must be the environment variable names. DATABASE_URL below stays chart-managed.
+existingSecret: ""
+
+# -- Sensitive environment variables rendered into a Secret. Keys are the literal names from
+# <https://github.com/BSStudio/backstage/blob/main/.env.example>. DATABASE_URL defaults to the
+# bundled sub-chart; set it to point at an external database.
+secrets:
+  # -- Signing key for session cookies; the app will not start without it. `openssl rand -base64 32`
+  BETTER_AUTH_SECRET: ""
+  # -- OIDC client secret of the Authentik application
+  AUTHENTIK_CLIENT_SECRET: ""
+  # -- Authentik REST API token, used for the user and group syncs
+  AUTHENTIK_API_TOKEN: ""
+  # -- Administrator account on the legacy website, used for the website sync
+  WEBSITE_ADMIN_USERNAME: ""
+  # -- Password of that administrator account
+  WEBSITE_ADMIN_PASSWORD: ""
+  # DATABASE_URL: ""
+  # S3 credentials. Omit to use the default AWS credential chain (IAM role, instance profile):
+  # S3_ACCESS_KEY_ID: ""
+  # S3_SECRET_ACCESS_KEY: ""
+
+postgres:
+  # -- Enable the CloudPirates PostgreSQL chart.
+  # Refer to <https://github.com/CloudPirates-io/helm-charts/blob/main/charts/postgres> for possible values.
+  enabled: true
+  auth:
+    # -- Name for a custom user to create
+    username: backstage
+    # -- Name for a custom database to create
+    database: backstage
+    # -- Password for the custom user. Required, and must be URL-safe: it is interpolated into
+    # `secrets.DATABASE_URL`.
+    password: ""
+  # NOTE: Compose initialises PostgreSQL with a Hungarian ICU collation
+  # (`--locale-provider=icu --icu-locale=hu-HU`), which orders accented surnames correctly. Set
+  # `initdb.args` to match; it only applies to a database created from scratch.
+  resources:
+    limits:
+      # -- The maximum amount of CPU the container can use
+      cpu: 500m
+      # -- The maximum amount of memory the container can use
+      memory: 512Mi
+    requests:
+      # -- Specifies the minimum amount of CPU that will be allocated to the container
+      cpu: 250m
+      # -- Specifies the minimum amount of memory that will be allocated to the container
+      memory: 512Mi
+  containerSecurityContext:
+    # -- Run container processes as non-root user nobody
+    runAsUser: 65534
+    # -- Run container processes with nobody group
+    runAsGroup: 65534
+    seccompProfile:
+      # -- Use the container runtime default seccomp profile
+      type: RuntimeDefault
