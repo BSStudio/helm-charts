@@ -9,7 +9,7 @@ postgres:
     password: secretPassword
 
 config:
-  BETTER_AUTH_URL: https://backstage.example.com
+  APP_URL: https://backstage.example.com
 
 ingress:
   enabled: true

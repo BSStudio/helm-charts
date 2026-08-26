@@ -18,7 +18,7 @@ Backstage is exposed on a {{ .Values.service.type }} Service. To reach it from y
 then open http://127.0.0.1:{{ .Values.service.port }}
 {{- end }}
 
-Configured public URL: {{ .Values.config.BETTER_AUTH_URL }}
+Configured public URL: {{ .Values.config.APP_URL }}
 {{- if not .Values.existingSecret }}
 {{- if not .Values.secrets.BETTER_AUTH_SECRET }}
 
@@ -29,14 +29,14 @@ refuses to start and every request fails.
 {{- if and .Values.postgres.enabled (not .Values.postgres.auth.password) }}
 WARNING: postgres.auth.password is empty — set it or Backstage cannot reach the bundled database.
 {{- end }}
-{{- if and .Values.ingress.enabled .Values.config.BETTER_AUTH_URL }}
-{{- $authHost := (urlParse (.Values.config.BETTER_AUTH_URL | toString)).host }}
+{{- if and .Values.ingress.enabled .Values.config.APP_URL }}
+{{- $authHost := (urlParse (.Values.config.APP_URL | toString)).host }}
 {{- $hosts := list }}
 {{- range .Values.ingress.hosts }}
 {{- $hosts = append $hosts .host }}
 {{- end }}
 {{- if not (has $authHost $hosts) }}
-WARNING: config.BETTER_AUTH_URL points at {{ $authHost }}, which no ingress host matches. The OIDC
+WARNING: config.APP_URL points at {{ $authHost }}, which no ingress host matches. The OIDC
 callback is built from that URL, so login will redirect away from this deployment.
 {{- end }}
 {{- end }}

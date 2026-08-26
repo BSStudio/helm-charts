@@ -84,7 +84,7 @@ ingress:
   # -- Additional ingress annotations
   annotations: {}
     # cert-manager.io/cluster-issuer: letsencrypt-prod
-  # -- List of ingress hosts. Must match `config.BETTER_AUTH_URL`, where the OIDC callback lands.
+  # -- List of ingress hosts. Must match `config.APP_URL`, where the OIDC callback lands.
   hosts: []
     #  - host: backstage.example.com
     #    paths:
@@ -228,9 +228,9 @@ affinity: {}
 # <https://github.com/BSStudio/backstage/blob/main/.env.example>; empty values are dropped.
 # `NEXT_PUBLIC_*` settings are absent because `next build` freezes them into the image.
 config:
-  # -- Publicly accessible URL. Better Auth builds the OIDC callback from it, so it has to match the
-  # ingress host and the redirect URI registered in Authentik.
-  BETTER_AUTH_URL: https://backstage.example.com
+  # -- Publicly accessible URL. The OIDC callback and the avatar URLs handed to Authentik are built
+  # from it, so it has to match the ingress host and the redirect URI registered in Authentik.
+  APP_URL: https://backstage.example.com
   # -- OIDC issuer, the Authentik application's provider URL. Blanking it takes down every auth
   # route, not just login.
   AUTHENTIK_ISSUER: https://auth.example.com/application/o/backstage
