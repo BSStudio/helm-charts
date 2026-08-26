@@ -4,7 +4,8 @@
       "exclude": [
         "Postgres?SQL",
         "readme(s)?",
-        "URL"
+        "URL",
+        "web[- ]?site(s)?"
       ]
     }
   }

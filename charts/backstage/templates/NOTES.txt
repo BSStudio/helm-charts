@@ -1,0 +1,61 @@
+{{- $fullName := include "backstage.fullname" . -}}
+Backstage {{ .Chart.AppVersion }} has been deployed as release {{ .Release.Name }}.
+
+{{- if .Values.ingress.enabled }}
+
+Reach the application at:
+{{- range $host := .Values.ingress.hosts }}
+  {{- range .paths }}
+  http{{ if $.Values.ingress.tls }}s{{ end }}://{{ $host.host }}{{ .path }}
+  {{- end }}
+{{- end }}
+{{- else }}
+
+Backstage is exposed on a {{ .Values.service.type }} Service. To reach it from your machine:
+
+  kubectl --namespace {{ .Release.Namespace }} port-forward svc/{{ $fullName }} {{ .Values.service.port }}:{{ .Values.service.port }}
+
+then open http://127.0.0.1:{{ .Values.service.port }}
+{{- end }}
+
+Configured public URL: {{ .Values.config.BETTER_AUTH_URL }}
+{{- if not .Values.existingSecret }}
+{{- if not .Values.secrets.BETTER_AUTH_SECRET }}
+
+WARNING: secrets.BETTER_AUTH_SECRET is empty — set it (openssl rand -base64 32) or Better Auth
+refuses to start and every request fails.
+{{- end }}
+{{- end }}
+{{- if and .Values.postgres.enabled (not .Values.postgres.auth.password) }}
+WARNING: postgres.auth.password is empty — set it or Backstage cannot reach the bundled database.
+{{- end }}
+{{- if and .Values.ingress.enabled .Values.config.BETTER_AUTH_URL }}
+{{- $authHost := (urlParse (.Values.config.BETTER_AUTH_URL | toString)).host }}
+{{- $hosts := list }}
+{{- range .Values.ingress.hosts }}
+{{- $hosts = append $hosts .host }}
+{{- end }}
+{{- if not (has $authHost $hosts) }}
+WARNING: config.BETTER_AUTH_URL points at {{ $authHost }}, which no ingress host matches. The OIDC
+callback is built from that URL, so login will redirect away from this deployment.
+{{- end }}
+{{- end }}
+{{- if eq "local" (.Values.config.AVATAR_STORAGE | toString) }}
+{{- if not .Values.persistence.enabled }}
+WARNING: config.AVATAR_STORAGE is "local" but persistence is disabled, so nothing under /app/storage
+is writable. Avatar uploads will fail with a read-only filesystem error until you enable
+persistence, or switch to "s3".
+{{- else if and (or .Values.autoscaling.enabled (gt (int .Values.replicaCount) 1)) (ne .Values.persistence.accessMode "ReadWriteMany") }}
+WARNING: config.AVATAR_STORAGE is "local" on a {{ .Values.persistence.accessMode }} volume, which only one
+node can mount. Replicas beyond the first will fail to schedule. Use ReadWriteMany, or "s3".
+{{- end }}
+{{- else if eq "s3" (.Values.config.AVATAR_STORAGE | toString) }}
+{{- if or (not .Values.config.S3_BUCKET) (not .Values.config.S3_REGION) }}
+WARNING: config.AVATAR_STORAGE is "s3" but S3_BUCKET or S3_REGION is unset. The app starts, then
+throws on the first avatar upload or download.
+{{- end }}
+{{- if .Values.persistence.enabled }}
+NOTE: config.AVATAR_STORAGE is "s3", so the volume claimed for /app/storage is never written to.
+Set persistence.enabled to false to stop claiming it.
+{{- end }}
+{{- end }}
