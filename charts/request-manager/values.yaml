@@ -107,6 +107,13 @@ server:
     initialDelaySeconds: 10
     periodSeconds: 10
     failureThreshold: 30
+  # -- Container lifecycle hooks. A `preStop` sleep holds the pod open until its endpoint removal
+  # has propagated. It is charged against `terminationGracePeriodSeconds`, which already only matches
+  # Gunicorn's `--graceful-timeout` — raise it alongside, or the sleep eats into the drain.
+  lifecycle: {}
+    # preStop:
+    #   exec:
+    #     command: ["/bin/sleep", "10"]
   resources:
     limits:
       # -- The maximum amount of CPU the container can use

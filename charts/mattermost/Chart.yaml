@@ -26,4 +26,4 @@ sources:
   - https://github.com/BSStudio/mattermost-oidc
   - https://github.com/mattermost/mattermost
 type: application
-version: 1.0.1
+version: 1.1.0

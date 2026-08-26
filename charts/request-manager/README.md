@@ -1,6 +1,6 @@
 # request-manager
 
-![Version: 0.3.1](https://img.shields.io/badge/Version-0.3.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.4.1](https://img.shields.io/badge/AppVersion-1.4.1-informational?style=flat-square)
+![Version: 0.4.0](https://img.shields.io/badge/Version-0.4.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.4.1](https://img.shields.io/badge/AppVersion-1.4.1-informational?style=flat-square)
 
 Manage video shooting and live streaming requests at Budavári Schönherz Stúdió.
 
@@ -104,6 +104,7 @@ Kubernetes: `>=1.23.0-0`
 | server.autoscaling.maxReplicas | int | `10` | Maximum number of server replicas |
 | server.autoscaling.minReplicas | int | `1` | Minimum number of server replicas |
 | server.autoscaling.targetCPUUtilizationPercentage | int | `80` | Target CPU utilization percentage that triggers scaling |
+| server.lifecycle | object | `{}` | Container lifecycle hooks. A `preStop` sleep holds the pod open until its endpoint removal has propagated. It is charged against `terminationGracePeriodSeconds`, which already only matches Gunicorn's `--graceful-timeout` — raise it alongside, or the sleep eats into the drain. |
 | server.livenessProbe | object | `{"failureThreshold":3,"httpGet":{"path":"/livez","port":"http"},"initialDelaySeconds":10,"periodSeconds":10}` | Liveness probe for the server container |
 | server.pdb.enabled | bool | `false` | Enable a PodDisruptionBudget for the server deployment |
 | server.pdb.maxUnavailable | string | `""` | Maximum unavailable server pods (takes precedence over minAvailable when set) |
