@@ -1,6 +1,6 @@
 # mattermost
 
-![Version: 1.0.1](https://img.shields.io/badge/Version-1.0.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 11.9.0](https://img.shields.io/badge/AppVersion-11.9.0-informational?style=flat-square)
+![Version: 1.1.0](https://img.shields.io/badge/Version-1.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 11.9.0](https://img.shields.io/badge/AppVersion-11.9.0-informational?style=flat-square)
 
 Mattermost Team Edition with OIDC single sign-on and the user limit lifted.
 
@@ -51,6 +51,7 @@ Kubernetes: `>=1.21.0-0`
 | ingress.hosts | list | `[]` | List of ingress hosts |
 | ingress.tls | list | `[]` | Ingress TLS configuration |
 | initContainers | list | `[]` | Init containers to add to the deployment |
+| lifecycle | object | `{}` | Container lifecycle hooks. A `preStop` sleep holds the pod open until its endpoint removal has propagated, and is charged against `terminationGracePeriodSeconds`. |
 | livenessProbe | object | `{"failureThreshold":3,"initialDelaySeconds":10,"periodSeconds":10,"tcpSocket":{"port":"http"}}` | Liveness probe for the container. `tcpSocket`, not the ping endpoint: a ping that reaches the database would restart every replica during a database blip, which cannot fix it. |
 | nameOverride | string | `""` | Provide a name in place of `mattermost` |
 | nodeSelector | object | `{}` | NodeSelector for the deployment |

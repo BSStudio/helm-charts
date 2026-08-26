@@ -125,6 +125,13 @@ startupProbe:
   periodSeconds: 10
   failureThreshold: 30
 
+# -- Container lifecycle hooks. A `preStop` sleep holds the pod open until its endpoint removal
+# has propagated, and is charged against `terminationGracePeriodSeconds`.
+lifecycle: {}
+  # preStop:
+  #   exec:
+  #     command: ["/bin/sleep", "10"]
+
 resources:
   limits:
     # -- The maximum amount of CPU the container can use

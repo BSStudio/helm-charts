@@ -1,6 +1,6 @@
 # backstage
 
-![Version: 0.1.0](https://img.shields.io/badge/Version-0.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: main](https://img.shields.io/badge/AppVersion-main-informational?style=flat-square)
+![Version: 0.2.0](https://img.shields.io/badge/Version-0.2.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: main](https://img.shields.io/badge/AppVersion-main-informational?style=flat-square)
 
 Internal member portal for Budavári Schönherz Stúdió, and the source of truth for member data.
 
@@ -68,6 +68,7 @@ Kubernetes: `>=1.23.0-0`
 | ingress.hosts | list | `[]` | List of ingress hosts. Must match `config.BETTER_AUTH_URL`, where the OIDC callback lands. |
 | ingress.tls | list | `[]` | Ingress TLS configuration |
 | initContainers | list | `[]` | Init containers to add to the deployment |
+| lifecycle | object | `{}` | Container lifecycle hooks. A `preStop` sleep holds the pod open until its endpoint removal has propagated, and is charged against `terminationGracePeriodSeconds`. |
 | livenessProbe | object | `{"failureThreshold":3,"initialDelaySeconds":10,"periodSeconds":10,"tcpSocket":{"port":"http"}}` | Liveness probe for the container. `tcpSocket`, not `/api/health`: that endpoint queries the database. |
 | nameOverride | string | `""` | Provide a name in place of `backstage` |
 | nodeSelector | object | `{}` | NodeSelector for the deployment |
