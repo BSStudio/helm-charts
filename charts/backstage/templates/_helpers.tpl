@@ -128,13 +128,6 @@ pointing at an external database looks like.
 {{- end }}
 
 {{/*
-Name of the Secret holding the user-supplied secrets, for consumers that read a single key.
-*/}}
-{{- define "backstage.secretName" -}}
-{{- default (include "backstage.fullname" .) .Values.existingSecret }}
-{{- end }}
-
-{{/*
 Environment variables the chart derives from other values, followed by the user's `extraEnv`
 entries. Anything a user should be able to change belongs in `config` or `secrets` instead: `env`
 wins over the ConfigMap and Secret, so entries here silently override them.
