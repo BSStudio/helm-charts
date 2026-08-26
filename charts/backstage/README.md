@@ -95,9 +95,9 @@ Kubernetes: `>=1.23.0-0`
 | readinessProbe | object | `{"failureThreshold":3,"httpGet":{"path":"/api/health","port":"http"},"initialDelaySeconds":5,"periodSeconds":10}` | Readiness probe for the container |
 | replicaCount | int | `1` | The number of replicas to deploy (ignored when autoscaling is enabled). Each replica keeps its own in-memory rate-limit counters for the machine-to-machine API. |
 | resources.limits.cpu | string | `"1000m"` | The maximum amount of CPU the container can use |
-| resources.limits.memory | string | `"768Mi"` | The maximum amount of memory the container can use |
+| resources.limits.memory | string | `"1Gi"` | The maximum amount of memory the container can use |
 | resources.requests.cpu | string | `"250m"` | Specifies the minimum amount of CPU that will be allocated to the container |
-| resources.requests.memory | string | `"768Mi"` | Specifies the minimum amount of memory that will be allocated to the container |
+| resources.requests.memory | string | `"1Gi"` | Specifies the minimum amount of memory that will be allocated to the container |
 | secrets | object | `{"AUTHENTIK_API_TOKEN":"","AUTHENTIK_CLIENT_SECRET":"","BETTER_AUTH_SECRET":"","WEBSITE_ADMIN_PASSWORD":"","WEBSITE_ADMIN_USERNAME":""}` | Sensitive environment variables rendered into a Secret. Keys are the literal names from <https://github.com/BSStudio/backstage/blob/main/.env.example>. DATABASE_URL defaults to the bundled sub-chart; set it to point at an external database. |
 | secrets.AUTHENTIK_API_TOKEN | string | `""` | Authentik REST API token, used for the user and group syncs |
 | secrets.AUTHENTIK_CLIENT_SECRET | string | `""` | OIDC client secret of the Authentik application |

@@ -129,12 +129,12 @@ resources:
     # -- The maximum amount of CPU the container can use
     cpu: 1000m
     # -- The maximum amount of memory the container can use
-    memory: 768Mi
+    memory: 1Gi
   requests:
     # -- Specifies the minimum amount of CPU that will be allocated to the container
     cpu: 250m
     # -- Specifies the minimum amount of memory that will be allocated to the container
-    memory: 768Mi
+    memory: 1Gi
 
 persistence:
   # -- Claim a volume for `/app/storage`, where the app keeps uploaded avatars. With
