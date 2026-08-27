@@ -25,6 +25,27 @@ Kubernetes: `>=1.23.0-0`
 |------------|------|---------|
 | oci://registry-1.docker.io/cloudpirates | postgres | 0.19.12 |
 
+## Upgrading
+
+### 0.2.x to 0.3.0
+
+`config.BETTER_AUTH_URL` is renamed to `config.APP_URL`, following the rename in the application.
+The value is the same; only the key changes.
+
+```yaml
+# before
+config:
+  BETTER_AUTH_URL: https://backstage.example.com
+
+# after
+config:
+  APP_URL: https://backstage.example.com
+```
+
+Nothing fails loudly when this is missed. The old key still renders into the ConfigMap, as an
+environment variable the application ignores, and `APP_URL` falls back to the chart default. Login
+then redirects to that default host, and the avatar URLs handed to Authentik point at it too.
+
 ## Values
 
 | Key | Type | Default | Description |
