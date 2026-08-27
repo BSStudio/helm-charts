@@ -1,6 +1,6 @@
 ---
 apiVersion: v2
-appVersion: main
+appVersion: 1.0.0
 dependencies:
   - condition: postgres.enabled
     name: postgres
