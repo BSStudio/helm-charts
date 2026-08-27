@@ -1,6 +1,6 @@
 # backstage
 
-![Version: 0.2.0](https://img.shields.io/badge/Version-0.2.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: main](https://img.shields.io/badge/AppVersion-main-informational?style=flat-square)
+![Version: 0.3.0](https://img.shields.io/badge/Version-0.3.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.0.0](https://img.shields.io/badge/AppVersion-1.0.0-informational?style=flat-square)
 
 Internal member portal for Budavári Schönherz Stúdió, and the source of truth for member data.
 
@@ -25,6 +25,27 @@ Kubernetes: `>=1.23.0-0`
 |------------|------|---------|
 | oci://registry-1.docker.io/cloudpirates | postgres | 0.19.12 |
 
+## Upgrading
+
+### 0.2.x to 0.3.0
+
+`config.BETTER_AUTH_URL` is renamed to `config.APP_URL`, following the rename in the application.
+The value is the same; only the key changes.
+
+```yaml
+# before
+config:
+  BETTER_AUTH_URL: https://backstage.example.com
+
+# after
+config:
+  APP_URL: https://backstage.example.com
+```
+
+Nothing fails loudly when this is missed. The old key still renders into the ConfigMap, as an
+environment variable the application ignores, and `APP_URL` falls back to the chart default. Login
+then redirects to that default host, and the avatar URLs handed to Authentik point at it too.
+
 ## Values
 
 | Key | Type | Default | Description |
@@ -35,7 +56,8 @@ Kubernetes: `>=1.23.0-0`
 | autoscaling.minReplicas | int | `1` | Defines the minimum number of application instances (replicas) to maintain, even during low demand |
 | autoscaling.targetCPUUtilizationPercentage | int | `80` | Specifies the CPU utilization threshold at which autoscaling will be triggered to adjust the number of replicas |
 | cacheSizeLimit | string | `"512Mi"` | Size limit for the Next.js cache emptyDir, where `next/image` writes what it optimizes |
-| config | object | `{"AUTHENTIK_CLIENT_ID":"","AUTHENTIK_GROUP_ADMIN":"","AUTHENTIK_GROUP_ALUMNI":"","AUTHENTIK_GROUP_API_CLIENTS":"backstage-api-clients","AUTHENTIK_GROUP_CANDIDATE":"","AUTHENTIK_GROUP_CANDIDATE_CANDIDATE":"","AUTHENTIK_GROUP_LEADERSHIP":"","AUTHENTIK_GROUP_LEADERSHIP_UUID":"","AUTHENTIK_GROUP_MEMBER":"","AUTHENTIK_ISSUER":"https://auth.example.com/application/o/backstage","AUTHENTIK_URL":"https://auth.example.com","AVATAR_STORAGE":"local","BETTER_AUTH_URL":"https://backstage.example.com","MIGRATION_TIMEOUT":"300","RUN_MIGRATIONS":"true","WEBSITE_URL":"https://bsstudio.hu"}` | Non-secret environment variables rendered into a ConfigMap. Keys are the literal names from <https://github.com/BSStudio/backstage/blob/main/.env.example>; empty values are dropped. `NEXT_PUBLIC_*` settings are absent because `next build` freezes them into the image. |
+| config | object | `{"APP_URL":"https://backstage.example.com","AUTHENTIK_CLIENT_ID":"","AUTHENTIK_GROUP_ADMIN":"","AUTHENTIK_GROUP_ALUMNI":"","AUTHENTIK_GROUP_API_CLIENTS":"backstage-api-clients","AUTHENTIK_GROUP_CANDIDATE":"","AUTHENTIK_GROUP_CANDIDATE_CANDIDATE":"","AUTHENTIK_GROUP_LEADERSHIP":"","AUTHENTIK_GROUP_LEADERSHIP_UUID":"","AUTHENTIK_GROUP_MEMBER":"","AUTHENTIK_ISSUER":"https://auth.example.com/application/o/backstage","AUTHENTIK_URL":"https://auth.example.com","AVATAR_STORAGE":"local","MIGRATION_TIMEOUT":"300","RUN_MIGRATIONS":"true","WEBSITE_URL":"https://bsstudio.hu"}` | Non-secret environment variables rendered into a ConfigMap. Keys are the literal names from <https://github.com/BSStudio/backstage/blob/main/.env.example>; empty values are dropped. `NEXT_PUBLIC_*` settings are absent because `next build` freezes them into the image. |
+| config.APP_URL | string | `"https://backstage.example.com"` | Publicly accessible URL. The OIDC callback and the avatar URLs handed to Authentik are built from it, so it has to match the ingress host and the redirect URI registered in Authentik. |
 | config.AUTHENTIK_CLIENT_ID | string | `""` | OIDC client ID, also the audience the machine-to-machine API checks tokens against |
 | config.AUTHENTIK_GROUP_ADMIN | string | `""` | Authentik group name that grants the ADMIN role |
 | config.AUTHENTIK_GROUP_ALUMNI | string | `""` | UUID of the Authentik group for alumni ("öregtag") |
@@ -48,7 +70,6 @@ Kubernetes: `>=1.23.0-0`
 | config.AUTHENTIK_ISSUER | string | `"https://auth.example.com/application/o/backstage"` | OIDC issuer, the Authentik application's provider URL. Blanking it takes down every auth route, not just login. |
 | config.AUTHENTIK_URL | string | `"https://auth.example.com"` | Base URL of the Authentik instance, for its REST API |
 | config.AVATAR_STORAGE | string | `"local"` | Avatar storage backend, "local" or "s3". "local" needs `persistence`. |
-| config.BETTER_AUTH_URL | string | `"https://backstage.example.com"` | Publicly accessible URL. Better Auth builds the OIDC callback from it, so it has to match the ingress host and the redirect URI registered in Authentik. |
 | config.MIGRATION_TIMEOUT | string | `"300"` | Seconds the entrypoint waits for migrations before failing the container |
 | config.RUN_MIGRATIONS | string | `"true"` | Apply database migrations from the entrypoint before the server starts |
 | config.WEBSITE_URL | string | `"https://bsstudio.hu"` | Base URL of the legacy Drupal website that member data is synced to |
@@ -65,7 +86,7 @@ Kubernetes: `>=1.23.0-0`
 | ingress.annotations | object | `{}` | Additional ingress annotations |
 | ingress.className | string | `""` | Defines which ingress controller will implement the resource |
 | ingress.enabled | bool | `false` | Enable an ingress resource |
-| ingress.hosts | list | `[]` | List of ingress hosts. Must match `config.BETTER_AUTH_URL`, where the OIDC callback lands. |
+| ingress.hosts | list | `[]` | List of ingress hosts. Must match `config.APP_URL`, where the OIDC callback lands. |
 | ingress.tls | list | `[]` | Ingress TLS configuration |
 | initContainers | list | `[]` | Init containers to add to the deployment |
 | lifecycle | object | `{}` | Container lifecycle hooks. A `preStop` sleep holds the pod open until its endpoint removal has propagated, and is charged against `terminationGracePeriodSeconds`. |
