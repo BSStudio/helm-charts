@@ -1,11 +1,11 @@
 ---
 apiVersion: v2
-appVersion: 1.0.0
+appVersion: 1.1.0
 dependencies:
   - condition: postgres.enabled
     name: postgres
     repository: oci://registry-1.docker.io/cloudpirates
-    version: 0.19.12
+    version: 0.20.4
 description: Internal member portal for Budavári Schönherz Stúdió, and the source of truth for member data.
 home: https://github.com/BSStudio/backstage
 # image: ghcr.io/bsstudio/backstage

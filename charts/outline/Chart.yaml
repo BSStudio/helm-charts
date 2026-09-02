@@ -5,15 +5,15 @@ dependencies:
   - condition: minio.enabled
     name: minio
     repository: oci://registry-1.docker.io/cloudpirates
-    version: 0.13.1
+    version: 0.13.3
   - condition: postgres.enabled
     name: postgres
     repository: oci://registry-1.docker.io/cloudpirates
-    version: 0.19.12
+    version: 0.20.4
   - condition: redis.enabled
     name: redis
     repository: oci://registry-1.docker.io/cloudpirates
-    version: 0.33.2
+    version: 0.34.26
 description: Outline is a fast, collaborative, knowledge base for your team built using React and Node.js.
 home: https://www.getoutline.com
 icon: https://www.getoutline.com/images/logo.svg
