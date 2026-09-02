@@ -28,4 +28,4 @@ sources:
   - https://github.com/BSStudio/helm-charts/tree/main/charts/request-manager
   - https://github.com/BSStudio/request-manager
 type: application
-version: 0.4.0
+version: 0.4.1
