@@ -1,6 +1,6 @@
 # mattermost
 
-![Version: 1.1.0](https://img.shields.io/badge/Version-1.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 11.9.0](https://img.shields.io/badge/AppVersion-11.9.0-informational?style=flat-square)
+![Version: 1.1.0](https://img.shields.io/badge/Version-1.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 11.10.1](https://img.shields.io/badge/AppVersion-11.10.1-informational?style=flat-square)
 
 Mattermost Team Edition with OIDC single sign-on and the user limit lifted.
 
@@ -25,7 +25,7 @@ Kubernetes: `>=1.21.0-0`
 
 | Repository | Name | Version |
 |------------|------|---------|
-| oci://registry-1.docker.io/cloudpirates | postgres | 0.19.12 |
+| oci://registry-1.docker.io/cloudpirates | postgres | 0.20.4 |
 
 ## Values
 
