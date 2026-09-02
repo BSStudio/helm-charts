@@ -14,6 +14,33 @@
 
 ## Upgrading
 
+### 0.3.x to 0.4.0
+
+Application 1.1.0 adds the Google Group sync and the calendar dashboard, which read four new
+settings: `secrets.GOOGLE_SERVICE_ACCOUNT_KEY`, `config.GOOGLE_GROUP_EMAIL`,
+`config.GOOGLE_ALUMNI_GROUP_EMAIL` and `config.GOOGLE_CALENDAR_ID`. Leaving them empty is a
+supported state — the Google sync jobs record themselves as `SKIPPED` and the dashboard drops the
+calendar widget — so the upgrade can land before the credentials exist.
+
+```yaml
+config:
+  GOOGLE_GROUP_EMAIL: members@example.com
+  GOOGLE_ALUMNI_GROUP_EMAIL: alumni@example.com
+  GOOGLE_CALENDAR_ID: studio@group.calendar.google.com
+secrets:
+  # base64 of the downloaded service account JSON key
+  GOOGLE_SERVICE_ACCOUNT_KEY: "eyJ0eXBlIjogInNlcnZpY2VfYWNjb3VudCIsIC4uLn0="
+```
+
+The service account needs the **MANAGER** role on `GOOGLE_GROUP_EMAIL`, and the calendar has to be
+shared with its address at "See all event details" — a share that never landed reads as a 404, not a
+403.
+
+The release also ships four database migrations, applied by the entrypoint before the server
+listens. They are covered by the existing `config.MIGRATION_TIMEOUT` and the startup probe window;
+with `persistence.enabled` and a `ReadWriteOnce` volume the chart already picks the `Recreate`
+strategy, so no second replica runs them concurrently.
+
 ### 0.2.x to 0.3.0
 
 `config.BETTER_AUTH_URL` is renamed to `config.APP_URL`, following the rename in the application.
