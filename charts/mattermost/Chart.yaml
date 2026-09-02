@@ -1,11 +1,11 @@
 ---
 apiVersion: v2
-appVersion: 11.9.0
+appVersion: 11.10.1
 dependencies:
   - condition: postgres.enabled
     name: postgres
     repository: oci://registry-1.docker.io/cloudpirates
-    version: 0.19.12
+    version: 0.20.4
 description: Mattermost Team Edition with OIDC single sign-on and the user limit lifted.
 home: https://mattermost.com
 icon: https://mattermost.com/wp-content/uploads/2022/02/icon.png
@@ -26,4 +26,4 @@ sources:
   - https://github.com/BSStudio/mattermost-oidc
   - https://github.com/mattermost/mattermost
 type: application
-version: 1.1.0
+version: 1.1.1

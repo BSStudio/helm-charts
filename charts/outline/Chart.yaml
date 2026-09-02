@@ -1,19 +1,19 @@
 ---
 apiVersion: v2
-appVersion: 1.9.2
+appVersion: 1.10.0
 dependencies:
   - condition: minio.enabled
     name: minio
     repository: oci://registry-1.docker.io/cloudpirates
-    version: 0.13.1
+    version: 0.13.3
   - condition: postgres.enabled
     name: postgres
     repository: oci://registry-1.docker.io/cloudpirates
-    version: 0.19.12
+    version: 0.20.4
   - condition: redis.enabled
     name: redis
     repository: oci://registry-1.docker.io/cloudpirates
-    version: 0.33.2
+    version: 0.34.26
 description: Outline is a fast, collaborative, knowledge base for your team built using React and Node.js.
 home: https://www.getoutline.com
 icon: https://www.getoutline.com/images/logo.svg
@@ -31,4 +31,4 @@ sources:
   - https://github.com/BSStudio/helm-charts/tree/main/charts/outline
   - https://github.com/outline/outline
 type: application
-version: 2.1.0
+version: 2.1.1
