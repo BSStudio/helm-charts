@@ -1,0 +1,26 @@
+---
+"chart: backstage":
+  - changed-files:
+      - any-glob-to-any-file: charts/backstage/**
+
+"chart: mattermost":
+  - changed-files:
+      - any-glob-to-any-file: charts/mattermost/**
+
+"chart: outline":
+  - changed-files:
+      - any-glob-to-any-file: charts/outline/**
+
+"chart: request-manager":
+  - changed-files:
+      - any-glob-to-any-file: charts/request-manager/**
+
+ci:
+  - changed-files:
+      - any-glob-to-any-file:
+          - .github/**
+          - scripts/**
+
+pre-commit:
+  - changed-files:
+      - any-glob-to-any-file: .pre-commit-config.yaml
