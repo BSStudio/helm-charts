@@ -1,6 +1,6 @@
 # backstage
 
-![Version: 0.4.0](https://img.shields.io/badge/Version-0.4.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.1.0](https://img.shields.io/badge/AppVersion-1.1.0-informational?style=flat-square)
+![Version: 0.5.0](https://img.shields.io/badge/Version-0.5.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.1.0](https://img.shields.io/badge/AppVersion-1.1.0-informational?style=flat-square)
 
 Internal member portal for Budavári Schönherz Stúdió, and the source of truth for member data.
 
@@ -103,7 +103,7 @@ then redirects to that default host, and the avatar URLs handed to Authentik poi
 | config.MIGRATION_TIMEOUT | string | `"300"` | Seconds the entrypoint waits for migrations before failing the container |
 | config.RUN_MIGRATIONS | string | `"true"` | Apply database migrations from the entrypoint before the server starts |
 | config.WEBSITE_URL | string | `"https://bsstudio.hu"` | Base URL of the legacy Drupal website that member data is synced to |
-| existingSecret | string | `""` | Read the sensitive environment variables from an existing Secret instead of `secrets`. Its keys must be the environment variable names. DATABASE_URL below stays chart-managed. |
+| existingSecret | string | `""` | Read the sensitive environment variables from an existing Secret instead of `secrets`. Its keys must be the environment variable names, and GOOGLE_SERVICE_ACCOUNT_KEY its base64 form: nothing encodes it on this path. DATABASE_URL below stays chart-managed. |
 | extraEnv | list | `[]` | Additional environment variables, appended to the container verbatim. Prefer `config` and `secrets`; entries here take precedence over both. |
 | extraEnvFrom | list | `[]` | Additional envFrom sources appended to the container |
 | extraVolumeMounts | list | `[]` | Additional volume mounts for the containers |
@@ -154,7 +154,7 @@ then redirects to that default host, and the avatar URLs handed to Authentik poi
 | secrets.AUTHENTIK_API_TOKEN | string | `""` | Authentik REST API token, used for the user and group syncs |
 | secrets.AUTHENTIK_CLIENT_SECRET | string | `""` | OIDC client secret of the Authentik application |
 | secrets.BETTER_AUTH_SECRET | string | `""` | Signing key for session cookies; the app will not start without it. `openssl rand -base64 32` |
-| secrets.GOOGLE_SERVICE_ACCOUNT_KEY | string | `""` | Google service account JSON key, base64-encoded, used for both the group sync and the calendar read. The account needs the MANAGER role on `config.GOOGLE_GROUP_EMAIL`. |
+| secrets.GOOGLE_SERVICE_ACCOUNT_KEY | string | `""` | Google service account key for the group sync and the calendar read, as the downloaded JSON or already base64-encoded. The account needs the MANAGER role on `config.GOOGLE_GROUP_EMAIL`. |
 | secrets.WEBSITE_ADMIN_PASSWORD | string | `""` | Password of that administrator account |
 | secrets.WEBSITE_ADMIN_USERNAME | string | `""` | Administrator account on the legacy website, used for the website sync |
 | securityContext | object | `{}` | Run containers as a specific securityContext, merged over chart defaults (runAsUser 65532, the UID the image chowns its files to; readOnlyRootFilesystem; capabilities drop ALL) |

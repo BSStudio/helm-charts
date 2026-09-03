@@ -278,7 +278,8 @@ config:
   # S3_FORCE_PATH_STYLE: "false"
 
 # -- Read the sensitive environment variables from an existing Secret instead of `secrets`. Its keys
-# must be the environment variable names. DATABASE_URL below stays chart-managed.
+# must be the environment variable names, and GOOGLE_SERVICE_ACCOUNT_KEY its base64 form: nothing
+# encodes it on this path. DATABASE_URL below stays chart-managed.
 existingSecret: ""
 
 # -- Sensitive environment variables rendered into a Secret. Keys are the literal names from
@@ -295,8 +296,8 @@ secrets:
   WEBSITE_ADMIN_USERNAME: ""
   # -- Password of that administrator account
   WEBSITE_ADMIN_PASSWORD: ""
-  # -- Google service account JSON key, base64-encoded, used for both the group sync and the calendar
-  # read. The account needs the MANAGER role on `config.GOOGLE_GROUP_EMAIL`.
+  # -- Google service account key for the group sync and the calendar read, as the downloaded JSON or
+  # already base64-encoded. The account needs the MANAGER role on `config.GOOGLE_GROUP_EMAIL`.
   GOOGLE_SERVICE_ACCOUNT_KEY: ""
   # DATABASE_URL: ""
   # S3 credentials. Omit to use the default AWS credential chain (IAM role, instance profile):

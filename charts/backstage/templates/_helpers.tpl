@@ -117,6 +117,10 @@ pointing at an external database looks like.
 {{- if not .Values.existingSecret -}}
 {{- range $k, $v := .Values.secrets -}}
 {{- $rendered := tpl ($v | toString) $ -}}
+{{- /* The app base64-decodes this value, so a JSON key is encoded here rather than by hand. */ -}}
+{{- if and (eq $k "GOOGLE_SERVICE_ACCOUNT_KEY") (hasPrefix "{" (trim $rendered)) -}}
+{{- $rendered = b64enc $rendered -}}
+{{- end -}}
 {{- if $rendered -}}
 {{- $_ := set $user $k $rendered -}}
 {{- end -}}
