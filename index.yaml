@@ -3,6 +3,36 @@ entries:
   backstage:
   - apiVersion: v2
     appVersion: 1.1.0
+    created: "2026-09-03T09:02:58.971629272Z"
+    dependencies:
+    - condition: postgres.enabled
+      name: postgres
+      repository: oci://registry-1.docker.io/cloudpirates
+      version: 0.20.4
+    description: Internal member portal for Budavári Schönherz Stúdió, and the source
+      of truth for member data.
+    digest: 9090227bf3c3c95e3b4b865b786f107cdc129113529ef6ebcca641b5697b06a2
+    home: https://github.com/BSStudio/backstage
+    keywords:
+    - backstage
+    - member-management
+    - authentik
+    - studio
+    - bss
+    kubeVersion: '>=1.23.0-0'
+    maintainers:
+    - name: Budavári Schönherz Stúdió
+      url: https://github.com/BSStudio/helm-charts
+    name: backstage
+    sources:
+    - https://github.com/BSStudio/helm-charts/tree/main/charts/backstage
+    - https://github.com/BSStudio/backstage
+    type: application
+    urls:
+    - https://github.com/BSStudio/helm-charts/releases/download/backstage-0.5.0/backstage-0.5.0.tgz
+    version: 0.5.0
+  - apiVersion: v2
+    appVersion: 1.1.0
     created: "2026-09-02T01:32:17.036458538Z"
     dependencies:
     - condition: postgres.enabled
@@ -1544,4 +1574,4 @@ entries:
     urls:
     - https://github.com/BSStudio/helm-charts/releases/download/request-manager-0.1.0/request-manager-0.1.0.tgz
     version: 0.1.0
-generated: "2026-09-02T01:32:17.737991273Z"
+generated: "2026-09-03T09:02:58.971724741Z"
