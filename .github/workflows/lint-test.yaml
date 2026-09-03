@@ -61,6 +61,18 @@ jobs:
             echo -e '\033[0;32mDocumentation up to date\033[0m ✔'
           fi
 
+      - name: Check every chart has a labeler entry
+        run: |
+          missing=$(for dir in charts/*/; do
+            chart=$(basename "$dir")
+            grep -q "^\"chart: $chart\":" ./.github/configs/labeler.yaml || echo "$chart"
+          done)
+          if [[ -n "$missing" ]]; then
+            echo "Charts missing from .github/configs/labeler.yaml:"
+            echo "$missing"
+            exit 1
+          fi
+
       - name: Create kind cluster
         uses: helm/kind-action@v1.14.0
         if: steps.list-changed.outputs.changed == 'true'
