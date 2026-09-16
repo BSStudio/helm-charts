@@ -14,6 +14,56 @@
 
 ## Upgrading
 
+### 0.5.x to 0.6.0
+
+Application 1.2.0 renames the Drupal sync settings. `config.WEBSITE_URL`,
+`secrets.WEBSITE_ADMIN_USERNAME` and `secrets.WEBSITE_ADMIN_PASSWORD` become `config.DRUPAL_URL`,
+`secrets.DRUPAL_ADMIN_USERNAME` and `secrets.DRUPAL_ADMIN_PASSWORD`. The values are the same; only
+the keys change.
+
+```yaml
+# before
+config:
+  WEBSITE_URL: https://bsstudio.hu
+secrets:
+  WEBSITE_ADMIN_USERNAME: backstage
+  WEBSITE_ADMIN_PASSWORD: a-password
+
+# after
+config:
+  DRUPAL_URL: https://bsstudio.hu
+secrets:
+  DRUPAL_ADMIN_USERNAME: backstage
+  DRUPAL_ADMIN_PASSWORD: a-password
+```
+
+Nothing fails loudly when this is missed. The old names are read by nothing and an empty `DRUPAL_*`
+is a supported state, so the sync stops quietly; `/admin/sync-jobs` filling with `SKIPPED` rows is
+the tell.
+
+The release's other settings are optional, and empty is a working state for each — the feature is
+dropped rather than failed.
+
+```yaml
+config:
+  # Holds one Authentik service account per workstation, and has to exist before they check in.
+  AUTHENTIK_GROUP_COMPUTER_AGENTS: backstage-computer-agents
+  WEBSITE_WEBHOOK_URL: https://example.hu/api/webhooks/members
+  # The workstation ID is joined onto this, reaching nle4 at nle4.example.com.
+  COMPUTER_RDP_HOST_SUFFIX: example.com
+  COMPUTER_RDP_AD_DOMAIN: EXAMPLE
+secrets:
+  # Issued on the website's side, and shown there once.
+  WEBSITE_WEBHOOK_TOKEN: a-token
+```
+
+Three more database migrations ship with the release, applied by the entrypoint as in 0.4.0 and
+covered by `config.MIGRATION_TIMEOUT` and the startup probe window.
+
+Avatars now answer with `max-age=300`, which a CDN in front of the ingress has to be told to respect
+— on Cloudflare, a Cache Rule on `/avatars/*` with browser TTL at **Respect origin**. Left at the
+zone default the header is rewritten upward and replaced avatars stay cached for hours.
+
 ### 0.3.x to 0.4.0
 
 Application 1.1.0 adds the Google Group sync and the calendar dashboard, which read four new

@@ -21,7 +21,7 @@ imagePullSecrets: []
 replicaCount: 1
 
 # -- Grace period for shutdown. Next.js drains in-flight requests with no deadline of its own, and
-# syncs to Authentik and the website run inside the request that triggered them.
+# syncs to Authentik, Drupal and the new website run inside the request that triggered them.
 terminationGracePeriodSeconds: 60
 
 # -- Deployment update strategy. When empty, defaults to `Recreate` if persistence is enabled with a
@@ -244,6 +244,8 @@ config:
   AUTHENTIK_GROUP_ADMIN: ""
   # -- Authentik group name a machine-to-machine API client must be in
   AUTHENTIK_GROUP_API_CLIENTS: backstage-api-clients
+  # -- Authentik group name a workstation agent must be in
+  AUTHENTIK_GROUP_COMPUTER_AGENTS: backstage-computer-agents
   # -- UUID of the Authentik group for candidate candidates ("jelölt-jelölt")
   AUTHENTIK_GROUP_CANDIDATE_CANDIDATE: ""
   # -- UUID of the Authentik group for candidates ("jelölt")
@@ -254,8 +256,12 @@ config:
   AUTHENTIK_GROUP_ALUMNI: ""
   # -- UUID of the common Leadership group in Authentik
   AUTHENTIK_GROUP_LEADERSHIP_UUID: ""
-  # -- Base URL of the legacy Drupal website that member data is synced to
-  WEBSITE_URL: https://bsstudio.hu
+  # -- Base URL of the Drupal site that member data is synced to. Empty, or with either
+  # `secrets.DRUPAL_ADMIN_*` empty, the Drupal jobs record as `SKIPPED` rather than failing.
+  DRUPAL_URL: https://bsstudio.hu
+  # -- Member webhook of the new website, synced alongside Drupal. Empty, or without
+  # `secrets.WEBSITE_WEBHOOK_TOKEN`, its jobs record as `SKIPPED`.
+  WEBSITE_WEBHOOK_URL: ""
   # -- Main mailing list the member addresses are synced to. Unset, every Google job lands as
   # `SKIPPED` and the reconciliation page reports nothing configured.
   GOOGLE_GROUP_EMAIL: ""
@@ -264,6 +270,14 @@ config:
   # -- Studio calendar shown on the dashboard, shared with the service account's address at "See all
   # event details". Unset, the widget is dropped rather than failing.
   GOOGLE_CALENDAR_ID: ""
+  # -- Domain the workstation ID is joined onto for the `.rdp` download, reaching `nle4` at
+  # `nle4.example.com`. Empty, the download button is dropped from `/computers`.
+  COMPUTER_RDP_HOST_SUFFIX: ""
+  # -- Port written into the `.rdp` file
+  COMPUTER_RDP_PORT: "3389"
+  # -- NetBIOS name of the AD domain, prefilled as `DOMAIN\<Authentik username>`. Empty, the file
+  # carries no username.
+  COMPUTER_RDP_AD_DOMAIN: ""
   # -- Avatar storage backend, "local" or "s3". "local" needs `persistence`.
   AVATAR_STORAGE: local
   # -- Apply database migrations from the entrypoint before the server starts
@@ -292,10 +306,12 @@ secrets:
   AUTHENTIK_CLIENT_SECRET: ""
   # -- Authentik REST API token, used for the user and group syncs
   AUTHENTIK_API_TOKEN: ""
-  # -- Administrator account on the legacy website, used for the website sync
-  WEBSITE_ADMIN_USERNAME: ""
+  # -- Administrator account on the Drupal site, used for the Drupal sync
+  DRUPAL_ADMIN_USERNAME: ""
   # -- Password of that administrator account
-  WEBSITE_ADMIN_PASSWORD: ""
+  DRUPAL_ADMIN_PASSWORD: ""
+  # -- Bearer token for `config.WEBSITE_WEBHOOK_URL`. Issued on the website's side.
+  WEBSITE_WEBHOOK_TOKEN: ""
   # -- Google service account key for the group sync and the calendar read, as the downloaded JSON or
   # already base64-encoded. The account needs the MANAGER role on `config.GOOGLE_GROUP_EMAIL`.
   GOOGLE_SERVICE_ACCOUNT_KEY: ""
