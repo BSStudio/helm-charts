@@ -1,0 +1,11 @@
+---
+# Ingress enabled, so the API server validates the chart-owned `/api` and `/` paths.
+
+postgres:
+  auth:
+    password: secretPassword
+
+ingress:
+  enabled: true
+  hosts:
+    - host: raktr.example.com

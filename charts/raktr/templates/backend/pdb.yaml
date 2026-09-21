@@ -1,0 +1,19 @@
+{{- if .Values.backend.pdb.enabled }}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "raktr.fullname" . }}-backend
+  labels:
+    {{- include "raktr.labels" . | nindent 4 }}
+    app.kubernetes.io/component: backend
+spec:
+  {{- if .Values.backend.pdb.maxUnavailable }}
+  maxUnavailable: {{ .Values.backend.pdb.maxUnavailable }}
+  {{- else }}
+  minAvailable: {{ .Values.backend.pdb.minAvailable | default 1 }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "raktr.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: backend
+{{- end }}

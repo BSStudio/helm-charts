@@ -1,0 +1,27 @@
+---
+apiVersion: v2
+appVersion: 1.0.0
+dependencies:
+  - condition: postgres.enabled
+    name: postgres
+    repository: oci://registry-1.docker.io/cloudpirates
+    version: 0.20.4
+description: Inventory and rental management system for Budavári Schönherz Stúdió.
+home: https://github.com/mboldi/Raktr
+# image: ghcr.io/mboldi/raktr/backend
+keywords:
+  - raktr
+  - inventory
+  - rental
+  - studio
+  - bss
+kubeVersion: ">=1.23.0-0"
+maintainers:
+  - name: Budavári Schönherz Stúdió
+    url: https://github.com/BSStudio/helm-charts
+name: raktr
+sources:
+  - https://github.com/BSStudio/helm-charts/tree/main/charts/raktr
+  - https://github.com/mboldi/Raktr
+type: application
+version: 0.1.0

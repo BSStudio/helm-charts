@@ -6,6 +6,7 @@ misconfigurations:
       - charts/mattermost/charts/postgres/templates/statefulset.yaml
       - charts/outline/charts/postgres/templates/statefulset.yaml
       - charts/outline/charts/redis/templates/statefulset.yaml
+      - charts/raktr/charts/postgres/templates/statefulset.yaml
       - charts/request-manager/charts/postgres/templates/statefulset.yaml
     statement: External charts
   - id: AVD-KSV-0110
@@ -14,6 +15,8 @@ misconfigurations:
       - charts/mattermost/templates/deployment.yaml
       - charts/outline/templates/cronjob.yaml
       - charts/outline/templates/deployment.yaml
+      - charts/raktr/templates/backend/deployment.yaml
+      - charts/raktr/templates/frontend/deployment.yaml
       - charts/request-manager/templates/beat/deployment.yaml
       - charts/request-manager/templates/migrate-job.yaml
       - charts/request-manager/templates/server/deployment.yaml
@@ -26,5 +29,6 @@ misconfigurations:
       - charts/backstage/templates/configmap.yaml
       - charts/mattermost/templates/configmap.yaml
       - charts/outline/templates/configmap.yaml
+      - charts/raktr/templates/configmap.yaml
       - charts/request-manager/templates/configmap.yaml
     statement: Matches on the key name only; the ConfigMap holds no sensitive values
