@@ -11,6 +11,10 @@
   - changed-files:
       - any-glob-to-any-file: charts/outline/**
 
+"chart: raktr":
+  - changed-files:
+      - any-glob-to-any-file: charts/raktr/**
+
 "chart: request-manager":
   - changed-files:
       - any-glob-to-any-file: charts/request-manager/**

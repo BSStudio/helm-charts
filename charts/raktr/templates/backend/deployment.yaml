@@ -1,0 +1,115 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "raktr.fullname" . }}-backend
+  labels:
+    {{- include "raktr.labels" . | nindent 4 }}
+    app.kubernetes.io/component: backend
+spec:
+  {{- if not .Values.backend.autoscaling.enabled }}
+  replicas: {{ .Values.backend.replicaCount }}
+  {{- end }}
+  {{- with .Values.backend.strategy }}
+  strategy:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "raktr.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: backend
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        checksum/secret: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
+        {{- with .Values.podAnnotations }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+      labels:
+        {{- include "raktr.labels" . | nindent 8 }}
+        app.kubernetes.io/component: backend
+        {{- with .Values.podLabels }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "raktr.serviceAccountName" . }}
+      automountServiceAccountToken: {{ .Values.serviceAccount.automount }}
+      terminationGracePeriodSeconds: {{ .Values.backend.terminationGracePeriodSeconds }}
+      securityContext:
+        {{- include "raktr.podSecurityContext" . | nindent 8 }}
+      {{- with .Values.initContainers }}
+      initContainers:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: backend
+          securityContext:
+            {{- include "raktr.containerSecurityContext" . | nindent 12 }}
+          image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.backend.image.imagePullPolicy }}
+          env:
+            {{- include "raktr.backendEnv" . | trim | nindent 12 }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "raktr.fullname" . }}
+            - secretRef:
+                name: {{ include "raktr.fullname" . }}
+            {{- with .Values.existingSecret }}
+            - secretRef:
+                name: {{ . }}
+            {{- end }}
+            {{- with .Values.extraEnvFrom }}
+              {{- toYaml . | nindent 12 }}
+            {{- end }}
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          {{- with .Values.backend.livenessProbe }}
+          livenessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.backend.readinessProbe }}
+          readinessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.backend.startupProbe }}
+          startupProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.backend.lifecycle }}
+          lifecycle:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          resources:
+            {{- toYaml .Values.backend.resources | nindent 12 }}
+          volumeMounts:
+            # The root filesystem is read-only; Tomcat and the JVM write their scratch files here.
+            - name: tmp
+              mountPath: /tmp
+            {{- with .Values.extraVolumeMounts }}
+              {{- toYaml . | nindent 12 }}
+            {{- end }}
+      volumes:
+        - name: tmp
+          emptyDir:
+            medium: Memory
+        {{- with .Values.extraVolumes }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

@@ -1,0 +1,44 @@
+{{- $fullName := include "raktr.fullname" . -}}
+apiVersion: v1
+kind: Pod
+metadata:
+  name: {{ printf "%s-test-connection" $fullName | trunc 63 | trimSuffix "-" }}
+  labels:
+    {{- include "raktr.labels" . | nindent 4 }}
+    app.kubernetes.io/component: test
+  annotations:
+    helm.sh/hook: test
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+    checkov.io/skip1: CKV_K8S_8=One-shot helm test pod runs to completion; liveness probe not applicable
+    checkov.io/skip2: CKV_K8S_9=One-shot helm test pod runs to completion; readiness probe not applicable
+spec:
+  restartPolicy: Never
+  automountServiceAccountToken: false
+  securityContext:
+    seccompProfile:
+      type: RuntimeDefault
+  containers:
+    - name: test-connection
+      image: busybox:stable-uclibc
+      securityContext:
+        runAsUser: 65534
+        runAsGroup: 65534
+        allowPrivilegeEscalation: false
+        runAsNonRoot: true
+        readOnlyRootFilesystem: true
+        capabilities:
+          drop:
+            - ALL
+      command: [sh]
+      args:
+        - -ec
+        - |
+          wget --spider -S http://{{ $fullName }}-backend:{{ .Values.backend.service.port }}/api/actuator/health
+          wget --spider -S http://{{ $fullName }}-frontend:{{ .Values.frontend.service.port }}/
+      resources:
+        requests:
+          cpu: 50m
+          memory: 32Mi
+        limits:
+          cpu: 100m
+          memory: 64Mi

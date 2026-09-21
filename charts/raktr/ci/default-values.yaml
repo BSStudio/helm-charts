@@ -1,0 +1,4 @@
+---
+postgres:
+  auth:
+    password: secretPassword

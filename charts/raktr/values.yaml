@@ -1,0 +1,306 @@
+---
+# -- Provide a name in place of `raktr`
+nameOverride: ""
+# -- String to fully override `"raktr.fullname"`
+fullnameOverride: ""
+
+# -- Secrets for pulling the images from a private registry
+imagePullSecrets: []
+  # - name: ghcr-credentials
+
+serviceAccount:
+  # -- Specifies whether a service account should be created
+  create: true
+  # -- Automatically mount a ServiceAccount's API credentials?
+  automount: false
+  # -- Annotations to add to the service account
+  annotations: {}
+  # -- The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template.
+  name: ""
+
+# -- Optional additional annotations to add to all pods
+podAnnotations: {}
+
+# -- Optional additional labels to add to all pods
+podLabels: {}
+
+# -- Pod-level security context, merged over chart defaults (fsGroup 65532 for volume writes)
+podSecurityContext: {}
+  # fsGroup: 2000
+
+# -- Container-level security context for both workloads, merged over the hardened chart defaults
+# (runAsUser 65532, readOnlyRootFilesystem, capabilities drop ALL)
+securityContext: {}
+  # runAsUser: 65532
+
+# -- Init containers to add to the backend deployment
+initContainers: []
+  # - name: wait-for-something
+  #   image: busybox:latest
+  #   command: ['sh', '-c', 'do-something-here']
+
+# -- NodeSelector for all workloads
+nodeSelector: {}
+
+# -- Tolerations for all workloads
+tolerations: []
+
+# -- Affinity for all workloads
+affinity: {}
+
+backend:
+  image:
+    # -- The Docker repository to pull the backend image from
+    repository: ghcr.io/mboldi/raktr/backend
+    # -- The logic of image pulling
+    imagePullPolicy: IfNotPresent
+    # -- Overrides the image tag whose default is the chart appVersion
+    tag: ""
+  # -- Number of backend replicas (ignored when autoscaling is enabled). Flyway migrates on startup
+  # under a database lock, so replicas can start together.
+  replicaCount: 1
+  # -- Grace period for shutdown. Above the 30s Spring allows its graceful shutdown to drain requests.
+  terminationGracePeriodSeconds: 45
+  # -- Deployment update strategy for the backend
+  strategy: {}
+    # type: RollingUpdate
+    # rollingUpdate:
+    #   maxSurge: 1
+    #   maxUnavailable: 0
+  service:
+    # -- Kubernetes service type for the API
+    type: ClusterIP
+    # -- Port number for the API
+    port: 8080
+  # -- Liveness probe for the backend container. `tcpSocket`: `/api/actuator/health` queries the
+  # database, and the actuator's liveness group is behind authentication.
+  livenessProbe:
+    tcpSocket:
+      port: http
+    periodSeconds: 10
+    failureThreshold: 3
+  # -- Readiness probe for the backend container
+  readinessProbe:
+    httpGet:
+      path: /api/actuator/health
+      port: http
+    periodSeconds: 10
+    failureThreshold: 3
+  # -- Startup probe for the backend container. Flyway migrates before the port opens, so the
+  # window has to cover the migrations as well as the JVM start.
+  startupProbe:
+    httpGet:
+      path: /api/actuator/health
+      port: http
+    initialDelaySeconds: 10
+    periodSeconds: 5
+    failureThreshold: 60
+  # -- Container lifecycle hooks. A `preStop` sleep holds the pod open until its endpoint removal
+  # has propagated, and is charged against `terminationGracePeriodSeconds`.
+  lifecycle: {}
+    # preStop:
+    #   exec:
+    #     command: ["/bin/sleep", "10"]
+  resources:
+    limits:
+      # -- The maximum amount of CPU the container can use
+      cpu: 1000m
+      # -- The maximum amount of memory the container can use. Keep `config.JAVA_TOOL_OPTIONS` in
+      # step: the heap is sized from this limit.
+      memory: 768Mi
+    requests:
+      # -- Specifies the minimum amount of CPU that will be allocated to the container
+      cpu: 250m
+      # -- Specifies the minimum amount of memory that will be allocated to the container
+      memory: 768Mi
+  autoscaling:
+    # -- Controls whether autoscaling is enabled for the backend deployment
+    enabled: false
+    # -- Minimum number of backend replicas
+    minReplicas: 1
+    # -- Maximum number of backend replicas
+    maxReplicas: 10
+    # -- Target CPU utilization percentage that triggers scaling
+    targetCPUUtilizationPercentage: 80
+    # targetMemoryUtilizationPercentage: 80
+  pdb:
+    # -- Enable a PodDisruptionBudget for the backend. With a single replica `minAvailable: 1`
+    # blocks node drains.
+    enabled: false
+    # -- Minimum available backend pods (used when maxUnavailable is unset; defaults to 1)
+    minAvailable: ""
+    # -- Maximum unavailable backend pods (takes precedence over minAvailable when set)
+    maxUnavailable: ""
+
+frontend:
+  image:
+    # -- The Docker repository to pull the frontend image from
+    repository: ghcr.io/mboldi/raktr/frontend
+    # -- The logic of image pulling
+    imagePullPolicy: IfNotPresent
+    # -- Overrides the image tag whose default is the chart appVersion
+    tag: ""
+  # -- Number of frontend replicas (ignored when autoscaling is enabled)
+  replicaCount: 1
+  # -- Grace period for shutdown. nginx drains open connections on the image's `SIGQUIT` stop signal.
+  terminationGracePeriodSeconds: 30
+  # -- Deployment update strategy for the frontend
+  strategy: {}
+  service:
+    # -- Kubernetes service type for the web app
+    type: ClusterIP
+    # -- Port number for the web app
+    port: 8080
+  # -- Liveness probe for the frontend container
+  livenessProbe:
+    httpGet:
+      path: /
+      port: http
+    periodSeconds: 10
+    failureThreshold: 3
+  # -- Readiness probe for the frontend container
+  readinessProbe:
+    httpGet:
+      path: /
+      port: http
+    periodSeconds: 10
+    failureThreshold: 3
+  # -- Startup probe for the frontend container (disabled by default; nginx starts in under a second)
+  startupProbe: {}
+  # -- Container lifecycle hooks
+  lifecycle: {}
+  resources:
+    limits:
+      # -- The maximum amount of CPU the container can use
+      cpu: 250m
+      # -- The maximum amount of memory the container can use. nginx starts one worker per node CPU.
+      memory: 64Mi
+    requests:
+      # -- Specifies the minimum amount of CPU that will be allocated to the container
+      cpu: 25m
+      # -- Specifies the minimum amount of memory that will be allocated to the container
+      memory: 64Mi
+  autoscaling:
+    # -- Controls whether autoscaling is enabled for the frontend deployment
+    enabled: false
+    # -- Minimum number of frontend replicas
+    minReplicas: 1
+    # -- Maximum number of frontend replicas
+    maxReplicas: 10
+    # -- Target CPU utilization percentage that triggers scaling
+    targetCPUUtilizationPercentage: 80
+    # targetMemoryUtilizationPercentage: 80
+  pdb:
+    # -- Enable a PodDisruptionBudget for the frontend. With a single replica `minAvailable: 1`
+    # blocks node drains.
+    enabled: false
+    # -- Minimum available frontend pods (used when maxUnavailable is unset; defaults to 1)
+    minAvailable: ""
+    # -- Maximum unavailable frontend pods (takes precedence over minAvailable when set)
+    maxUnavailable: ""
+
+ingress:
+  # -- Enable an ingress resource. The frontend calls the API on its own origin, so each host routes
+  # `/api` to the backend, which the chart serves under that context path, and the rest to the frontend.
+  enabled: false
+  # -- Defines which ingress controller will implement the resource
+  className: ""
+  # -- Additional ingress annotations
+  annotations: {}
+    # cert-manager.io/cluster-issuer: letsencrypt-prod
+  # -- List of ingress hosts. The paths are fixed by the chart. The frontend image hardcodes its
+  # Authentik client and sends the user back to its own origin, so each host has to be a redirect
+  # URI of that client.
+  hosts: []
+    #  - host: raktr.example.com
+  # -- Ingress TLS configuration
+  tls: []
+    #  - secretName: raktr-example-com-tls
+    #    hosts:
+    #      - raktr.example.com
+
+# -- Non-secret environment variables for the backend, rendered into a ConfigMap. Keys are the
+# environment forms of the Spring properties in
+# <https://github.com/mboldi/Raktr/blob/main/backend/src/main/resources/application.yml>; empty
+# values are dropped. With postgres.enabled, SPRING_DATASOURCE_URL and _USERNAME default to it.
+config:
+  # -- `prod` turns off the Swagger UI and the API docs
+  SPRING_PROFILES_ACTIVE: prod
+  # -- JVM flags. The JVM caps its heap at 25% of the memory limit unless told otherwise.
+  JAVA_TOOL_OPTIONS: -XX:MaxRAMPercentage=50
+  # JWKS the access tokens are verified against. Unset, the app default is BSS's Authentik, which the
+  # frontend image hardcodes as its issuer too, so change them together.
+  # SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWKSETURI: https://login.bsstudio.hu/application/o/raktr/jwks/
+  # External database, with postgres.enabled false:
+  # SPRING_DATASOURCE_URL: jdbc:postgresql://db.example.com:5432/raktr
+  # SPRING_DATASOURCE_USERNAME: raktr
+  # SENTRY_ENVIRONMENT: production
+
+# -- Sensitive environment variables for the backend, rendered into a Secret. Keys follow the same
+# scheme as `config`. With postgres.enabled, SPRING_DATASOURCE_PASSWORD defaults to
+# postgres.auth.password.
+secrets:
+  # -- Sentry DSN for error reporting. Empty disables Sentry.
+  SENTRY_DSN: ""
+  # SPRING_DATASOURCE_PASSWORD: ""
+
+# -- Supply the sensitive environment variables from an existing Secret instead of `secrets`. Its
+# keys must be the environment variable names. SPRING_DATASOURCE_PASSWORD stays chart-managed.
+existingSecret: ""
+
+# -- Additional environment variables, appended to the backend container verbatim. Prefer `config`
+# and `secrets`; entries here take precedence over both.
+extraEnv: []
+  # - name: MY_SETTING
+  #   valueFrom:
+  #     fieldRef:
+  #       fieldPath: metadata.namespace
+
+# -- Additional envFrom sources appended to the backend container
+extraEnvFrom: []
+  # - secretRef:
+  #     name: extra-secret
+
+# -- Additional volumes added to the backend pod
+extraVolumes: []
+  # - name: foo
+  #   secret:
+  #     secretName: mysecret
+
+# -- Additional volume mounts added to the backend container
+extraVolumeMounts: []
+  # - name: foo
+  #   mountPath: /etc/foo
+  #   readOnly: true
+
+postgres:
+  # -- Enable the CloudPirates PostgreSQL chart.
+  # Refer to <https://github.com/CloudPirates-io/helm-charts/blob/main/charts/postgres> for possible values.
+  enabled: true
+  auth:
+    # -- Name for a custom user to create (also used as SPRING_DATASOURCE_USERNAME)
+    username: raktr
+    # -- Name for a custom database to create (used in SPRING_DATASOURCE_URL)
+    database: raktr
+    # -- Password for the custom user (also used as SPRING_DATASOURCE_PASSWORD). Must be set.
+    password: ""
+  resources:
+    limits:
+      # -- The maximum amount of CPU the container can use
+      cpu: 500m
+      # -- The maximum amount of memory the container can use
+      memory: 512Mi
+    requests:
+      # -- Specifies the minimum amount of CPU that will be allocated to the container
+      cpu: 250m
+      # -- Specifies the minimum amount of memory that will be allocated to the container
+      memory: 512Mi
+  containerSecurityContext:
+    # -- Run container processes as non-root user nobody
+    runAsUser: 65534
+    # -- Run container processes with nobody group
+    runAsGroup: 65534
+    seccompProfile:
+      # -- Use the container runtime default seccomp profile
+      type: RuntimeDefault
