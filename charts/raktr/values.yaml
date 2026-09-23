@@ -34,12 +34,6 @@ podSecurityContext: {}
 securityContext: {}
   # runAsUser: 65532
 
-# -- Init containers to add to the backend deployment
-initContainers: []
-  # - name: wait-for-something
-  #   image: busybox:latest
-  #   command: ['sh', '-c', 'do-something-here']
-
 # -- NodeSelector for all workloads
 nodeSelector: {}
 
@@ -67,6 +61,53 @@ backend:
     # rollingUpdate:
     #   maxSurge: 1
     #   maxUnavailable: 0
+  # -- Non-secret environment variables for the backend; empty values are dropped. Keys are the
+  # environment forms of the properties in
+  # <https://github.com/mboldi/Raktr/blob/main/backend/src/main/resources/application.yml>.
+  config:
+    # -- `prod` turns off the Swagger UI and the API docs
+    SPRING_PROFILES_ACTIVE: prod
+    # -- JVM flags. The heap defaults to 25% of the memory limit.
+    JAVA_TOOL_OPTIONS: -XX:MaxRAMPercentage=50
+    # JWKS the tokens are verified against. Unset, the app default matches the frontend image.
+    # SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWKSETURI: https://login.bsstudio.hu/application/o/raktr/jwks/
+    # External database, with postgres.enabled false:
+    # SPRING_DATASOURCE_URL: jdbc:postgresql://db.example.com:5432/raktr
+    # SPRING_DATASOURCE_USERNAME: raktr
+    # SENTRY_ENVIRONMENT: production
+  # -- Sensitive environment variables for the backend. Keys follow the same scheme as `config`.
+  secrets:
+    # -- Sentry DSN for error reporting. Empty disables Sentry.
+    SENTRY_DSN: ""
+    # SPRING_DATASOURCE_PASSWORD: ""
+  # -- Supply the sensitive environment variables from an existing Secret instead of `secrets`. Its
+  # keys must be the environment variable names. SPRING_DATASOURCE_PASSWORD stays chart-managed.
+  existingSecret: ""
+  # -- Additional environment variables for the backend container. These win over `config` and `secrets`.
+  extraEnv: []
+    # - name: MY_SETTING
+    #   valueFrom:
+    #     fieldRef:
+    #       fieldPath: metadata.namespace
+  # -- Additional envFrom sources appended to the backend container
+  extraEnvFrom: []
+    # - secretRef:
+    #     name: extra-secret
+  # -- Additional volumes added to the backend pod
+  extraVolumes: []
+    # - name: foo
+    #   secret:
+    #     secretName: mysecret
+  # -- Additional volume mounts added to the backend container
+  extraVolumeMounts: []
+    # - name: foo
+    #   mountPath: /etc/foo
+    #   readOnly: true
+  # -- Init containers to add to the backend deployment
+  initContainers: []
+    # - name: wait-for-something
+    #   image: busybox:latest
+    #   command: ['sh', '-c', 'do-something-here']
   service:
     # -- Kubernetes service type for the API
     type: ClusterIP
@@ -126,7 +167,6 @@ backend:
     minAvailable: ""
     # -- Maximum unavailable backend pods (takes precedence over minAvailable when set)
     maxUnavailable: ""
-
 frontend:
   image:
     # -- The Docker repository to pull the frontend image from
@@ -219,55 +259,6 @@ ingress:
     #  - secretName: raktr-example-com-tls
     #    hosts:
     #      - raktr.example.com
-
-# -- Non-secret environment variables for the backend; empty values are dropped. Keys are the
-# environment forms of the properties in
-# <https://github.com/mboldi/Raktr/blob/main/backend/src/main/resources/application.yml>.
-config:
-  # -- `prod` turns off the Swagger UI and the API docs
-  SPRING_PROFILES_ACTIVE: prod
-  # -- JVM flags. The heap defaults to 25% of the memory limit.
-  JAVA_TOOL_OPTIONS: -XX:MaxRAMPercentage=50
-  # JWKS the tokens are verified against. Unset, the app default matches the frontend image.
-  # SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWKSETURI: https://login.bsstudio.hu/application/o/raktr/jwks/
-  # External database, with postgres.enabled false:
-  # SPRING_DATASOURCE_URL: jdbc:postgresql://db.example.com:5432/raktr
-  # SPRING_DATASOURCE_USERNAME: raktr
-  # SENTRY_ENVIRONMENT: production
-
-# -- Sensitive environment variables for the backend. Keys follow the same scheme as `config`.
-secrets:
-  # -- Sentry DSN for error reporting. Empty disables Sentry.
-  SENTRY_DSN: ""
-  # SPRING_DATASOURCE_PASSWORD: ""
-
-# -- Supply the sensitive environment variables from an existing Secret instead of `secrets`. Its
-# keys must be the environment variable names. SPRING_DATASOURCE_PASSWORD stays chart-managed.
-existingSecret: ""
-
-# -- Additional environment variables for the backend container. These win over `config` and `secrets`.
-extraEnv: []
-  # - name: MY_SETTING
-  #   valueFrom:
-  #     fieldRef:
-  #       fieldPath: metadata.namespace
-
-# -- Additional envFrom sources appended to the backend container
-extraEnvFrom: []
-  # - secretRef:
-  #     name: extra-secret
-
-# -- Additional volumes added to the backend pod
-extraVolumes: []
-  # - name: foo
-  #   secret:
-  #     secretName: mysecret
-
-# -- Additional volume mounts added to the backend container
-extraVolumeMounts: []
-  # - name: foo
-  #   mountPath: /etc/foo
-  #   readOnly: true
 
 postgres:
   # -- Enable the CloudPirates PostgreSQL chart.

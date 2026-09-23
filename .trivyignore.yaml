@@ -29,6 +29,6 @@ misconfigurations:
       - charts/backstage/templates/configmap.yaml
       - charts/mattermost/templates/configmap.yaml
       - charts/outline/templates/configmap.yaml
-      - charts/raktr/templates/configmap.yaml
+      - charts/raktr/templates/backend/configmap.yaml
       - charts/request-manager/templates/configmap.yaml
     statement: Matches on the key name only; the ConfigMap holds no sensitive values

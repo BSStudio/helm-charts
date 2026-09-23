@@ -20,8 +20,8 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
-        checksum/secret: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
+        checksum/config: {{ include (print $.Template.BasePath "/backend/configmap.yaml") . | sha256sum }}
+        checksum/secret: {{ include (print $.Template.BasePath "/backend/secret.yaml") . | sha256sum }}
         {{- with .Values.podAnnotations }}
           {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -41,7 +41,7 @@ spec:
       terminationGracePeriodSeconds: {{ .Values.backend.terminationGracePeriodSeconds }}
       securityContext:
         {{- include "raktr.podSecurityContext" . | nindent 8 }}
-      {{- with .Values.initContainers }}
+      {{- with .Values.backend.initContainers }}
       initContainers:
         {{- toYaml . | nindent 8 }}
       {{- end }}
@@ -55,14 +55,14 @@ spec:
             {{- include "raktr.backendEnv" . | trim | nindent 12 }}
           envFrom:
             - configMapRef:
-                name: {{ include "raktr.fullname" . }}
+                name: {{ include "raktr.fullname" . }}-backend
             - secretRef:
-                name: {{ include "raktr.fullname" . }}
-            {{- with .Values.existingSecret }}
+                name: {{ include "raktr.fullname" . }}-backend
+            {{- with .Values.backend.existingSecret }}
             - secretRef:
                 name: {{ . }}
             {{- end }}
-            {{- with .Values.extraEnvFrom }}
+            {{- with .Values.backend.extraEnvFrom }}
               {{- toYaml . | nindent 12 }}
             {{- end }}
           ports:
@@ -91,14 +91,14 @@ spec:
             # The root filesystem is read-only; Tomcat and the JVM write their scratch files here.
             - name: tmp
               mountPath: /tmp
-            {{- with .Values.extraVolumeMounts }}
+            {{- with .Values.backend.extraVolumeMounts }}
               {{- toYaml . | nindent 12 }}
             {{- end }}
       volumes:
         - name: tmp
           emptyDir:
             medium: Memory
-        {{- with .Values.extraVolumes }}
+        {{- with .Values.backend.extraVolumes }}
           {{- toYaml . | nindent 8 }}
         {{- end }}
       {{- with .Values.nodeSelector }}

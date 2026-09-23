@@ -25,6 +25,47 @@ Kubernetes: `>=1.23.0-0`
 |------------|------|---------|
 | oci://registry-1.docker.io/cloudpirates | postgres | 0.20.4 |
 
+## Upgrading
+
+### 0.1.x to 0.2.0
+
+The backend's application settings move under `backend`, where the frontend already keeps its own.
+`config`, `secrets`, `existingSecret`, `extraEnv`, `extraEnvFrom`, `extraVolumes`, `extraVolumeMounts`
+and `initContainers` move as they are; only their place changes.
+
+```yaml
+# before
+config:
+  SPRING_DATASOURCE_URL: jdbc:postgresql://db.example.com:5432/raktr
+existingSecret: raktr-env
+
+# after
+backend:
+  config:
+    SPRING_DATASOURCE_URL: jdbc:postgresql://db.example.com:5432/raktr
+  existingSecret: raktr-env
+```
+
+A key left at the top level is read by nothing and the chart default takes over. That is loud for an
+external `SPRING_DATASOURCE_URL` — the backend falls back to `localhost:5432` and exits — and quiet
+for `secrets` and `existingSecret`, where the pods come up with the feature switched off.
+
+The backend's ConfigMap and Secret are renamed to `<release>-backend`, so anything outside the chart
+that reads them by name needs the new one.
+
+Sentry in the browser arrives with this release, off until you set it:
+
+```yaml
+frontend:
+  config:
+    SENTRY_DSN: https://examplePublicKey@o0.ingest.sentry.io/0
+    SENTRY_ENVIRONMENT: production
+```
+
+The frontend now serves the site from an emptyDir that an init container fills, because images with
+that support rewrite `config.js` at startup and the root filesystem is read-only. Older images are
+served the same way, so the upgrade needs nothing from you either way.
+
 ## Values
 
 | Key | Type | Default | Description |
@@ -34,9 +75,18 @@ Kubernetes: `>=1.23.0-0`
 | backend.autoscaling.maxReplicas | int | `10` | Maximum number of backend replicas |
 | backend.autoscaling.minReplicas | int | `1` | Minimum number of backend replicas |
 | backend.autoscaling.targetCPUUtilizationPercentage | int | `80` | Target CPU utilization percentage that triggers scaling |
+| backend.config | object | `{"JAVA_TOOL_OPTIONS":"-XX:MaxRAMPercentage=50","SPRING_PROFILES_ACTIVE":"prod"}` | Non-secret environment variables for the backend; empty values are dropped. Keys are the environment forms of the properties in <https://github.com/mboldi/Raktr/blob/main/backend/src/main/resources/application.yml>. |
+| backend.config.JAVA_TOOL_OPTIONS | string | `"-XX:MaxRAMPercentage=50"` | JVM flags. The heap defaults to 25% of the memory limit. |
+| backend.config.SPRING_PROFILES_ACTIVE | string | `"prod"` | `prod` turns off the Swagger UI and the API docs |
+| backend.existingSecret | string | `""` | Supply the sensitive environment variables from an existing Secret instead of `secrets`. Its keys must be the environment variable names. SPRING_DATASOURCE_PASSWORD stays chart-managed. |
+| backend.extraEnv | list | `[]` | Additional environment variables for the backend container. These win over `config` and `secrets`. |
+| backend.extraEnvFrom | list | `[]` | Additional envFrom sources appended to the backend container |
+| backend.extraVolumeMounts | list | `[]` | Additional volume mounts added to the backend container |
+| backend.extraVolumes | list | `[]` | Additional volumes added to the backend pod |
 | backend.image.imagePullPolicy | string | `"IfNotPresent"` | The logic of image pulling |
 | backend.image.repository | string | `"ghcr.io/mboldi/raktr/backend"` | The Docker repository to pull the backend image from |
 | backend.image.tag | string | `""` | Overrides the image tag whose default is the chart appVersion |
+| backend.initContainers | list | `[]` | Init containers to add to the backend deployment |
 | backend.lifecycle | object | `{}` | Container lifecycle hooks. A `preStop` sleep is charged against `terminationGracePeriodSeconds`. |
 | backend.livenessProbe | object | `{"failureThreshold":3,"periodSeconds":10,"tcpSocket":{"port":"http"}}` | Liveness probe. The health endpoint queries the database, and the probe groups need a token. |
 | backend.pdb.enabled | bool | `false` | Enable a PodDisruptionBudget for the backend. `minAvailable: 1` blocks drains at one replica. |
@@ -48,19 +98,13 @@ Kubernetes: `>=1.23.0-0`
 | backend.resources.limits.memory | string | `"768Mi"` | The maximum amount of memory the container can use |
 | backend.resources.requests.cpu | string | `"250m"` | Specifies the minimum amount of CPU that will be allocated to the container |
 | backend.resources.requests.memory | string | `"768Mi"` | Specifies the minimum amount of memory that will be allocated to the container |
+| backend.secrets | object | `{"SENTRY_DSN":""}` | Sensitive environment variables for the backend. Keys follow the same scheme as `config`. |
+| backend.secrets.SENTRY_DSN | string | `""` | Sentry DSN for error reporting. Empty disables Sentry. |
 | backend.service.port | int | `8080` | Port number for the API |
 | backend.service.type | string | `"ClusterIP"` | Kubernetes service type for the API |
 | backend.startupProbe | object | `{"failureThreshold":60,"httpGet":{"path":"/api/actuator/health","port":"http"},"initialDelaySeconds":10,"periodSeconds":5}` | Startup probe. Flyway migrates before the port opens. |
 | backend.strategy | object | `{}` | Deployment update strategy for the backend |
 | backend.terminationGracePeriodSeconds | int | `45` | Grace period for shutdown. Spring's graceful shutdown drains for up to 30s. |
-| config | object | `{"JAVA_TOOL_OPTIONS":"-XX:MaxRAMPercentage=50","SPRING_PROFILES_ACTIVE":"prod"}` | Non-secret environment variables for the backend; empty values are dropped. Keys are the environment forms of the properties in <https://github.com/mboldi/Raktr/blob/main/backend/src/main/resources/application.yml>. |
-| config.JAVA_TOOL_OPTIONS | string | `"-XX:MaxRAMPercentage=50"` | JVM flags. The heap defaults to 25% of the memory limit. |
-| config.SPRING_PROFILES_ACTIVE | string | `"prod"` | `prod` turns off the Swagger UI and the API docs |
-| existingSecret | string | `""` | Supply the sensitive environment variables from an existing Secret instead of `secrets`. Its keys must be the environment variable names. SPRING_DATASOURCE_PASSWORD stays chart-managed. |
-| extraEnv | list | `[]` | Additional environment variables for the backend container. These win over `config` and `secrets`. |
-| extraEnvFrom | list | `[]` | Additional envFrom sources appended to the backend container |
-| extraVolumeMounts | list | `[]` | Additional volume mounts added to the backend container |
-| extraVolumes | list | `[]` | Additional volumes added to the backend pod |
 | frontend.autoscaling.enabled | bool | `false` | Controls whether autoscaling is enabled for the frontend deployment |
 | frontend.autoscaling.maxReplicas | int | `10` | Maximum number of frontend replicas |
 | frontend.autoscaling.minReplicas | int | `1` | Minimum number of frontend replicas |
@@ -95,7 +139,6 @@ Kubernetes: `>=1.23.0-0`
 | ingress.enabled | bool | `false` | Enable an ingress resource. Each host routes `/api` to the backend and the rest to the frontend. |
 | ingress.hosts | list | `[]` | List of ingress hosts; the chart fixes the paths. Each host has to be a redirect URI of the Authentik client the frontend image hardcodes. |
 | ingress.tls | list | `[]` | Ingress TLS configuration |
-| initContainers | list | `[]` | Init containers to add to the backend deployment |
 | nameOverride | string | `""` | Provide a name in place of `raktr` |
 | nodeSelector | object | `{}` | NodeSelector for all workloads |
 | podAnnotations | object | `{}` | Optional additional annotations to add to all pods |
@@ -112,8 +155,6 @@ Kubernetes: `>=1.23.0-0`
 | postgres.resources.limits.memory | string | `"512Mi"` | The maximum amount of memory the container can use |
 | postgres.resources.requests.cpu | string | `"250m"` | Specifies the minimum amount of CPU that will be allocated to the container |
 | postgres.resources.requests.memory | string | `"512Mi"` | Specifies the minimum amount of memory that will be allocated to the container |
-| secrets | object | `{"SENTRY_DSN":""}` | Sensitive environment variables for the backend. Keys follow the same scheme as `config`. |
-| secrets.SENTRY_DSN | string | `""` | Sentry DSN for error reporting. Empty disables Sentry. |
 | securityContext | object | `{}` | Container-level security context for both workloads, merged over the hardened chart defaults (runAsUser 65532, readOnlyRootFilesystem, capabilities drop ALL) |
 | serviceAccount.annotations | object | `{}` | Annotations to add to the service account |
 | serviceAccount.automount | bool | `false` | Automatically mount a ServiceAccount's API credentials? |
