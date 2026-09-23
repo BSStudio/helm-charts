@@ -124,6 +124,20 @@ so that blanking a default in a values file removes the variable rather than set
 {{- end }}
 
 {{/*
+The frontend's environment. Blanking a value leaves the image's own default rather than "".
+*/}}
+{{- define "raktr.frontendConfig" -}}
+{{- range $k, $v := .Values.frontend.config -}}
+{{- if not (kindIs "invalid" $v) -}}
+{{- $rendered := tpl ($v | toString) $ }}
+{{- if $rendered }}
+{{ $k }}: {{ $rendered | quote }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+
+{{/*
 The backend's sensitive environment variables. SPRING_DATASOURCE_PASSWORD is derived from
 `postgres.auth` so the bundled sub-chart stays the single source of truth for it; that stays true
 under `existingSecret`, which replaces only the user-supplied `secrets`.
@@ -152,8 +166,7 @@ under `existingSecret`, which replaces only the user-supplied `secrets`.
 {{/*
 Environment variables the chart sets on the backend, followed by the user's `extraEnv` entries.
 The context path is fixed: the frontend calls the API at `/api` on its own origin, and the ingress
-routes that prefix to the backend without rewriting it. It lives here rather than in the ConfigMap
-because `env` wins over `envFrom`, so `config` cannot move it by accident.
+routes that prefix to the backend unchanged. `env` wins over `envFrom`, so `config` cannot move it.
 */}}
 {{- define "raktr.backendEnv" -}}
 - name: SERVER_SERVLET_CONTEXT_PATH

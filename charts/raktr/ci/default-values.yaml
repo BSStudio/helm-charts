@@ -2,3 +2,8 @@
 postgres:
   auth:
     password: secretPassword
+
+frontend:
+  config:
+    # Renders a non-empty frontend ConfigMap.
+    SENTRY_ENVIRONMENT: ci

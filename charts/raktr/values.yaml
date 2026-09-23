@@ -57,10 +57,9 @@ backend:
     imagePullPolicy: IfNotPresent
     # -- Overrides the image tag whose default is the chart appVersion
     tag: ""
-  # -- Number of backend replicas (ignored when autoscaling is enabled). Flyway migrates on startup
-  # under a database lock, so replicas can start together.
+  # -- Number of backend replicas (ignored when autoscaling is enabled)
   replicaCount: 1
-  # -- Grace period for shutdown. Above the 30s Spring allows its graceful shutdown to drain requests.
+  # -- Grace period for shutdown. Spring's graceful shutdown drains for up to 30s.
   terminationGracePeriodSeconds: 45
   # -- Deployment update strategy for the backend
   strategy: {}
@@ -73,8 +72,7 @@ backend:
     type: ClusterIP
     # -- Port number for the API
     port: 8080
-  # -- Liveness probe for the backend container. `tcpSocket`: `/api/actuator/health` queries the
-  # database, and the actuator's liveness group is behind authentication.
+  # -- Liveness probe. The health endpoint queries the database, and the probe groups need a token.
   livenessProbe:
     tcpSocket:
       port: http
@@ -87,8 +85,7 @@ backend:
       port: http
     periodSeconds: 10
     failureThreshold: 3
-  # -- Startup probe for the backend container. Flyway migrates before the port opens, so the
-  # window has to cover the migrations as well as the JVM start.
+  # -- Startup probe. Flyway migrates before the port opens.
   startupProbe:
     httpGet:
       path: /api/actuator/health
@@ -96,8 +93,7 @@ backend:
     initialDelaySeconds: 10
     periodSeconds: 5
     failureThreshold: 60
-  # -- Container lifecycle hooks. A `preStop` sleep holds the pod open until its endpoint removal
-  # has propagated, and is charged against `terminationGracePeriodSeconds`.
+  # -- Container lifecycle hooks. A `preStop` sleep is charged against `terminationGracePeriodSeconds`.
   lifecycle: {}
     # preStop:
     #   exec:
@@ -106,8 +102,7 @@ backend:
     limits:
       # -- The maximum amount of CPU the container can use
       cpu: 1000m
-      # -- The maximum amount of memory the container can use. Keep `config.JAVA_TOOL_OPTIONS` in
-      # step: the heap is sized from this limit.
+      # -- The maximum amount of memory the container can use
       memory: 768Mi
     requests:
       # -- Specifies the minimum amount of CPU that will be allocated to the container
@@ -125,8 +120,7 @@ backend:
     targetCPUUtilizationPercentage: 80
     # targetMemoryUtilizationPercentage: 80
   pdb:
-    # -- Enable a PodDisruptionBudget for the backend. With a single replica `minAvailable: 1`
-    # blocks node drains.
+    # -- Enable a PodDisruptionBudget for the backend. `minAvailable: 1` blocks drains at one replica.
     enabled: false
     # -- Minimum available backend pods (used when maxUnavailable is unset; defaults to 1)
     minAvailable: ""
@@ -143,10 +137,17 @@ frontend:
     tag: ""
   # -- Number of frontend replicas (ignored when autoscaling is enabled)
   replicaCount: 1
-  # -- Grace period for shutdown. nginx drains open connections on the image's `SIGQUIT` stop signal.
+  # -- Grace period for shutdown
   terminationGracePeriodSeconds: 30
   # -- Deployment update strategy for the frontend
   strategy: {}
+  # -- Environment variables for the frontend, written into the browser's `config.js` at startup.
+  # Keys from <https://github.com/mboldi/Raktr/blob/main/frontend/nginx/40-sentry-config.sh>.
+  config:
+    # -- Sentry DSN for browser error reporting. Empty disables Sentry.
+    SENTRY_DSN: ""
+    # -- Environment tag on the browser's Sentry events
+    SENTRY_ENVIRONMENT: ""
   service:
     # -- Kubernetes service type for the web app
     type: ClusterIP
@@ -166,15 +167,17 @@ frontend:
       port: http
     periodSeconds: 10
     failureThreshold: 3
-  # -- Startup probe for the frontend container (disabled by default; nginx starts in under a second)
+  # -- Startup probe for the frontend container (disabled by default)
   startupProbe: {}
+  # -- Size limit for the emptyDir the site is served from
+  webrootSizeLimit: 64Mi
   # -- Container lifecycle hooks
   lifecycle: {}
   resources:
     limits:
       # -- The maximum amount of CPU the container can use
       cpu: 250m
-      # -- The maximum amount of memory the container can use. nginx starts one worker per node CPU.
+      # -- The maximum amount of memory the container can use. nginx runs one worker per node CPU.
       memory: 64Mi
     requests:
       # -- Specifies the minimum amount of CPU that will be allocated to the container
@@ -192,8 +195,7 @@ frontend:
     targetCPUUtilizationPercentage: 80
     # targetMemoryUtilizationPercentage: 80
   pdb:
-    # -- Enable a PodDisruptionBudget for the frontend. With a single replica `minAvailable: 1`
-    # blocks node drains.
+    # -- Enable a PodDisruptionBudget for the frontend. `minAvailable: 1` blocks drains at one replica.
     enabled: false
     # -- Minimum available frontend pods (used when maxUnavailable is unset; defaults to 1)
     minAvailable: ""
@@ -201,17 +203,15 @@ frontend:
     maxUnavailable: ""
 
 ingress:
-  # -- Enable an ingress resource. The frontend calls the API on its own origin, so each host routes
-  # `/api` to the backend, which the chart serves under that context path, and the rest to the frontend.
+  # -- Enable an ingress resource. Each host routes `/api` to the backend and the rest to the frontend.
   enabled: false
   # -- Defines which ingress controller will implement the resource
   className: ""
   # -- Additional ingress annotations
   annotations: {}
     # cert-manager.io/cluster-issuer: letsencrypt-prod
-  # -- List of ingress hosts. The paths are fixed by the chart. The frontend image hardcodes its
-  # Authentik client and sends the user back to its own origin, so each host has to be a redirect
-  # URI of that client.
+  # -- List of ingress hosts; the chart fixes the paths. Each host has to be a redirect URI of the
+  # Authentik client the frontend image hardcodes.
   hosts: []
     #  - host: raktr.example.com
   # -- Ingress TLS configuration
@@ -220,26 +220,22 @@ ingress:
     #    hosts:
     #      - raktr.example.com
 
-# -- Non-secret environment variables for the backend, rendered into a ConfigMap. Keys are the
-# environment forms of the Spring properties in
-# <https://github.com/mboldi/Raktr/blob/main/backend/src/main/resources/application.yml>; empty
-# values are dropped. With postgres.enabled, SPRING_DATASOURCE_URL and _USERNAME default to it.
+# -- Non-secret environment variables for the backend; empty values are dropped. Keys are the
+# environment forms of the properties in
+# <https://github.com/mboldi/Raktr/blob/main/backend/src/main/resources/application.yml>.
 config:
   # -- `prod` turns off the Swagger UI and the API docs
   SPRING_PROFILES_ACTIVE: prod
-  # -- JVM flags. The JVM caps its heap at 25% of the memory limit unless told otherwise.
+  # -- JVM flags. The heap defaults to 25% of the memory limit.
   JAVA_TOOL_OPTIONS: -XX:MaxRAMPercentage=50
-  # JWKS the access tokens are verified against. Unset, the app default is BSS's Authentik, which the
-  # frontend image hardcodes as its issuer too, so change them together.
+  # JWKS the tokens are verified against. Unset, the app default matches the frontend image.
   # SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWKSETURI: https://login.bsstudio.hu/application/o/raktr/jwks/
   # External database, with postgres.enabled false:
   # SPRING_DATASOURCE_URL: jdbc:postgresql://db.example.com:5432/raktr
   # SPRING_DATASOURCE_USERNAME: raktr
   # SENTRY_ENVIRONMENT: production
 
-# -- Sensitive environment variables for the backend, rendered into a Secret. Keys follow the same
-# scheme as `config`. With postgres.enabled, SPRING_DATASOURCE_PASSWORD defaults to
-# postgres.auth.password.
+# -- Sensitive environment variables for the backend. Keys follow the same scheme as `config`.
 secrets:
   # -- Sentry DSN for error reporting. Empty disables Sentry.
   SENTRY_DSN: ""
@@ -249,8 +245,7 @@ secrets:
 # keys must be the environment variable names. SPRING_DATASOURCE_PASSWORD stays chart-managed.
 existingSecret: ""
 
-# -- Additional environment variables, appended to the backend container verbatim. Prefer `config`
-# and `secrets`; entries here take precedence over both.
+# -- Additional environment variables for the backend container. These win over `config` and `secrets`.
 extraEnv: []
   # - name: MY_SETTING
   #   valueFrom:

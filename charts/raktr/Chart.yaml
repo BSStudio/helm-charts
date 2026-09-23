@@ -24,4 +24,4 @@ sources:
   - https://github.com/BSStudio/helm-charts/tree/main/charts/raktr
   - https://github.com/mboldi/Raktr
 type: application
-version: 0.1.0
+version: 0.2.0

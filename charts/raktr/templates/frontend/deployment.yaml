@@ -19,10 +19,11 @@ spec:
       app.kubernetes.io/component: frontend
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
       annotations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+        checksum/config: {{ include (print $.Template.BasePath "/frontend/configmap.yaml") . | sha256sum }}
+        {{- with .Values.podAnnotations }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
       labels:
         {{- include "raktr.labels" . | nindent 8 }}
         app.kubernetes.io/component: frontend
@@ -39,12 +40,32 @@ spec:
       terminationGracePeriodSeconds: {{ .Values.frontend.terminationGracePeriodSeconds }}
       securityContext:
         {{- include "raktr.podSecurityContext" . | nindent 8 }}
+      initContainers:
+        # The entrypoint rewrites /usr/share/nginx/html/config.js from the environment on start,
+        # which the read-only root filesystem refuses, so the site is served from a writable copy.
+        - name: copy-webroot
+          securityContext:
+            {{- include "raktr.containerSecurityContext" . | nindent 12 }}
+          image: "{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.frontend.image.imagePullPolicy }}
+          command: [sh]
+          args:
+            - -ec
+            - cp -R /usr/share/nginx/html/. /webroot/
+          resources:
+            {{- toYaml .Values.frontend.resources | nindent 12 }}
+          volumeMounts:
+            - name: webroot
+              mountPath: /webroot
       containers:
         - name: frontend
           securityContext:
             {{- include "raktr.containerSecurityContext" . | nindent 12 }}
           image: "{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.frontend.image.imagePullPolicy }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "raktr.fullname" . }}-frontend
           ports:
             - name: http
               containerPort: 8080
@@ -68,17 +89,22 @@ spec:
           resources:
             {{- toYaml .Values.frontend.resources | nindent 12 }}
           volumeMounts:
-            # nginx fails to start unless it can write its pid file and create its temp directories.
+            # nginx will not start without a writable pid file and temp directories.
             - name: run
               mountPath: /run
             - name: cache
               mountPath: /var/cache/nginx
+            - name: webroot
+              mountPath: /usr/share/nginx/html
       volumes:
         - name: run
           emptyDir:
             medium: Memory
         - name: cache
           emptyDir: {}
+        - name: webroot
+          emptyDir:
+            sizeLimit: {{ .Values.frontend.webrootSizeLimit }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
