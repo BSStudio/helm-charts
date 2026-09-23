@@ -26,8 +26,8 @@ Enable ingress for that, or check the API on its own:
 WARNING: postgres.auth.password is empty. Set it so the backend and the bundled PostgreSQL
 agree on the database password.
 {{- end }}
-{{- if and (not .Values.postgres.enabled) (not (index (default dict .Values.config) "SPRING_DATASOURCE_URL")) (not .Values.existingSecret) }}
+{{- if and (not .Values.postgres.enabled) (not (index (default dict .Values.backend.config) "SPRING_DATASOURCE_URL")) (not .Values.backend.existingSecret) }}
 
-WARNING: postgres.enabled is false and config.SPRING_DATASOURCE_URL is unset, so the backend
+WARNING: postgres.enabled is false and backend.config.SPRING_DATASOURCE_URL is unset, so the backend
 falls back to localhost:5432 and exits on startup.
 {{- end }}
