@@ -127,13 +127,17 @@ so that blanking a default in a values file removes the variable rather than set
 The frontend's environment. Blanking a value leaves the image's own default rather than "".
 */}}
 {{- define "raktr.frontendConfig" -}}
+{{- $cfg := dict -}}
 {{- range $k, $v := .Values.frontend.config -}}
 {{- if not (kindIs "invalid" $v) -}}
-{{- $rendered := tpl ($v | toString) $ }}
-{{- if $rendered }}
-{{ $k }}: {{ $rendered | quote }}
-{{- end }}
-{{- end }}
+{{- $rendered := tpl ($v | toString) $ -}}
+{{- if $rendered -}}
+{{- $_ := set $cfg $k $rendered -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- range $k, $v := $cfg }}
+{{ $k }}: {{ $v | quote }}
 {{- end }}
 {{- end }}
 

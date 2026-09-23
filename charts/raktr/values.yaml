@@ -63,7 +63,8 @@ backend:
     #   maxUnavailable: 0
   # -- Non-secret environment variables for the backend; empty values are dropped. Keys are the
   # environment forms of the properties in
-  # <https://github.com/mboldi/Raktr/blob/main/backend/src/main/resources/application.yml>.
+  # <https://github.com/mboldi/Raktr/blob/main/backend/src/main/resources/application.yml>. With
+  # postgres.enabled, SPRING_DATASOURCE_URL and _USERNAME default to it.
   config:
     # -- `prod` turns off the Swagger UI and the API docs
     SPRING_PROFILES_ACTIVE: prod
@@ -76,6 +77,7 @@ backend:
     # SPRING_DATASOURCE_USERNAME: raktr
     # SENTRY_ENVIRONMENT: production
   # -- Sensitive environment variables for the backend. Keys follow the same scheme as `config`.
+  # With postgres.enabled, SPRING_DATASOURCE_PASSWORD defaults to postgres.auth.password.
   secrets:
     # -- Sentry DSN for error reporting. Empty disables Sentry.
     SENTRY_DSN: ""
@@ -182,11 +184,12 @@ frontend:
   # -- Deployment update strategy for the frontend
   strategy: {}
   # -- Environment variables for the frontend, written into the browser's `config.js` at startup.
-  # Keys from <https://github.com/mboldi/Raktr/blob/main/frontend/nginx/40-sentry-config.sh>.
+  # Keys from <https://github.com/mboldi/Raktr/blob/main/frontend/nginx/40-sentry-config.sh>, except
+  # RAKTR_RELEASE: the image carries the release its source maps were uploaded for.
   config:
     # -- Sentry DSN for browser error reporting. Empty disables Sentry.
     SENTRY_DSN: ""
-    # -- Environment tag on the browser's Sentry events
+    # -- Environment tag on the browser's Sentry events. Empty means `production`.
     SENTRY_ENVIRONMENT: ""
   service:
     # -- Kubernetes service type for the web app

@@ -75,7 +75,7 @@ served the same way, so the upgrade needs nothing from you either way.
 | backend.autoscaling.maxReplicas | int | `10` | Maximum number of backend replicas |
 | backend.autoscaling.minReplicas | int | `1` | Minimum number of backend replicas |
 | backend.autoscaling.targetCPUUtilizationPercentage | int | `80` | Target CPU utilization percentage that triggers scaling |
-| backend.config | object | `{"JAVA_TOOL_OPTIONS":"-XX:MaxRAMPercentage=50","SPRING_PROFILES_ACTIVE":"prod"}` | Non-secret environment variables for the backend; empty values are dropped. Keys are the environment forms of the properties in <https://github.com/mboldi/Raktr/blob/main/backend/src/main/resources/application.yml>. |
+| backend.config | object | `{"JAVA_TOOL_OPTIONS":"-XX:MaxRAMPercentage=50","SPRING_PROFILES_ACTIVE":"prod"}` | Non-secret environment variables for the backend; empty values are dropped. Keys are the environment forms of the properties in <https://github.com/mboldi/Raktr/blob/main/backend/src/main/resources/application.yml>. With postgres.enabled, SPRING_DATASOURCE_URL and _USERNAME default to it. |
 | backend.config.JAVA_TOOL_OPTIONS | string | `"-XX:MaxRAMPercentage=50"` | JVM flags. The heap defaults to 25% of the memory limit. |
 | backend.config.SPRING_PROFILES_ACTIVE | string | `"prod"` | `prod` turns off the Swagger UI and the API docs |
 | backend.existingSecret | string | `""` | Supply the sensitive environment variables from an existing Secret instead of `secrets`. Its keys must be the environment variable names. SPRING_DATASOURCE_PASSWORD stays chart-managed. |
@@ -98,7 +98,7 @@ served the same way, so the upgrade needs nothing from you either way.
 | backend.resources.limits.memory | string | `"768Mi"` | The maximum amount of memory the container can use |
 | backend.resources.requests.cpu | string | `"250m"` | Specifies the minimum amount of CPU that will be allocated to the container |
 | backend.resources.requests.memory | string | `"768Mi"` | Specifies the minimum amount of memory that will be allocated to the container |
-| backend.secrets | object | `{"SENTRY_DSN":""}` | Sensitive environment variables for the backend. Keys follow the same scheme as `config`. |
+| backend.secrets | object | `{"SENTRY_DSN":""}` | Sensitive environment variables for the backend. Keys follow the same scheme as `config`. With postgres.enabled, SPRING_DATASOURCE_PASSWORD defaults to postgres.auth.password. |
 | backend.secrets.SENTRY_DSN | string | `""` | Sentry DSN for error reporting. Empty disables Sentry. |
 | backend.service.port | int | `8080` | Port number for the API |
 | backend.service.type | string | `"ClusterIP"` | Kubernetes service type for the API |
@@ -109,9 +109,9 @@ served the same way, so the upgrade needs nothing from you either way.
 | frontend.autoscaling.maxReplicas | int | `10` | Maximum number of frontend replicas |
 | frontend.autoscaling.minReplicas | int | `1` | Minimum number of frontend replicas |
 | frontend.autoscaling.targetCPUUtilizationPercentage | int | `80` | Target CPU utilization percentage that triggers scaling |
-| frontend.config | object | `{"SENTRY_DSN":"","SENTRY_ENVIRONMENT":""}` | Environment variables for the frontend, written into the browser's `config.js` at startup. Keys from <https://github.com/mboldi/Raktr/blob/main/frontend/nginx/40-sentry-config.sh>. |
+| frontend.config | object | `{"SENTRY_DSN":"","SENTRY_ENVIRONMENT":""}` | Environment variables for the frontend, written into the browser's `config.js` at startup. Keys from <https://github.com/mboldi/Raktr/blob/main/frontend/nginx/40-sentry-config.sh>, except RAKTR_RELEASE: the image carries the release its source maps were uploaded for. |
 | frontend.config.SENTRY_DSN | string | `""` | Sentry DSN for browser error reporting. Empty disables Sentry. |
-| frontend.config.SENTRY_ENVIRONMENT | string | `""` | Environment tag on the browser's Sentry events |
+| frontend.config.SENTRY_ENVIRONMENT | string | `""` | Environment tag on the browser's Sentry events. Empty means `production`. |
 | frontend.image.imagePullPolicy | string | `"IfNotPresent"` | The logic of image pulling |
 | frontend.image.repository | string | `"ghcr.io/mboldi/raktr/frontend"` | The Docker repository to pull the frontend image from |
 | frontend.image.tag | string | `""` | Overrides the image tag whose default is the chart appVersion |
