@@ -2,6 +2,36 @@ apiVersion: v1
 entries:
   backstage:
   - apiVersion: v2
+    appVersion: 1.2.1
+    created: "2026-10-02T07:29:43.033128924Z"
+    dependencies:
+    - condition: postgres.enabled
+      name: postgres
+      repository: oci://registry-1.docker.io/cloudpirates
+      version: 0.20.6
+    description: Internal member portal for Budavári Schönherz Stúdió, and the source
+      of truth for member data.
+    digest: d0af061f2a271516d866cc9858a269f873192e67630e1aa2d3c7c5f87e5ce826
+    home: https://github.com/BSStudio/backstage
+    keywords:
+    - backstage
+    - member-management
+    - authentik
+    - studio
+    - bss
+    kubeVersion: '>=1.23.0-0'
+    maintainers:
+    - name: Budavári Schönherz Stúdió
+      url: https://github.com/BSStudio/helm-charts
+    name: backstage
+    sources:
+    - https://github.com/BSStudio/helm-charts/tree/main/charts/backstage
+    - https://github.com/BSStudio/backstage
+    type: application
+    urls:
+    - https://github.com/BSStudio/helm-charts/releases/download/backstage-0.6.1/backstage-0.6.1.tgz
+    version: 0.6.1
+  - apiVersion: v2
     appVersion: 1.2.0
     created: "2026-09-16T21:38:24.276913679Z"
     dependencies:
@@ -183,6 +213,38 @@ entries:
     version: 0.1.0
   mattermost:
   - apiVersion: v2
+    appVersion: 11.11.1
+    created: "2026-10-02T07:29:43.246325988Z"
+    dependencies:
+    - condition: postgres.enabled
+      name: postgres
+      repository: oci://registry-1.docker.io/cloudpirates
+      version: 0.20.6
+    description: Mattermost Team Edition with OIDC single sign-on and the user limit
+      lifted.
+    digest: b1644925dfe1c63f0253770b7ffcf9f66beed8d847379855243513f7d2cf7720
+    home: https://mattermost.com
+    icon: https://mattermost.com/wp-content/uploads/2022/02/icon.png
+    keywords:
+    - mattermost
+    - communication
+    - team collaboration
+    - oidc
+    kubeVersion: '>=1.21.0-0'
+    maintainers:
+    - name: Budavári Schönherz Stúdió
+      url: https://github.com/BSStudio/helm-charts
+    name: mattermost
+    sources:
+    - https://github.com/BSStudio/helm-charts/tree/main/charts/mattermost
+    - https://github.com/BSStudio/mattermost-image
+    - https://github.com/BSStudio/mattermost-oidc
+    - https://github.com/mattermost/mattermost
+    type: application
+    urls:
+    - https://github.com/BSStudio/helm-charts/releases/download/mattermost-1.1.2/mattermost-1.1.2.tgz
+    version: 1.1.2
+  - apiVersion: v2
     appVersion: 11.10.1
     created: "2026-09-02T01:32:17.26749934Z"
     dependencies:
@@ -311,6 +373,43 @@ entries:
     - https://github.com/BSStudio/helm-charts/releases/download/mattermost-1.0.0/mattermost-1.0.0.tgz
     version: 1.0.0
   outline:
+  - apiVersion: v2
+    appVersion: 1.10.1
+    created: "2026-10-02T07:29:43.452600327Z"
+    dependencies:
+    - condition: minio.enabled
+      name: minio
+      repository: oci://registry-1.docker.io/cloudpirates
+      version: 0.14.0
+    - condition: postgres.enabled
+      name: postgres
+      repository: oci://registry-1.docker.io/cloudpirates
+      version: 0.20.6
+    - condition: redis.enabled
+      name: redis
+      repository: oci://registry-1.docker.io/cloudpirates
+      version: 0.35.4
+    description: Outline is a fast, collaborative, knowledge base for your team built
+      using React and Node.js.
+    digest: 31d8b6e3656ca86fbbcaacf60627f54cd90be7c6c0e9bd44fa75cb3f193b134e
+    home: https://www.getoutline.com
+    icon: https://www.getoutline.com/images/logo.svg
+    keywords:
+    - outline
+    - wiki
+    - docs
+    kubeVersion: '>=1.23.0-0'
+    maintainers:
+    - name: Budavári Schönherz Stúdió
+      url: https://github.com/BSStudio/helm-charts
+    name: outline
+    sources:
+    - https://github.com/BSStudio/helm-charts/tree/main/charts/outline
+    - https://github.com/outline/outline
+    type: application
+    urls:
+    - https://github.com/BSStudio/helm-charts/releases/download/outline-2.1.2/outline-2.1.2.tgz
+    version: 2.1.2
   - apiVersion: v2
     appVersion: 1.10.0
     created: "2026-09-02T01:32:17.497358582Z"
@@ -1401,6 +1500,35 @@ entries:
     version: 1.0.0
   raktr:
   - apiVersion: v2
+    appVersion: 1.3.3
+    created: "2026-10-02T07:29:43.639286735Z"
+    dependencies:
+    - condition: postgres.enabled
+      name: postgres
+      repository: oci://registry-1.docker.io/cloudpirates
+      version: 0.20.6
+    description: Inventory and rental management system for Budavári Schönherz Stúdió.
+    digest: 606fc10114f94835ce84f122335f51ccbff2540a1314b8db360942cf6b3b21b4
+    home: https://github.com/mboldi/Raktr
+    keywords:
+    - raktr
+    - inventory
+    - rental
+    - studio
+    - bss
+    kubeVersion: '>=1.23.0-0'
+    maintainers:
+    - name: Budavári Schönherz Stúdió
+      url: https://github.com/BSStudio/helm-charts
+    name: raktr
+    sources:
+    - https://github.com/BSStudio/helm-charts/tree/main/charts/raktr
+    - https://github.com/mboldi/Raktr
+    type: application
+    urls:
+    - https://github.com/BSStudio/helm-charts/releases/download/raktr-0.2.1/raktr-0.2.1.tgz
+    version: 0.2.1
+  - apiVersion: v2
     appVersion: 1.3.1
     created: "2026-09-23T10:25:42.272904189Z"
     dependencies:
@@ -1459,6 +1587,40 @@ entries:
     - https://github.com/BSStudio/helm-charts/releases/download/raktr-0.1.0/raktr-0.1.0.tgz
     version: 0.1.0
   request-manager:
+  - apiVersion: v2
+    appVersion: 1.5.0
+    created: "2026-10-02T07:29:43.863532333Z"
+    dependencies:
+    - condition: postgres.enabled
+      name: postgres
+      repository: oci://registry-1.docker.io/cloudpirates
+      version: 0.20.6
+    - condition: redis.enabled
+      name: redis
+      repository: oci://registry-1.docker.io/cloudpirates
+      version: 0.35.4
+    description: Manage video shooting and live streaming requests at Budavári Schönherz
+      Stúdió.
+    digest: 49c76109a877cb7339b3ac5a9587943d9a2737bc55e069290277aaccab1acc9b
+    home: https://github.com/BSStudio/request-manager
+    keywords:
+    - request-manager
+    - video-requests
+    - video-production
+    - studio
+    - bss
+    kubeVersion: '>=1.23.0-0'
+    maintainers:
+    - name: Budavári Schönherz Stúdió
+      url: https://github.com/BSStudio/helm-charts
+    name: request-manager
+    sources:
+    - https://github.com/BSStudio/helm-charts/tree/main/charts/request-manager
+    - https://github.com/BSStudio/request-manager
+    type: application
+    urls:
+    - https://github.com/BSStudio/helm-charts/releases/download/request-manager-0.4.2/request-manager-0.4.2.tgz
+    version: 0.4.2
   - apiVersion: v2
     appVersion: 1.4.2
     created: "2026-09-02T01:32:17.737810914Z"
@@ -1663,4 +1825,4 @@ entries:
     urls:
     - https://github.com/BSStudio/helm-charts/releases/download/request-manager-0.1.0/request-manager-0.1.0.tgz
     version: 0.1.0
-generated: "2026-09-23T10:25:42.27295087Z"
+generated: "2026-10-02T07:29:43.863787464Z"
