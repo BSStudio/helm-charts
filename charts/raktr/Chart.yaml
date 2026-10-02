@@ -1,11 +1,11 @@
 ---
 apiVersion: v2
-appVersion: 1.3.1
+appVersion: 1.3.3
 dependencies:
   - condition: postgres.enabled
     name: postgres
     repository: oci://registry-1.docker.io/cloudpirates
-    version: 0.20.4
+    version: 0.20.6
 description: Inventory and rental management system for Budavári Schönherz Stúdió.
 home: https://github.com/mboldi/Raktr
 # image: ghcr.io/mboldi/raktr/backend
