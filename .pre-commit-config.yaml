@@ -1,6 +1,8 @@
 ---
 ci:
   skip: [chart-testing, helmlint]
+  # Renovate updates the hooks inside its windows; this only catches what it misses.
+  autoupdate_schedule: quarterly
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
