@@ -1,19 +1,9 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    ":automergeDisabled",
-    ":dependencyDashboard",
-    ":disableRateLimiting",
-    ":enableVulnerabilityAlertsWithLabel(security)",
-    ":ignoreUnstable",
-    ":label(renovate)",
-    ":pinAllExceptPeerDependencies",
-    ":timezone(Europe/Budapest)",
-    "group:monorepos",
-    "group:recommended",
-    "replacements:all",
-    "schedule:monthly",
-    "workarounds:all"
+    "github>BSStudio/renovate-config",
+    "github>BSStudio/renovate-config:monthly",
+    "github>BSStudio/renovate-config:approve-merges"
   ],
   "customManagers": [
     {
@@ -37,7 +27,6 @@
       "matchStringsStrategy": "combination"
     }
   ],
-  "gitIgnoredAuthors": ["66853113+pre-commit-ci[bot]@users.noreply.github.com"],
   "packageRules": [
     {
       "description": "Group all minor and patch updates together for applications.",
@@ -55,21 +44,13 @@
       "postUpdateOptions": ["helmUpdateSubChartArchives"]
     },
     {
-      "description": "Group all minor and patch updates together for CI/CD and development dependencies.",
+      "description": "Group all minor and patch updates together for development dependencies. GitHub Actions stay in the shared preset's group, which merges unattended.",
       "addLabels": ["development"],
       "groupName": "all non-major development dependencies",
       "groupSlug": "all-minor-patch-development",
       "matchFileNames": ["**/!(Chart.yaml)"],
-      "matchManagers": ["custom.regex", "github-actions", "pip_requirements"],
+      "matchManagers": ["custom.regex", "pip_requirements", "pre-commit"],
       "matchUpdateTypes": ["minor", "patch"]
-    },
-    {
-      "matchManagers": ["github-actions"],
-      "matchPackageNames": ["actions/python-versions"],
-      "matchUpdateTypes": ["patch", "pin"],
-      "enabled": false
     }
-  ],
-  "rebaseWhen": "conflicted",
-  "reviewersFromCodeOwners": true
+  ]
 }
