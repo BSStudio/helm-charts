@@ -308,6 +308,8 @@ config:
   # DEFAULT_FROM_EMAIL: noreply@example.com
   # DEFAULT_REPLY_EMAIL: info@example.com
   # WEEKLY_TASK_EMAIL: list@example.com
+  # WEB_PUSH_CONTACT: mailto:it@example.com
+  # WEB_PUSH_VAPID_PUBLIC_KEY: ""
 
 # -- Sensitive environment variables rendered into a Secret, shared by all roles. Keys are the
 # literal names from <https://github.com/BSStudio/request-manager/blob/main/backend/.env.sample>.
@@ -329,6 +331,8 @@ secrets:
   # SENTRY_URL: ""
   # TURNSTILE_SECRET_KEY: ""
   # EMAIL_HOST_PASSWORD: ""
+  # MATTERMOST_WEBHOOK_URL: ""
+  # WEB_PUSH_VAPID_PRIVATE_KEY: ""
 
 # -- Supply the sensitive environment variables from an existing Secret instead of `secrets`. Its
 # keys must be the environment variable names. DATABASE_PASSWORD stays chart-managed.
