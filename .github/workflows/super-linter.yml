@@ -27,6 +27,7 @@ jobs:
       - name: Super-linter
         uses: super-linter/super-linter/slim@2da136927bd4a73596db63044b504547c62cb854 # v9.0.0
         env:
+          ENABLE_GITHUB_PULL_REQUEST_SUMMARY_COMMENT: false
           LINTER_RULES_PATH: .github/configs
           MULTI_STATUS: false
           VALIDATE_GITHUB_ACTIONS: false
