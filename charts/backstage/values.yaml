@@ -246,9 +246,9 @@ config:
   AUTHENTIK_GROUP_API_CLIENTS: backstage-api-clients
   # -- Authentik group name a workstation agent must be in
   AUTHENTIK_GROUP_COMPUTER_AGENTS: backstage-computer-agents
-  # -- UUID of the Authentik group for candidate candidates ("jelölt-jelölt")
+  # -- UUID of the Authentik group for candidate candidates ("stúdiós-jelölt jelölt")
   AUTHENTIK_GROUP_CANDIDATE_CANDIDATE: ""
-  # -- UUID of the Authentik group for candidates ("jelölt")
+  # -- UUID of the Authentik group for candidates ("stúdiós-jelölt")
   AUTHENTIK_GROUP_CANDIDATE: ""
   # -- UUID of the Authentik group for members ("stúdiós")
   AUTHENTIK_GROUP_MEMBER: ""
