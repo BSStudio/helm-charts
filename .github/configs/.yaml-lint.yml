@@ -3,6 +3,8 @@ extends: default
 
 ignore:
   - "**/charts/*/templates/"
+  # Linted with .yaml-lint-workflows.yml, which follows the shared workflow convention.
+  - .github/workflows/
 
 rules:
   braces:

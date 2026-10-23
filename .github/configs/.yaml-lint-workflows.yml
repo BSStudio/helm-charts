@@ -1,0 +1,16 @@
+---
+# Workflows follow the shared workflow convention: no document start marker, an `on` key, and a
+# single space before the comment that names a pinned action's release. Pinned `uses:` lines
+# cannot wrap, so there is no line limit.
+extends: .github/configs/.yaml-lint.yml
+
+# Replaces the main config's list, which ignores the workflows.
+ignore: []
+
+rules:
+  comments:
+    min-spaces-from-content: 1
+  document-start: disable
+  line-length: disable
+  truthy:
+    check-keys: false
