@@ -1,6 +1,6 @@
 # backstage
 
-![Version: 0.6.1](https://img.shields.io/badge/Version-0.6.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.2.1](https://img.shields.io/badge/AppVersion-1.2.1-informational?style=flat-square)
+![Version: 0.6.2](https://img.shields.io/badge/Version-0.6.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.2.4](https://img.shields.io/badge/AppVersion-1.2.4-informational?style=flat-square)
 
 Internal member portal for Budavári Schönherz Stúdió, and the source of truth for member data.
 
@@ -139,8 +139,8 @@ then redirects to that default host, and the avatar URLs handed to Authentik poi
 | config.AUTHENTIK_GROUP_ADMIN | string | `""` | Authentik group name that grants the ADMIN role |
 | config.AUTHENTIK_GROUP_ALUMNI | string | `""` | UUID of the Authentik group for alumni ("öregtag") |
 | config.AUTHENTIK_GROUP_API_CLIENTS | string | `"backstage-api-clients"` | Authentik group name a machine-to-machine API client must be in |
-| config.AUTHENTIK_GROUP_CANDIDATE | string | `""` | UUID of the Authentik group for candidates ("jelölt") |
-| config.AUTHENTIK_GROUP_CANDIDATE_CANDIDATE | string | `""` | UUID of the Authentik group for candidate candidates ("jelölt-jelölt") |
+| config.AUTHENTIK_GROUP_CANDIDATE | string | `""` | UUID of the Authentik group for candidates ("stúdiós-jelölt") |
+| config.AUTHENTIK_GROUP_CANDIDATE_CANDIDATE | string | `""` | UUID of the Authentik group for candidate candidates ("stúdiós-jelölt jelölt") |
 | config.AUTHENTIK_GROUP_COMPUTER_AGENTS | string | `"backstage-computer-agents"` | Authentik group name a workstation agent must be in |
 | config.AUTHENTIK_GROUP_LEADERSHIP | string | `""` | Authentik group name that grants the LEADERSHIP role |
 | config.AUTHENTIK_GROUP_LEADERSHIP_UUID | string | `""` | UUID of the common Leadership group in Authentik |
