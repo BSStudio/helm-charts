@@ -1,6 +1,6 @@
 # request-manager
 
-![Version: 0.4.2](https://img.shields.io/badge/Version-0.4.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.5.0](https://img.shields.io/badge/AppVersion-1.5.0-informational?style=flat-square)
+![Version: 0.5.0](https://img.shields.io/badge/Version-0.5.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2.0.0](https://img.shields.io/badge/AppVersion-2.0.0-informational?style=flat-square)
 
 Manage video shooting and live streaming requests at Budavári Schönherz Stúdió.
 
@@ -25,6 +25,35 @@ Kubernetes: `>=1.23.0-0`
 |------------|------|---------|
 | oci://registry-1.docker.io/cloudpirates | postgres | 0.20.6 |
 | oci://registry-1.docker.io/cloudpirates | redis | 0.35.4 |
+
+## Upgrading
+
+### 0.4.x to 0.5.0
+
+The chart moves to Request Manager 2.0, whose migrations cannot be reversed. Read the [upstream upgrade notes](https://github.com/BSStudio/request-manager/releases/tag/v2.0.0) and back up the database first: `helm rollback` restores the 1.5 image but not the schema, so going back means restoring that backup.
+
+The migration Job drops tables that 1.5 still uses. The old pods keep serving until their replacements are ready and fail logins and bans in that gap; set `server.strategy.type: Recreate` for this upgrade to take a short outage instead. Everyone is logged out once.
+
+Logins now use a session cookie and a CSRF token, both `Secure`, so the site must be served over HTTPS. Behind an ingress that terminates TLS, set `CSRF_TRUSTED_ORIGINS` to the site's `https://` origin: Django sees the forwarded request as plain HTTP and otherwise rejects every write a logged-in user makes.
+
+New optional settings, each off until set:
+
+```yaml
+config:
+  WEB_PUSH_CONTACT: mailto:it@example.com
+  WEB_PUSH_VAPID_PUBLIC_KEY: "..."
+secrets:
+  MATTERMOST_WEBHOOK_URL: https://mattermost.example.com/hooks/...
+  WEB_PUSH_VAPID_PRIVATE_KEY: "..."
+```
+
+Push notifications need all three `WEB_PUSH_*` settings; generate the key pair as described under "Web push keys" in the [backend README](https://github.com/BSStudio/request-manager/blob/main/backend/README.md), and keep it once people have subscribed.
+
+After the upgrade, remove the content types the JWT blacklist left behind. The command lists them and asks before deleting:
+
+```sh
+kubectl exec -it deploy/request-manager-server -- python manage.py remove_stale_contenttypes --include-stale-apps
+```
 
 ## Values
 
