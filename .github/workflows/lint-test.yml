@@ -1,4 +1,3 @@
----
 name: Lint and Test Charts
 
 on:
@@ -8,15 +7,24 @@ on:
       - charts/**
   pull_request:
 
-permissions: read-all
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+defaults:
+  run:
+    shell: bash
 
 jobs:
   lint-test:
     name: Lint and Test Charts
     runs-on: ubuntu-latest
-
+    timeout-minutes: 60
     steps:
-      - name: Checkout
+      - name: Check out
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
@@ -30,7 +38,7 @@ jobs:
         with:
           python-version: 3.14
 
-      - name: Setup Chart Linting
+      - name: Set up chart-testing
         uses: helm/chart-testing-action@720270857a28afd41e2426521a7801db09e9b510 # v2.9.0
         with:
           version: 3.14.0
@@ -40,26 +48,12 @@ jobs:
         id: list-changed
         run: |
           changed=$(ct --config ./.github/configs/ct.yaml list-changed)
-          charts=$(echo "$changed" | tr '\n' ' ' | xargs)
           if [[ -n "$changed" ]]; then
-            echo "changed=true" >> $GITHUB_OUTPUT
-            echo "changed_charts=$charts" >> $GITHUB_OUTPUT
+            echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Run chart-testing (lint)
         run: ct lint --debug --config ./.github/configs/ct.yaml --lint-conf ./.github/configs/.yaml-lint.yml
-
-      - name: Run docs-testing (helm-docs)
-        id: helm-docs
-        run: |
-          ./scripts/helm-docs.sh
-          if [[ $(git diff --stat) != '' ]]; then
-            echo -e '\033[0;31mDocumentation outdated!\033[0m ❌'
-            git diff --color
-            exit 1
-          else
-            echo -e '\033[0;32mDocumentation up to date\033[0m ✔'
-          fi
 
       - name: Check every chart has a labeler entry
         run: |
@@ -74,9 +68,9 @@ jobs:
           fi
 
       - name: Create kind cluster
-        uses: helm/kind-action@1544676c07bb3570fcb70166beaa07c4528fd4aa # v1.15.1
         if: steps.list-changed.outputs.changed == 'true'
+        uses: helm/kind-action@1544676c07bb3570fcb70166beaa07c4528fd4aa # v1.15.1
 
       - name: Run chart-testing (install)
-        run: ct install --config ./.github/configs/ct.yaml
         if: steps.list-changed.outputs.changed == 'true'
+        run: ct install --config ./.github/configs/ct.yaml

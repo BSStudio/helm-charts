@@ -18,4 +18,4 @@ docker run \
             --config .github/configs/ct.yaml \
             --lint-conf .github/configs/.yaml-lint.yml
     "
-# Update lint-test.yaml workflow when updating image version.
+# Update lint-test.yml workflow when updating image version.
