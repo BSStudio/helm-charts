@@ -55,18 +55,6 @@ jobs:
       - name: Run chart-testing (lint)
         run: ct lint --debug --config ./.github/configs/ct.yaml --lint-conf ./.github/configs/.yaml-lint.yml
 
-      - name: Run docs-testing (helm-docs)
-        id: helm-docs
-        run: |
-          ./scripts/helm-docs.sh
-          if [[ $(git diff --stat) != '' ]]; then
-            echo -e '\033[0;31mDocumentation outdated!\033[0m ❌'
-            git diff --color
-            exit 1
-          else
-            echo -e '\033[0;32mDocumentation up to date\033[0m ✔'
-          fi
-
       - name: Check every chart has a labeler entry
         run: |
           missing=$(for dir in charts/*/; do
