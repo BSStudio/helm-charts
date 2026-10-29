@@ -1,0 +1,27 @@
+---
+apiVersion: v2
+appVersion: 1.0.0
+dependencies:
+  - condition: postgres.enabled
+    name: postgres
+    repository: oci://registry-1.docker.io/cloudpirates
+    version: 0.20.6
+description: Public website and video archive of Budavári Schönherz Stúdió.
+home: https://github.com/kir-dev/bss-stack
+# image: ghcr.io/kir-dev/bss-stack
+keywords:
+  - website
+  - video-archive
+  - authentik
+  - studio
+  - bss
+kubeVersion: ">=1.23.0-0"
+maintainers:
+  - name: Budavári Schönherz Stúdió
+    url: https://github.com/BSStudio/helm-charts
+name: website
+sources:
+  - https://github.com/BSStudio/helm-charts/tree/main/charts/website
+  - https://github.com/kir-dev/bss-stack
+type: application
+version: 0.1.0

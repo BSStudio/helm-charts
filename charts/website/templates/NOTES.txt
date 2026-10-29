@@ -1,0 +1,39 @@
+{{- $fullName := include "website.fullname" . -}}
+The BSS website {{ .Chart.AppVersion }} has been deployed as release {{ .Release.Name }}.
+
+{{- if .Values.ingress.enabled }}
+
+Reach the application at:
+{{- range $host := .Values.ingress.hosts }}
+  {{- range .paths }}
+  http{{ if $.Values.ingress.tls }}s{{ end }}://{{ $host.host }}{{ .path }}
+  {{- end }}
+{{- end }}
+
+Register these redirect URIs with the identity providers:
+{{- range .Values.ingress.hosts }}
+  https://{{ .host }}/api/auth/callback
+  {{- if $.Values.oobConfig.config.authsch }}
+  https://{{ .host }}/api/auth/authsch/callback
+  {{- end }}
+{{- end }}
+{{- else }}
+
+The website is exposed on a {{ .Values.service.type }} Service. To reach it from your machine:
+
+  kubectl --namespace {{ .Release.Namespace }} port-forward svc/{{ $fullName }} {{ .Values.service.port }}:{{ .Values.service.port }}
+
+then open http://127.0.0.1:{{ .Values.service.port }}
+{{- end }}
+{{- if not .Values.oobConfig.existingSecret }}
+{{- $authentik := .Values.oobConfig.config.authentik }}
+{{- if or (not $authentik.clientId) (not $authentik.clientSecret) }}
+
+WARNING: oobConfig.config.authentik.clientId or clientSecret is empty. The app then rejects the
+whole OOB config: nobody can log in, and video media URLs cannot be built.
+{{- end }}
+{{- end }}
+{{- if and .Values.postgres.enabled (not .Values.postgres.auth.password) }}
+
+WARNING: postgres.auth.password is empty — set it or the website cannot reach the bundled database.
+{{- end }}

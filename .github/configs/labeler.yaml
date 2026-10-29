@@ -19,6 +19,10 @@
   - changed-files:
       - any-glob-to-any-file: charts/request-manager/**
 
+"chart: website":
+  - changed-files:
+      - any-glob-to-any-file: charts/website/**
+
 ci:
   - changed-files:
       - any-glob-to-any-file:

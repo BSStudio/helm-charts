@@ -1,0 +1,10 @@
+---
+postgres:
+  auth:
+    password: secretPassword
+
+oobConfig:
+  config:
+    authentik:
+      clientId: ci
+      clientSecret: ci-secret
