@@ -1,0 +1,276 @@
+---
+# -- Provide a name in place of `website`
+nameOverride: ""
+# -- String to fully override `"website.fullname"`
+fullnameOverride: ""
+
+image:
+  # -- The Docker repository to pull the image from
+  repository: ghcr.io/kir-dev/bss-stack
+  # -- The logic of image pulling
+  imagePullPolicy: IfNotPresent
+  # -- Overrides the image tag whose default is the chart appVersion
+  tag: ""
+
+# -- Secrets for pulling the image from a private registry
+imagePullSecrets: []
+  # - name: ghcr-credentials
+
+# -- The number of replicas to deploy (ignored when autoscaling is enabled)
+replicaCount: 1
+
+# -- Grace period for shutdown. Must exceed the server's drain timeout: 5s, or
+# `config.SERVER_SHUTDOWN_TIMEOUT` seconds when set.
+terminationGracePeriodSeconds: 10
+
+# -- Deployment update strategy. Empty uses Kubernetes' default RollingUpdate: the new pod migrates the
+# database while the old one still serves on the previous schema.
+strategy: {}
+  # type: Recreate
+
+serviceAccount:
+  # -- Specifies whether a service account should be created
+  create: true
+  # -- Automatically mount a ServiceAccount's API credentials?
+  automount: false
+  # -- Annotations to add to the service account
+  annotations: {}
+  # -- The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template.
+  name: ""
+
+# -- Optional additional annotations to add to the pods
+podAnnotations: {}
+
+# -- Optional additional labels to add to the pods
+podLabels: {}
+
+# -- Pod-level security context, merged over chart defaults (seccompProfile RuntimeDefault)
+podSecurityContext: {}
+  # fsGroup: 2000
+
+# -- Run containers as a specific securityContext, merged over chart defaults (runAsUser 65532;
+# readOnlyRootFilesystem; capabilities drop ALL)
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+# -- Init containers to add to the deployment
+initContainers: []
+  # - name: wait-for-postgres
+  #   image: busybox:latest
+  #   command: ['sh', '-c', 'do-something-here']
+
+service:
+  # -- Kubernetes service type for web traffic
+  type: ClusterIP
+  # -- Port number for web traffic (passed to the container as `PORT`)
+  port: 3000
+
+ingress:
+  # -- Enable an ingress resource
+  enabled: false
+  # -- Defines which ingress controller will implement the resource
+  className: ""
+  # -- Additional ingress annotations
+  annotations: {}
+    # cert-manager.io/cluster-issuer: letsencrypt-prod
+  # -- List of ingress hosts. The OIDC redirect URI is built from the request's host, so register
+  # `https://<host>/api/auth/callback` for each one.
+  hosts: []
+    #  - host: website.example.com
+    #    paths:
+    #      - path: /
+    #        pathType: Prefix
+  # -- Ingress TLS configuration
+  tls: []
+    #  - secretName: website-example-com-tls
+    #    hosts:
+    #      - website.example.com
+
+# -- Liveness probe for the container. `/health/live` answers without touching the database.
+livenessProbe:
+  httpGet:
+    path: /health/live
+    port: http
+  periodSeconds: 10
+  failureThreshold: 3
+
+# -- Readiness probe for the container. `/health/ready` returns 503 until the database is reachable
+# and the startup migrations have finished.
+readinessProbe:
+  httpGet:
+    path: /health/ready
+    port: http
+  periodSeconds: 10
+  failureThreshold: 3
+
+# -- Startup probe for the container. None by default: the server listens within a second, and
+# migrations run behind the readiness probe.
+startupProbe: {}
+
+# -- Container lifecycle hooks. A `preStop` sleep holds the pod open until its endpoint removal
+# has propagated, and is charged against `terminationGracePeriodSeconds`.
+lifecycle: {}
+  # preStop:
+  #   exec:
+  #     command: ["/bin/sleep", "5"]
+
+resources:
+  limits:
+    # -- The maximum amount of CPU the container can use
+    cpu: 500m
+    # -- The maximum amount of memory the container can use
+    memory: 256Mi
+  requests:
+    # -- Specifies the minimum amount of CPU that will be allocated to the container
+    cpu: 50m
+    # -- Specifies the minimum amount of memory that will be allocated to the container
+    memory: 256Mi
+
+autoscaling:
+  # -- Controls whether autoscaling is enabled for the deployment
+  enabled: false
+  # -- Defines the minimum number of application instances (replicas) to maintain, even during low demand
+  minReplicas: 1
+  # -- Sets the maximum number of application instances (replicas) that can be scaled up to during high demand
+  maxReplicas: 10
+  # -- Specifies the CPU utilization threshold at which autoscaling will be triggered
+  # to adjust the number of replicas
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+pdb:
+  # -- Enable a PodDisruptionBudget. With a single replica `minAvailable: 1` blocks node drains.
+  enabled: false
+  # -- Maximum unavailable pods (takes precedence over minAvailable when set)
+  maxUnavailable: ""
+  # -- Minimum available pods (used when maxUnavailable is unset; defaults to 1)
+  minAvailable: ""
+
+# -- Additional environment variables, appended to the container verbatim. Prefer `config` and
+# `secrets`; entries here take precedence over both.
+extraEnv: []
+  # - name: ENV_VAR_NAME
+  #   value: VALUE
+  # - name: ENV_VAR_OTHER
+  #   valueFrom:
+  #     secretKeyRef:
+  #       name: secret-name
+  #       key: secret-key
+
+# -- Additional envFrom sources appended to the container
+extraEnvFrom: []
+  # - configMapRef:
+  #     name: config-map-name
+  # - secretRef:
+  #     name: secret-name
+
+# -- Additional volumes to mount to the deployment
+extraVolumes: []
+  # - name: foo
+  #   secret:
+  #     secretName: mysecret
+  #     optional: false
+
+# -- Additional volume mounts for the containers
+extraVolumeMounts: []
+  # - name: foo
+  #   mountPath: "/etc/foo"
+  #   readOnly: true
+
+# -- NodeSelector for the deployment
+nodeSelector: {}
+
+# -- Tolerations for the deployment
+tolerations: []
+
+# -- Affinity for the deployment
+affinity: {}
+
+# -- Non-secret environment variables rendered into a ConfigMap; empty values are dropped. The app
+# itself reads only `DATABASE_URL` (<https://github.com/kir-dev/bss-stack/blob/main/.env.example>)
+# and the OOB config below, so this holds runtime settings.
+config: {}
+  # Seconds the server waits for in-flight requests on SIGTERM; keep below terminationGracePeriodSeconds.
+  # SERVER_SHUTDOWN_TIMEOUT: "5"
+
+# -- Read the sensitive environment variables from an existing Secret instead of `secrets`. Its keys
+# must be the environment variable names. DATABASE_URL below stays chart-managed.
+existingSecret: ""
+
+# -- Sensitive environment variables rendered into a Secret. DATABASE_URL defaults to the bundled
+# sub-chart; set it to point at an external database.
+secrets: {}
+  # DATABASE_URL: ""
+
+oobConfig:
+  # -- Use an existing Secret holding the OOB config under the key `config.json` instead of creating
+  # one from `oobConfig.config`
+  existingSecret: ""
+  # -- BSS OOB config, rendered as JSON and mounted at `/app/oob/config.json`. Format:
+  # <https://github.com/kir-dev/bss-stack/blob/main/docs/oob-inputs.md>. With an empty client ID or
+  # secret the app rejects the whole config: nobody can log in, and video media URLs cannot be built.
+  # @default -- Authentik login with the studio's group names, media from v.bsstudio.hu
+  config:
+    authentik:
+      issuerUrl: https://auth.example.com/application/o/website/
+      clientId: ""
+      clientSecret: ""
+      scopes: [openid, profile, email]
+      claims:
+        sub: sub
+      groups:
+        admin: Admin
+        studio: Stúdiós
+        studioCandidate: Stúdiós-jelölt
+        studioCandidateCandidate: Stúdiós-jelölt jelölt
+        leadership: Vezetőség
+        alumni: Öregtag
+    # AuthSCH login for Schönherz residents, offered next to Authentik when set. Its redirect URI is
+    # `https://<host>/api/auth/authsch/callback`.
+    # authsch:
+    #   issuerUrl: https://auth.sch.bme.hu
+    #   clientId: ""
+    #   clientSecret: ""
+    #   scopes: [openid, profile]
+    youtube:
+      oEmbedEndpoint: https://www.youtube.com/oembed
+    media:
+      host: https://v.bsstudio.hu
+
+postgres:
+  # -- Enable the CloudPirates PostgreSQL chart.
+  # Refer to <https://github.com/CloudPirates-io/helm-charts/blob/main/charts/postgres> for possible values.
+  enabled: true
+  auth:
+    # -- Name for a custom user to create
+    username: website
+    # -- Name for a custom database to create
+    database: website
+    # -- Password for the custom user. Required, and must be URL-safe: it is interpolated into
+    # `secrets.DATABASE_URL`.
+    password: ""
+  resources:
+    limits:
+      # -- The maximum amount of CPU the container can use
+      cpu: 500m
+      # -- The maximum amount of memory the container can use
+      memory: 512Mi
+    requests:
+      # -- Specifies the minimum amount of CPU that will be allocated to the container
+      cpu: 250m
+      # -- Specifies the minimum amount of memory that will be allocated to the container
+      memory: 512Mi
+  containerSecurityContext:
+    # -- Run container processes as non-root user nobody
+    runAsUser: 65534
+    # -- Run container processes with nobody group
+    runAsGroup: 65534
+    seccompProfile:
+      # -- Use the container runtime default seccomp profile
+      type: RuntimeDefault

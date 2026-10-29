@@ -8,6 +8,7 @@ misconfigurations:
       - charts/outline/charts/redis/templates/statefulset.yaml
       - charts/raktr/charts/postgres/templates/statefulset.yaml
       - charts/request-manager/charts/postgres/templates/statefulset.yaml
+      - charts/website/charts/postgres/templates/statefulset.yaml
     statement: External charts
   - id: AVD-KSV-0110
     paths:
@@ -21,6 +22,7 @@ misconfigurations:
       - charts/request-manager/templates/migrate-job.yaml
       - charts/request-manager/templates/server/deployment.yaml
       - charts/request-manager/templates/worker/deployment.yaml
+      - charts/website/templates/deployment.yaml
     statement: Actual chart will not be deployed to default namespace
   - id: AVD-KSV-0125
     statement: Used container registries are trusted
@@ -31,4 +33,5 @@ misconfigurations:
       - charts/outline/templates/configmap.yaml
       - charts/raktr/templates/backend/configmap.yaml
       - charts/request-manager/templates/configmap.yaml
+      - charts/website/templates/configmap.yaml
     statement: Matches on the key name only; the ConfigMap holds no sensitive values
