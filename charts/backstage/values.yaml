@@ -21,7 +21,7 @@ imagePullSecrets: []
 replicaCount: 1
 
 # -- Grace period for shutdown. Next.js drains in-flight requests with no deadline of its own, and
-# syncs to Authentik, Drupal and the new website run inside the request that triggered them.
+# syncs to Authentik, Google and the website run inside the request that triggered them.
 terminationGracePeriodSeconds: 60
 
 # -- Deployment update strategy. When empty, defaults to `Recreate` if persistence is enabled with a
@@ -256,11 +256,8 @@ config:
   AUTHENTIK_GROUP_ALUMNI: ""
   # -- UUID of the common Leadership group in Authentik
   AUTHENTIK_GROUP_LEADERSHIP_UUID: ""
-  # -- Base URL of the Drupal site that member data is synced to. Empty, or with either
-  # `secrets.DRUPAL_ADMIN_*` empty, the Drupal jobs record as `SKIPPED` rather than failing.
-  DRUPAL_URL: https://bsstudio.hu
-  # -- Member webhook of the new website, synced alongside Drupal. Empty, or without
-  # `secrets.WEBSITE_WEBHOOK_TOKEN`, its jobs record as `SKIPPED`.
+  # -- Member webhook of the website. Empty, or without `secrets.WEBSITE_WEBHOOK_TOKEN`, its jobs
+  # record as `SKIPPED`.
   WEBSITE_WEBHOOK_URL: ""
   # -- Main mailing list the member addresses are synced to. Unset, every Google job lands as
   # `SKIPPED` and the reconciliation page reports nothing configured.
@@ -306,10 +303,6 @@ secrets:
   AUTHENTIK_CLIENT_SECRET: ""
   # -- Authentik REST API token, used for the user and group syncs
   AUTHENTIK_API_TOKEN: ""
-  # -- Administrator account on the Drupal site, used for the Drupal sync
-  DRUPAL_ADMIN_USERNAME: ""
-  # -- Password of that administrator account
-  DRUPAL_ADMIN_PASSWORD: ""
   # -- Bearer token for `config.WEBSITE_WEBHOOK_URL`. Issued on the website's side.
   WEBSITE_WEBHOOK_TOKEN: ""
   # -- Google service account key for the group sync and the calendar read, as the downloaded JSON or
