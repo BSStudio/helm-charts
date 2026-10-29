@@ -1889,4 +1889,34 @@ entries:
     urls:
     - https://github.com/BSStudio/helm-charts/releases/download/request-manager-0.1.0/request-manager-0.1.0.tgz
     version: 0.1.0
-generated: "2026-10-23T22:58:39.774073731Z"
+  website:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2026-10-29T13:28:56.597404597Z"
+    dependencies:
+    - condition: postgres.enabled
+      name: postgres
+      repository: oci://registry-1.docker.io/cloudpirates
+      version: 0.20.6
+    description: Public website and video archive of Budavári Schönherz Stúdió.
+    digest: b5c5bc2fc0af83ba78acdcbbb32df11eff452e997db5e21a041e1ef0142f0827
+    home: https://github.com/kir-dev/bss-stack
+    keywords:
+    - website
+    - video-archive
+    - authentik
+    - studio
+    - bss
+    kubeVersion: '>=1.23.0-0'
+    maintainers:
+    - name: Budavári Schönherz Stúdió
+      url: https://github.com/BSStudio/helm-charts
+    name: website
+    sources:
+    - https://github.com/BSStudio/helm-charts/tree/main/charts/website
+    - https://github.com/kir-dev/bss-stack
+    type: application
+    urls:
+    - https://github.com/BSStudio/helm-charts/releases/download/website-0.1.0/website-0.1.0.tgz
+    version: 0.1.0
+generated: "2026-10-29T13:28:56.59750387Z"
