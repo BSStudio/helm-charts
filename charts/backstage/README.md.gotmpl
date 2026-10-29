@@ -14,6 +14,17 @@
 
 ## Upgrading
 
+### 0.6.x to 0.7.0
+
+Application 1.3.0 removes the Drupal sync, and with it `config.DRUPAL_URL`,
+`secrets.DRUPAL_ADMIN_USERNAME` and `secrets.DRUPAL_ADMIN_PASSWORD`. Delete them from the release's
+values, or from `existingSecret`: left in place they still render, and the Drupal admin password
+stays in the Secret.
+
+The release's migration deletes the Drupal sync jobs and drops `Member.drupalUserId`, which
+application 1.2.x still reads. Rolling back to 0.6.x afterwards needs the database restored from a
+backup taken before the upgrade.
+
 ### 0.5.x to 0.6.0
 
 Application 1.2.0 renames the Drupal sync settings. `config.WEBSITE_URL`,
