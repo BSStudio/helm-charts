@@ -1,6 +1,6 @@
 ---
 apiVersion: v2
-appVersion: 11.11.1
+appVersion: 12.0.1
 dependencies:
   - condition: postgres.enabled
     name: postgres
@@ -26,4 +26,4 @@ sources:
   - https://github.com/BSStudio/mattermost-oidc
   - https://github.com/mattermost/mattermost
 type: application
-version: 1.1.2
+version: 1.1.3
