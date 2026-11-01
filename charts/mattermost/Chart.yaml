@@ -5,7 +5,7 @@ dependencies:
   - condition: postgres.enabled
     name: postgres
     repository: oci://registry-1.docker.io/cloudpirates
-    version: 0.20.6
+    version: 0.21.2
 description: Mattermost Team Edition with OIDC single sign-on and the user limit lifted.
 home: https://mattermost.com
 icon: https://mattermost.com/wp-content/uploads/2022/02/icon.png
