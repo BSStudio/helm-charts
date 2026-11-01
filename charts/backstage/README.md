@@ -23,7 +23,7 @@ Kubernetes: `>=1.23.0-0`
 
 | Repository | Name | Version |
 |------------|------|---------|
-| oci://registry-1.docker.io/cloudpirates | postgres | 0.20.6 |
+| oci://registry-1.docker.io/cloudpirates | postgres | 0.21.2 |
 
 ## Upgrading
 
