@@ -33,7 +33,7 @@ repos:
         name: Detect secrets
         exclude: ^charts/
   - repo: https://github.com/adhtruong/mirrors-typos
-    rev: v1.50.3
+    rev: v1.51.1
     hooks:
       - id: typos
         name: Run spell checker
@@ -73,7 +73,7 @@ repos:
         name: Generate README for charts
         args: [--chart-search-root=charts, --skip-version-footer]
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: 0.38.2
+    rev: 0.39.0
     hooks:
       - id: check-github-workflows
       - id: check-renovate
