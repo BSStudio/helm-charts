@@ -13,7 +13,7 @@ dependencies:
   - condition: redis.enabled
     name: redis
     repository: oci://registry-1.docker.io/cloudpirates
-    version: 0.37.13
+    version: 0.37.15
 description: Outline is a fast, collaborative, knowledge base for your team built using React and Node.js.
 home: https://www.getoutline.com
 icon: https://www.getoutline.com/images/logo.svg

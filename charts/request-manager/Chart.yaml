@@ -9,7 +9,7 @@ dependencies:
   - condition: redis.enabled
     name: redis
     repository: oci://registry-1.docker.io/cloudpirates
-    version: 0.37.13
+    version: 0.37.15
 description: Manage video shooting and live streaming requests at Budavári Schönherz Stúdió.
 home: https://github.com/BSStudio/request-manager
 # image: ghcr.io/bsstudio/request-manager
