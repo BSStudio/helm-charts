@@ -25,7 +25,7 @@ Kubernetes: `>=1.23.0-0`
 |------------|------|---------|
 | oci://registry-1.docker.io/cloudpirates | minio | 0.14.0 |
 | oci://registry-1.docker.io/cloudpirates | postgres | 0.21.2 |
-| oci://registry-1.docker.io/cloudpirates | redis | 0.37.13 |
+| oci://registry-1.docker.io/cloudpirates | redis | 0.37.15 |
 
 ## Upgrading
 
