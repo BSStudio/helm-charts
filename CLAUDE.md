@@ -10,7 +10,7 @@ Read [CONVENTIONS.md](CONVENTIONS.md) before creating or changing a chart. It is
 pre-commit run --all-files   # includes helm lint, ct lint through scripts/lint.sh, and helm-docs
 ```
 
-To rerun one part on its own: `scripts/lint.sh` runs `ct lint` on the charts changed against `origin/main`, as CI does; `scripts/helm-docs.sh` regenerates the chart READMEs. pre-commit and both scripts need Docker. The chart-testing hook can't run from a git worktree, so run the checks from the main clone.
+To rerun one part on its own: `scripts/lint.sh` runs `ct lint` on the charts changed against `origin/main`, as CI does; `scripts/helm-docs.sh` regenerates the chart READMEs. pre-commit and both scripts need Docker. The chart-testing hook can't run from a Git worktree, so run the checks from the main clone.
 
 `helm template` and `helm lint` do not prove the app starts. Say so when reporting results, and treat the `ct install` run on the PR as the first real test.
 
