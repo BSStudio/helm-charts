@@ -6,6 +6,7 @@
 ### Python ###
 # Virtual environment
 venv/*
+.venv/
 
 ### JetBrains products ###
 .idea/*

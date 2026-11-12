@@ -1,6 +1,6 @@
 # outline
 
-![Version: 2.1.3](https://img.shields.io/badge/Version-2.1.3-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.12.0](https://img.shields.io/badge/AppVersion-1.12.0-informational?style=flat-square)
+![Version: 2.1.4](https://img.shields.io/badge/Version-2.1.4-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.12.0](https://img.shields.io/badge/AppVersion-1.12.0-informational?style=flat-square)
 
 Outline is a fast, collaborative, knowledge base for your team built using React and Node.js.
 
@@ -31,10 +31,7 @@ Kubernetes: `>=1.23.0-0`
 
 ### 1.x to 2.0
 
-The `outline` values block is replaced by `config` (rendered into a ConfigMap) and `secrets`
-(rendered into a Secret). Keys are now the literal environment variable names from Outline's
-[.env.sample](https://github.com/outline/outline/blob/main/.env.sample), so `outline.secret_key`
-becomes `secrets.SECRET_KEY`, and a nested `outline.smtp.host` becomes `config.SMTP_HOST`.
+The `outline` values block is replaced by `config` (rendered into a ConfigMap) and `secrets` (rendered into a Secret). Keys are now the literal environment variable names from Outline's [.env.sample](https://github.com/outline/outline/blob/main/.env.sample), so `outline.secret_key` becomes `secrets.SECRET_KEY`, and a nested `outline.smtp.host` becomes `config.SMTP_HOST`.
 
 ```yaml
 # before
@@ -52,14 +49,9 @@ secrets:
   UTILS_SECRET: "..."
 ```
 
-`env` and `envFrom` are renamed to `extraEnv` and `extraEnvFrom`, matching the other charts in this
-repository. Entries under `extraEnv` are now passed to the container verbatim instead of being folded
-into the Secret, so a plain `value` is visible in the pod spec; move anything sensitive to `secrets`.
+`env` and `envFrom` are renamed to `extraEnv` and `extraEnvFrom`, matching the other charts in this repository. Entries under `extraEnv` are now passed to the container verbatim instead of being folded into the Secret, so a plain `value` is visible in the pod spec; move anything sensitive to `secrets`.
 
-`DATABASE_URL` and `REDIS_URL` no longer need to be set when the bundled sub-charts are used: they
-are built from `postgres.auth` and the release name. Set `postgres.auth.password` instead, which
-previously had to be kept in sync with the password embedded in `outline.database_url`. Set
-`secrets.DATABASE_URL` explicitly only to point at an external database.
+`DATABASE_URL` and `REDIS_URL` no longer need to be set when the bundled sub-charts are used: they are built from `postgres.auth` and the release name. Set `postgres.auth.password` instead, which previously had to be kept in sync with the password embedded in `outline.database_url`. Set `secrets.DATABASE_URL` explicitly only to point at an external database.
 
 ## Values
 

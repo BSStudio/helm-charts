@@ -1,6 +1,6 @@
 # backstage
 
-![Version: 0.7.1](https://img.shields.io/badge/Version-0.7.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.3.0](https://img.shields.io/badge/AppVersion-1.3.0-informational?style=flat-square)
+![Version: 0.7.2](https://img.shields.io/badge/Version-0.7.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.3.0](https://img.shields.io/badge/AppVersion-1.3.0-informational?style=flat-square)
 
 Internal member portal for Budavári Schönherz Stúdió, and the source of truth for member data.
 
@@ -29,21 +29,13 @@ Kubernetes: `>=1.23.0-0`
 
 ### 0.6.x to 0.7.0
 
-Application 1.3.0 removes the Drupal sync, and with it `config.DRUPAL_URL`,
-`secrets.DRUPAL_ADMIN_USERNAME` and `secrets.DRUPAL_ADMIN_PASSWORD`. Delete them from the release's
-values, or from `existingSecret`: left in place they still render, and the Drupal admin password
-stays in the Secret.
+Application 1.3.0 removes the Drupal sync, and with it `config.DRUPAL_URL`, `secrets.DRUPAL_ADMIN_USERNAME` and `secrets.DRUPAL_ADMIN_PASSWORD`. Delete them from the release's values, or from `existingSecret`: left in place they still render, and the Drupal admin password stays in the Secret.
 
-The release's migration deletes the Drupal sync jobs and drops `Member.drupalUserId`, which
-application 1.2.x still reads. Rolling back to 0.6.x afterwards needs the database restored from a
-backup taken before the upgrade.
+The release's migration deletes the Drupal sync jobs and drops `Member.drupalUserId`, which application 1.2.x still reads. Rolling back to 0.6.x afterwards needs the database restored from a backup taken before the upgrade.
 
 ### 0.5.x to 0.6.0
 
-Application 1.2.0 renames the Drupal sync settings. `config.WEBSITE_URL`,
-`secrets.WEBSITE_ADMIN_USERNAME` and `secrets.WEBSITE_ADMIN_PASSWORD` become `config.DRUPAL_URL`,
-`secrets.DRUPAL_ADMIN_USERNAME` and `secrets.DRUPAL_ADMIN_PASSWORD`. The values are the same; only
-the keys change.
+Application 1.2.0 renames the Drupal sync settings. `config.WEBSITE_URL`, `secrets.WEBSITE_ADMIN_USERNAME` and `secrets.WEBSITE_ADMIN_PASSWORD` become `config.DRUPAL_URL`, `secrets.DRUPAL_ADMIN_USERNAME` and `secrets.DRUPAL_ADMIN_PASSWORD`. The values are the same; only the keys change.
 
 ```yaml
 # before
@@ -61,12 +53,9 @@ secrets:
   DRUPAL_ADMIN_PASSWORD: a-password
 ```
 
-Nothing fails loudly when this is missed. The old names are read by nothing and an empty `DRUPAL_*`
-is a supported state, so the sync stops quietly; `/admin/sync-jobs` filling with `SKIPPED` rows is
-the tell.
+Nothing fails loudly when this is missed. The old names are read by nothing and an empty `DRUPAL_*` is a supported state, so the sync stops quietly; `/admin/sync-jobs` filling with `SKIPPED` rows is the tell.
 
-The release's other settings are optional, and empty is a working state for each — the feature is
-dropped rather than failed.
+The release's other settings are optional, and empty is a working state for each — the feature is dropped rather than failed.
 
 ```yaml
 config:
@@ -81,20 +70,13 @@ secrets:
   WEBSITE_WEBHOOK_TOKEN: a-token
 ```
 
-Three more database migrations ship with the release, applied by the entrypoint as in 0.4.0 and
-covered by `config.MIGRATION_TIMEOUT` and the startup probe window.
+Three more database migrations ship with the release, applied by the entrypoint as in 0.4.0 and covered by `config.MIGRATION_TIMEOUT` and the startup probe window.
 
-Avatars now answer with `max-age=300`, which a CDN in front of the ingress has to be told to respect
-— on Cloudflare, a Cache Rule on `/avatars/*` with browser TTL at **Respect origin**. Left at the
-zone default the header is rewritten upward and replaced avatars stay cached for hours.
+Avatars now answer with `max-age=300`, which a CDN in front of the ingress has to be told to respect — on Cloudflare, a Cache Rule on `/avatars/*` with browser TTL at **Respect origin**. Left at the zone default the header is rewritten upward and replaced avatars stay cached for hours.
 
 ### 0.3.x to 0.4.0
 
-Application 1.1.0 adds the Google Group sync and the calendar dashboard, which read four new
-settings: `secrets.GOOGLE_SERVICE_ACCOUNT_KEY`, `config.GOOGLE_GROUP_EMAIL`,
-`config.GOOGLE_ALUMNI_GROUP_EMAIL` and `config.GOOGLE_CALENDAR_ID`. Leaving them empty is a
-supported state — the Google sync jobs record themselves as `SKIPPED` and the dashboard drops the
-calendar widget — so the upgrade can land before the credentials exist.
+Application 1.1.0 adds the Google Group sync and the calendar dashboard, which read four new settings: `secrets.GOOGLE_SERVICE_ACCOUNT_KEY`, `config.GOOGLE_GROUP_EMAIL`, `config.GOOGLE_ALUMNI_GROUP_EMAIL` and `config.GOOGLE_CALENDAR_ID`. Leaving them empty is a supported state — the Google sync jobs record themselves as `SKIPPED` and the dashboard drops the calendar widget — so the upgrade can land before the credentials exist.
 
 ```yaml
 config:
@@ -106,19 +88,13 @@ secrets:
   GOOGLE_SERVICE_ACCOUNT_KEY: "eyJ0eXBlIjogInNlcnZpY2VfYWNjb3VudCIsIC4uLn0="
 ```
 
-The service account needs the **MANAGER** role on `GOOGLE_GROUP_EMAIL`, and the calendar has to be
-shared with its address at "See all event details" — a share that never landed reads as a 404, not a
-403.
+The service account needs the **MANAGER** role on `GOOGLE_GROUP_EMAIL`, and the calendar has to be shared with its address at "See all event details" — a share that never landed reads as a 404, not a 403.
 
-The release also ships four database migrations, applied by the entrypoint before the server
-listens. They are covered by the existing `config.MIGRATION_TIMEOUT` and the startup probe window;
-with `persistence.enabled` and a `ReadWriteOnce` volume the chart already picks the `Recreate`
-strategy, so no second replica runs them concurrently.
+The release also ships four database migrations, applied by the entrypoint before the server listens. They are covered by the existing `config.MIGRATION_TIMEOUT` and the startup probe window; with `persistence.enabled` and a `ReadWriteOnce` volume the chart already picks the `Recreate` strategy, so no second replica runs them concurrently.
 
 ### 0.2.x to 0.3.0
 
-`config.BETTER_AUTH_URL` is renamed to `config.APP_URL`, following the rename in the application.
-The value is the same; only the key changes.
+`config.BETTER_AUTH_URL` is renamed to `config.APP_URL`, following the rename in the application. The value is the same; only the key changes.
 
 ```yaml
 # before
@@ -130,9 +106,7 @@ config:
   APP_URL: https://backstage.example.com
 ```
 
-Nothing fails loudly when this is missed. The old key still renders into the ConfigMap, as an
-environment variable the application ignores, and `APP_URL` falls back to the chart default. Login
-then redirects to that default host, and the avatar URLs handed to Authentik point at it too.
+Nothing fails loudly when this is missed. The old key still renders into the ConfigMap, as an environment variable the application ignores, and `APP_URL` falls back to the chart default. Login then redirects to that default host, and the avatar URLs handed to Authentik point at it too.
 
 ## Values
 
