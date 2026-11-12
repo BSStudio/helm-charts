@@ -29,9 +29,7 @@ Kubernetes: `>=1.23.0-0`
 
 ### 0.1.x to 0.2.0
 
-The backend's application settings move under `backend`, where the frontend already keeps its own.
-`config`, `secrets`, `existingSecret`, `extraEnv`, `extraEnvFrom`, `extraVolumes`, `extraVolumeMounts`
-and `initContainers` move as they are; only their place changes.
+The backend's application settings move under `backend`, where the frontend already keeps its own. `config`, `secrets`, `existingSecret`, `extraEnv`, `extraEnvFrom`, `extraVolumes`, `extraVolumeMounts` and `initContainers` move as they are; only their place changes.
 
 ```yaml
 # before
@@ -46,12 +44,9 @@ backend:
   existingSecret: raktr-env
 ```
 
-A key left at the top level is read by nothing and the chart default takes over. That is loud for an
-external `SPRING_DATASOURCE_URL` — the backend falls back to `localhost:5432` and exits — and quiet
-for `secrets` and `existingSecret`, where the pods come up with the feature switched off.
+A key left at the top level is read by nothing and the chart default takes over. That is loud for an external `SPRING_DATASOURCE_URL` — the backend falls back to `localhost:5432` and exits — and quiet for `secrets` and `existingSecret`, where the pods come up with the feature switched off.
 
-The backend's ConfigMap and Secret are renamed to `<release>-backend`, so anything outside the chart
-that reads them by name needs the new one.
+The backend's ConfigMap and Secret are renamed to `<release>-backend`, so anything outside the chart that reads them by name needs the new one.
 
 Sentry in the browser arrives with this release, off until you set it:
 
@@ -62,9 +57,7 @@ frontend:
     SENTRY_ENVIRONMENT: production
 ```
 
-The frontend now serves the site from an emptyDir that an init container fills, because images with
-that support rewrite `config.js` at startup and the root filesystem is read-only. Older images are
-served the same way, so the upgrade needs nothing from you either way.
+The frontend now serves the site from an emptyDir that an init container fills, because images with that support rewrite `config.js` at startup and the root filesystem is read-only. Older images are served the same way, so the upgrade needs nothing from you either way.
 
 ## Values
 

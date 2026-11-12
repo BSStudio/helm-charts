@@ -20,8 +20,7 @@ helm install example bsstudio/<chart>
 
 If you want to add a new application or change on of the existing ones please follow the steps here.
 
-Read [CONVENTIONS.md](CONVENTIONS.md) first — it covers how charts in this repository are structured
-and the rules that are easy to get wrong.
+Read [CONVENTIONS.md](CONVENTIONS.md) first — it covers how charts in this repository are structured and the rules that are easy to get wrong.
 
 ### Pre-commit
 
