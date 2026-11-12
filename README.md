@@ -27,13 +27,13 @@ Read [CONVENTIONS.md](CONVENTIONS.md) first — it covers how charts in this rep
 Pre-commit will make sure that your changes follow the guidelines of this repository. To enable the hooks to the following:
 
 ```bash
-python -m venv venv
+python -m venv .venv
 
 # Windows
-venv\Scripts\Activate.ps1
+.venv\Scripts\Activate.ps1
 
 # Linux or macOS
-source venv/bin/activate
+source .venv/bin/activate
 
 pip install -r requirements.txt
 
