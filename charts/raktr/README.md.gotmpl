@@ -31,7 +31,7 @@ backend:
   existingSecret: raktr-env
 ```
 
-A key left at the top level is read by nothing and the chart default takes over. That is loud for an external `SPRING_DATASOURCE_URL` — the backend falls back to `localhost:5432` and exits — and quiet for `secrets` and `existingSecret`, where the pods come up with the feature switched off.
+A key left at the top level is read by nothing and the chart default takes over. That is loud for an external `SPRING_DATASOURCE_URL` — the backend falls back to the `localhost` default in Raktr's [`application.yml`](https://github.com/mboldi/Raktr/blob/main/backend/src/main/resources/application.yml) and exits — and quiet for `secrets` and `existingSecret`, where the pods come up with the feature switched off.
 
 The backend's ConfigMap and Secret are renamed to `<release>-backend`, so anything outside the chart that reads them by name needs the new one.
 

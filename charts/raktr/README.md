@@ -1,6 +1,6 @@
 # raktr
 
-![Version: 0.2.3](https://img.shields.io/badge/Version-0.2.3-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.4.1](https://img.shields.io/badge/AppVersion-1.4.1-informational?style=flat-square)
+![Version: 0.2.4](https://img.shields.io/badge/Version-0.2.4-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.4.1](https://img.shields.io/badge/AppVersion-1.4.1-informational?style=flat-square)
 
 Inventory and rental management system for Budavári Schönherz Stúdió.
 
@@ -44,7 +44,7 @@ backend:
   existingSecret: raktr-env
 ```
 
-A key left at the top level is read by nothing and the chart default takes over. That is loud for an external `SPRING_DATASOURCE_URL` — the backend falls back to `localhost:5432` and exits — and quiet for `secrets` and `existingSecret`, where the pods come up with the feature switched off.
+A key left at the top level is read by nothing and the chart default takes over. That is loud for an external `SPRING_DATASOURCE_URL` — the backend falls back to the `localhost` default in Raktr's [`application.yml`](https://github.com/mboldi/Raktr/blob/main/backend/src/main/resources/application.yml) and exits — and quiet for `secrets` and `existingSecret`, where the pods come up with the feature switched off.
 
 The backend's ConfigMap and Secret are renamed to `<release>-backend`, so anything outside the chart that reads them by name needs the new one.
 
